@@ -12,9 +12,10 @@ public class Main {
     public Main(SocketIOComponent socket)
     {
         this.socket = socket;
-        this.worldMapController = new WorldMapController(socket);
-        this.fightMapController = new FightMapController(socket);
-
+        worldMapController = new WorldMapController(socket);
+        fightMapController = new FightMapController(socket);
+        this.socket.Emit("initWorld");
+        Debug.Log("emit worlds");
     }
 
 }

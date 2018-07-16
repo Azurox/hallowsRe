@@ -1,4 +1,5 @@
 ﻿using SocketIO;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,9 +16,12 @@ public class WorldMapController {
 
     private void InitSocket()
     {
-        socket.On("loadMap", (data) =>
-        {
-            Debug.Log(data);
-        });
+        socket.On("loadMap", LoadMap);
     }
+
+    private void LoadMap(SocketIOEvent obj)
+    {
+        Debug.Log(obj.data.GetField("name"));
+    }
+
 }
