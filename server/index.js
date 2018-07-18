@@ -10,6 +10,8 @@ state.worldMap = [
   [{"name": "0-0.json"}, {"name": "0-0.json"}]
 ];
 
+state.MapController = {};
+
 io.on('connection', function(socket){
   socketHandlers[socket.id] = new SocketHandler(socket, state);
   socket.on('event', function(data){});
