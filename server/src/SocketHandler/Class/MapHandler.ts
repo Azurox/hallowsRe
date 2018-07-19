@@ -1,31 +1,34 @@
 import MapController from "../../BusinessClasses/MapController";
+import PlayerController from "../../BusinessClasses/PlayerController";
+import State from "../../BusinessClasses/State";
+import GSocket from "../../BusinessClasses/GSocket";
+
 
 // @flow
 export default class MapHandler {
-    socket: any;
+    socket: GSocket;
     M: MapController;
+    P: PlayerController;
 
-    constructor(socket: any, state: any){
+    constructor(socket: GSocket, state: State) {
         this.socket = socket;
         this.M = state.MapController;
+        this.P = state.PlayerController;
         this.initSocket();
     }
 
-    initSocket(){
-        this.socket.on('initWorld', this.spawnPlayer);
-        this.socket.on('move', this.move);
+    initSocket() {
+        this.socket.on("initWorld", this.spawnPlayer);
+        this.socket.on("move", this.move);
     }
 
-    async spawnPlayer(){
-        console.log('spawn player');
-        await this.M.spawnPlayer();
-        this.socket.emit('loadMap', {
-            name: this.M.worldMap[0][0].name
-        })
+    async spawnPlayer() {
+        console.log("spawn player");
+        await this.M.spawnPlayer(this.socket);
     }
 
-    async move(){
+    async move() {
         await this.M.movePlayer();
     }
 
-};
+}

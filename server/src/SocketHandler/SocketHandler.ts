@@ -1,13 +1,13 @@
 // @flow
 import MapHandler from "./Class/MapHandler";
-import { Socket } from "../../node_modules/@types/socket.io";
 import State from "../BusinessClasses/State";
+import GSocket from "../BusinessClasses/GSocket";
 
 export default class SocketHandler {
-    socket: Socket;
+    socket: GSocket;
     mapHandler: MapHandler;
 
-    constructor(socket: Socket, state: State) {
+    constructor(socket: GSocket, state: State) {
         this.socket = socket;
         this.mapHandler = new MapHandler(socket, state);
     }

@@ -1,15 +1,16 @@
 import SocketIo, { Socket } from "socket.io";
 import SocketHandler from "./SocketHandler/SocketHandler";
 import State from "./BusinessClasses/State";
-var server = require('http').createServer();
-var io = SocketIo(server);
-var socketHandlers: { [name: string]: SocketHandler } = {};
-var state = new State();
+import GSocket from "./BusinessClasses/GSocket";
+const server = require("http").createServer();
+const io = SocketIo(server);
+const socketHandlers: { [name: string]: SocketHandler } = {};
+const state = new State();
 
-io.on('connection', function(socket : Socket){
-  socketHandlers[socket.id] = new SocketHandler(socket, state);
-  socket.on('event', function(){});
-  socket.on('disconnect', function(){});
+io.on("connection", function(socket: Socket) {
+  socketHandlers[socket.id] = new SocketHandler(<GSocket>socket, state);
+  socket.on("event", function() {});
+  socket.on("disconnect", function() {});
 });
 
 server.listen(3000);
