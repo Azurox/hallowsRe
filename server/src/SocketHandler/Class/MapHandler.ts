@@ -1,12 +1,14 @@
+import MapController from "../../BusinessClasses/MapController";
+
 // @flow
 export default class MapHandler {
     socket: any;
-    M: any;
+    M: MapController;
 
     constructor(socket: any, state: any){
         this.socket = socket;
         this.M = state.MapController;
-        this.initSocket(socket);
+        this.initSocket();
     }
 
     initSocket(){
@@ -18,7 +20,7 @@ export default class MapHandler {
         console.log('spawn player');
         await this.M.spawnPlayer();
         this.socket.emit('loadMap', {
-            name: this.W.worldMap[0][0].name
+            name: this.M.worldMap[0][0].name
         })
     }
 
