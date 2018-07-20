@@ -3,8 +3,6 @@ import PlayerController from "../../BusinessClasses/PlayerController";
 import State from "../../BusinessClasses/State";
 import GSocket from "../../BusinessClasses/GSocket";
 
-
-// @flow
 export default class MapHandler {
     socket: GSocket;
     M: MapController;
