@@ -1,7 +1,8 @@
-import MapController from "../../BusinessClasses/MapController";
-import PlayerController from "../../BusinessClasses/PlayerController";
-import State from "../../BusinessClasses/State";
-import GSocket from "../../BusinessClasses/GSocket";
+import MapController from "../../../BusinessClasses/MapController";
+import PlayerController from "../../../BusinessClasses/PlayerController";
+import State from "../../../BusinessClasses/State";
+import GSocket from "../../../BusinessClasses/GSocket";
+import Position from "../../../BusinessClasses/RelationnalObject/Position";
 
 export default class MapHandler {
     socket: GSocket;
@@ -25,8 +26,8 @@ export default class MapHandler {
         await this.M.spawnPlayer(this.socket);
     }
 
-    async move() {
-        await this.M.movePlayer();
+    async move(position: Position) {
+        await this.M.movePlayer(this.socket, position);
     }
 
 }
