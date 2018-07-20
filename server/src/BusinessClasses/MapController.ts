@@ -1,16 +1,14 @@
 import GSocket from "./GSocket";
 import State from "./State";
+import WorldMap from "./Map/WorldMap";
 
 export default class MapController {
-    worldMap: { name: string; }[][];
+    worldMap: WorldMap;
     state: State;
 
     constructor(state: State) {
         this.state = state;
-        this.worldMap = [
-            [{name: "0-0.json"}, {name: "0-0.json"}],
-            [{name: "0-0.json"}, {name: "0-0.json"}]
-        ];
+        this.worldMap = new WorldMap("../data/worldMap.json");
     }
 
     async movePlayer() {
@@ -19,7 +17,7 @@ export default class MapController {
 
     async spawnPlayer(socket: GSocket) {
         await this.state.PlayerController.RetrievePlayer(socket);
-        const mapName = this.worldMap[socket.player.mapPosition.x][socket.player.mapPosition.y].name;
+        const mapName = this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y).name;
         socket.to(mapName).emit("spawnPlayer");
         socket.join(mapName);
         socket.emit("loadMap", {
