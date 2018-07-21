@@ -1,6 +1,7 @@
-import MapHandler from "./Class/MapHandler";
+
 import State from "../BusinessClasses/State";
 import GSocket from "../BusinessClasses/GSocket";
+import MapHandler from "./Class/MapHandler/MapHandler";
 
 export default class SocketHandler {
     socket: GSocket;

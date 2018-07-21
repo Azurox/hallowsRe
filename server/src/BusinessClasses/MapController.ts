@@ -1,7 +1,7 @@
 import GSocket from "./GSocket";
 import State from "./State";
 import WorldMap from "./Map/WorldMap";
-import Position from "./RelationnalObject/Position";
+import Position from "./RelationalObject/Position";
 
 export default class MapController {
     worldMap: WorldMap;
@@ -9,7 +9,7 @@ export default class MapController {
 
     constructor(state: State) {
         this.state = state;
-        this.worldMap = new WorldMap("../data/worldMap.json");
+        this.worldMap = new WorldMap();
     }
 
     async movePlayer(socket: GSocket, position: Position) {
