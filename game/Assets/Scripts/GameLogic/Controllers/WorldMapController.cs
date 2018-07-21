@@ -1,11 +1,11 @@
-﻿using SocketIO;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using SocketIO;
+using System.IO;
 using UnityEngine;
 
 public class WorldMapController {
 
+    public MapDTG MapDTG;
     private SocketIOComponent socket;
 
     public WorldMapController(SocketIOComponent socket)
@@ -21,7 +21,10 @@ public class WorldMapController {
 
     private void LoadMap(SocketIOEvent obj)
     {
-        Debug.Log(obj.data.GetField("name"));
+        string mapName = obj.data["mapName"].str;
+        string jsonFile = File.ReadAllText(Application.dataPath + "/Data/Map/" + mapName);
+        GameMap map = JsonConvert.DeserializeObject<GameMap>(jsonFile);
+        MapDTG.SetMap(map);
     }
 
 }
