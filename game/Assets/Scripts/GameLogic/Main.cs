@@ -15,8 +15,7 @@ public class Main {
         worldMapController = new WorldMapController(socket);
         fightMapController = new FightMapController(socket);
         this.socket.Emit("initWorld");
-        //Debug.Log(this.socket);
-        //Debug.Log("emit worlds");
+        Debug.Log("emit worlds");
     }
 
 }

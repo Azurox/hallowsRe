@@ -25,6 +25,7 @@ export default class MapController {
         const mapName = this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y).name;
         socket.to(mapName).emit("spawnPlayer");
         socket.join(mapName);
+        console.log("emit new map");
         socket.emit("loadMap", {
             mapName: mapName,
             position: socket.player.position

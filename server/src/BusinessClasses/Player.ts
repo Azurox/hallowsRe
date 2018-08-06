@@ -6,6 +6,5 @@ export default class Player {
     constructor() {
         this.mapPosition = {x: 0, y: 0};
         this.position = {x: 1, y: 1};
-
     }
 }

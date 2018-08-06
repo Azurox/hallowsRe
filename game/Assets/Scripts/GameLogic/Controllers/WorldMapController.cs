@@ -11,6 +11,7 @@ public class WorldMapController {
     public WorldMapController(SocketIOComponent socket)
     {
         this.socket = socket;
+        MapDTG = Object.FindObjectOfType<MapDTG>();
         InitSocket();
     }
 
@@ -21,6 +22,7 @@ public class WorldMapController {
 
     private void LoadMap(SocketIOEvent obj)
     {
+        Debug.Log("Load new map");
         string mapName = obj.data["mapName"].str;
         string jsonFile = File.ReadAllText(Application.dataPath + "/Data/Map/" + mapName);
         GameMap map = JsonConvert.DeserializeObject<GameMap>(jsonFile);
