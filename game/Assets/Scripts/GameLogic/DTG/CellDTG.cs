@@ -9,6 +9,12 @@ public class CellDTG : MonoBehaviour {
     public void SetCell(Cell cell)
     {
         currentCell = cell;
+        UpdatePosition();
+    }
+
+    private void UpdatePosition()
+    {
+        this.gameObject.transform.position = new Vector3(currentCell.X, 0, currentCell.Y);
     }
 	
 }

@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
 	// Use this for initialization
 	IEnumerator Start () {
         socket = GetComponent<SocketIOComponent>();
-        yield return new WaitForEndOfFrame(); // due to a lib bug, i have to wait a frame before being able to send anything
+        yield return new WaitForSeconds(2); // due to a lib bug, i have to wait a frame before being able to send anything
 		game = new Main(socket);
 	}
 	

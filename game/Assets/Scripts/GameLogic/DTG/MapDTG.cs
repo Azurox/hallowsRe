@@ -22,7 +22,7 @@ public class MapDTG : MonoBehaviour {
     {
         for (int i = 0, length = currentMap.cells.GetLength(0); i < length; i++)
         {
-            for (int j = 0, lengthJ = currentMap.cells.GetLength(1); j < lengthJ; i++)
+            for (int j = 0, lengthJ = currentMap.cells.GetLength(1); j < lengthJ; j++)
             {
                 GameObject cell = Instantiate(CellGameObject);
                 cell.name = i + "-" + j;
