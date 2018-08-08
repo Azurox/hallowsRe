@@ -25,6 +25,7 @@ public class MapDTG : MonoBehaviour {
             for (int j = 0, lengthJ = currentMap.cells.GetLength(1); j < lengthJ; j++)
             {
                 GameObject cell = Instantiate(CellGameObject);
+                cell.transform.parent = gameObject.transform;
                 cell.name = i + "-" + j;
                 cells[i, j] = cell.GetComponent<CellDTG>() ;
                 cells[i,j].SetCell(currentMap.cells[i, j]);
