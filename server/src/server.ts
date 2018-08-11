@@ -11,7 +11,7 @@ const socketHandlers: { [name: string]: SocketHandler } = {};
 const state = new State();
 
 /** DB */
-// mongoose.connect("mongodb://localhost/test");
+mongoose.connect("mongodb://localhost/test");
 
 /** Socket.io */
 io.on("connection", function(socket: Socket) {

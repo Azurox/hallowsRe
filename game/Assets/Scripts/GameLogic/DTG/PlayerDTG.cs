@@ -4,13 +4,8 @@ using UnityEngine;
 
 public class PlayerDTG : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void SetPosition(int x, int y)
+    {
+        gameObject.transform.position = new Vector3(x, gameObject.transform.position.y, y);
+    }
 }

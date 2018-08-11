@@ -22,6 +22,8 @@ public class WorldMapController {
     {
         socket.On("loadMap", LoadMap);
         socket.On("spawnMainPlayer", SpawnMainPlayer);
+        socket.On("spawnPlayer", SpawnPlayer);
+
     }
 
     private void LoadMap(SocketIOEvent obj)
@@ -42,5 +44,13 @@ public class WorldMapController {
         PlayerContainerDTG.SpawnMainPlayer((int) position[0].n, (int) position[1].n);
     }
 
+    private void SpawnPlayer(SocketIOEvent obj)
+    {
+        Debug.Log("Spawn other Player");
+        List<JSONObject> position = obj.data["position"].list;
+        Debug.Log("x " + position[0].n);
+        Debug.Log("y " + position[1].n);
+        PlayerContainerDTG.SpawnPlayer((int)position[0].n, (int)position[1].n, obj.data["id"].str);
+    }
 
 }
