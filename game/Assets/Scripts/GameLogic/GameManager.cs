@@ -9,13 +9,14 @@ public class GameManager : MonoBehaviour {
     private SocketIOComponent socket;
 
 	// Use this for initialization
-	void Start () {
+	IEnumerator Start () {
         socket = GetComponent<SocketIOComponent>();
+        yield return new WaitForSeconds(2); // due to a lib bug, i have to wait a frame before being able to send anything
 		game = new Main(socket);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+
+    }
 }
