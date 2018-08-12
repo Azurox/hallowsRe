@@ -5,31 +5,35 @@ import GSocket from "../../../BusinessClasses/GSocket";
 import Position from "../../../BusinessClasses/RelationalObject/Position";
 
 export default class MapHandler {
-    socket: GSocket;
-    M: MapController;
-    P: PlayerController;
+  socket: GSocket;
+  M: MapController;
+  P: PlayerController;
 
-    constructor(socket: GSocket, state: State) {
-        this.socket = socket;
-        this.M = state.MapController;
-        this.P = state.PlayerController;
-        this.initSocket();
-    }
+  constructor(socket: GSocket, state: State) {
+    this.socket = socket;
+    this.M = state.MapController;
+    this.P = state.PlayerController;
+    this.initSocket();
+  }
 
-    initSocket() {
-        console.log("init socket");
-        this.socket.on("initWorld", this.spawnPlayer.bind(this));
-        this.socket.on("loadMap", () => console.log("loadMap"));
-        this.socket.on("move", this.move.bind(this));
-    }
+  initSocket() {
+    console.log("init socket");
+    this.socket.on("initWorld", this.spawnPlayer.bind(this));
+    this.socket.on("loadMap", () => console.log("loadMap"));
+    this.socket.on("move", this.move.bind(this));
+    this.socket.on("disconnect", this.disconnect.bind(this));
+  }
 
-    async spawnPlayer() {
-        console.log("spawn player");
-        await this.M.spawnPlayer(this.socket);
-    }
+  async spawnPlayer() {
+    await this.P.RetrievePlayer(this.socket);
+    await this.M.spawnPlayer(this.socket);
+  }
 
-    async move(position: Position) {
-        await this.M.movePlayer(this.socket, position);
-    }
+  async move(position: Position) {
+    await this.M.movePlayer(this.socket, position);
+  }
 
+  async disconnect() {
+    await this.M.disconnectPlayer(this.socket);
+  }
 }
