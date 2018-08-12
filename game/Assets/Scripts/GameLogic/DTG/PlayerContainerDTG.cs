@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerContainerDTG : MonoBehaviour {
     public GameObject MainPlayerGameObject; 
     public GameObject PlayerGameObject;
-    private List<PlayerDTG> players = new List<PlayerDTG>();
+    private Dictionary<string,PlayerDTG> players = new Dictionary<string,PlayerDTG>();
     private MainPlayerDTG mainPlayer;
 
     public void SpawnMainPlayer(int x, int y)
@@ -20,13 +20,23 @@ public class PlayerContainerDTG : MonoBehaviour {
         }
     }
 
-    public void SpawnPlayer(int x, int y, string name)
+    public void SpawnPlayer(int x, int y, string id)
     {
         var playerGo = Instantiate(PlayerGameObject);
         playerGo.transform.parent = gameObject.transform;
-        playerGo.name = name;
+        playerGo.name = id;
         playerGo.GetComponent<PlayerDTG>().SetPosition(x, y);
-        players.Add(playerGo.GetComponent<PlayerDTG>());
+        players.Add(id, playerGo.GetComponent<PlayerDTG>());
+    }
+
+    public void DestroyPlayer(string id)
+    {
+        if(players.ContainsKey(id))
+        {
+            var player = players[id];
+            Destroy(player.gameObject);
+            players.Remove(id);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 import Cell from "./Cell";
 import { IPlayer } from "../../Schema/Player";
 import MappedPlayer from "./MappedPlayer";
+import uuidv4 from "uuid/v4";
 
 export default class Map {
   name: string;
@@ -15,15 +16,17 @@ export default class Map {
     this.cells = cells;
   }
 
-  spawnPlayer(x: number, y: number, player: IPlayer, id: string): boolean {
+  spawnPlayer(x: number, y: number, player: IPlayer): [boolean, string] {
     let moved = true;
+    const mappedId = uuidv4();
     try {
-      this.cells[x][y].addPlayer(id, new MappedPlayer(player));
+      this.cells[x][y].addPlayer(mappedId, new MappedPlayer(player));
     } catch (error) {
       console.log(error);
       moved = false;
     }
-    return moved;
+
+    return [moved, mappedId];
   }
 
   movePlayer(x: number, y: number, player: IPlayer, id: string): boolean {
@@ -31,9 +34,11 @@ export default class Map {
     try {
       const mappedPlayer = this.cells[player.position.x][
         player.position.y
-      ].getPlayer(id);
-      this.cells[x][y].addPlayer(id, mappedPlayer);
-      this.cells[player.position.x][player.position.y].removePlayer(id);
+      ].getPlayer(player.mappedId);
+      this.cells[x][y].addPlayer(player.mappedId, mappedPlayer);
+      this.cells[player.position.x][player.position.y].removePlayer(
+        player.mappedId
+      );
     } catch (error) {
       console.log(error);
       moved = false;
@@ -50,5 +55,13 @@ export default class Map {
       }
     }
     return players;
+  }
+
+  removePlayer(id: string) {
+    for (let i = 0; i < this.cells.length; i++) {
+      for (let j = 0; j < this.cells[0].length; j++) {
+        this.cells[i][j].removePlayer(id);
+      }
+    }
   }
 }

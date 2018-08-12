@@ -29,16 +29,22 @@ export default class MapController {
   async registerNewPosition(socket: GSocket, position: Position) {}
 
   async spawnPlayer(socket: GSocket) {
-    console.log("retrieve player");
-    await this.state.PlayerController.RetrievePlayer(socket);
     const map = this.worldMap.getMap(
       socket.player.mapPosition.x,
       socket.player.mapPosition.y
     );
 
+    const [spawned, mappedId] = await map.spawnPlayer(
+      socket.player.position.x,
+      socket.player.position.y,
+      socket.player
+    );
+
+    socket.player.mappedId = mappedId;
+
     socket.to(map.name).emit("spawnPlayer", {
       position: socket.player.position,
-      id: socket.player._id
+      id: mappedId
     });
 
     socket.emit("loadMap", {
@@ -48,21 +54,18 @@ export default class MapController {
 
     socket.emit("spawnMainPlayer", { position: socket.player.position });
 
-    const playerPresentOnMap = map.getPlayers();
-    for (let i = 0, len = playerPresentOnMap.length; i < len; i++) {
-      socket.emit("spawnPlayer", {
-        position: playerPresentOnMap[i].player.position,
-        id: playerPresentOnMap[i].player._id
-      });
-    }
+    socket.join(map.name);
+  }
 
-    const spawned = map.spawnPlayer(
-      socket.player.position.x,
-      socket.player.position.y,
-      socket.player,
-      socket.id
+  async disconnectPlayer(socket: GSocket) {
+    const map = this.worldMap.getMap(
+      socket.player.mapPosition.x,
+      socket.player.mapPosition.y
     );
 
-    socket.join(map.name);
+    map.removePlayer(socket.id);
+    socket
+      .to(map.name)
+      .emit("disconnectPlayer", { id: socket.player.mappedId });
   }
 }

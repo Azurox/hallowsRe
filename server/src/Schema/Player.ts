@@ -4,6 +4,7 @@ export interface IPlayer extends Mongoose.Document {
   name: string;
   mapPosition: { x: number; y: number };
   position: { x: number; y: number };
+  mappedId: string;
 }
 
 export const PlayerSchema = new Mongoose.Schema({
