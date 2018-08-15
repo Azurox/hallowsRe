@@ -7,6 +7,7 @@ using UnityEngine;
 public class WorldMapController {
 
     public MapDTG MapDTG;
+    public MapHandler MapHandler;
     public PlayerContainerDTG PlayerContainerDTG;
     private SocketIOComponent socket;
 
@@ -14,6 +15,7 @@ public class WorldMapController {
     {
         this.socket = socket;
         MapDTG = Object.FindObjectOfType<MapDTG>();
+        MapHandler = MapDTG.gameObject.GetComponent<MapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         InitSocket();
     }
@@ -33,12 +35,14 @@ public class WorldMapController {
         string jsonFile = File.ReadAllText(Application.dataPath + "/Data/Map/" + mapName);
         GameMap map = JsonConvert.DeserializeObject<GameMap>(jsonFile);
         MapDTG.SetMap(map);
+
     }
 
     private void SpawnMainPlayer(SocketIOEvent obj)
     {
         List<JSONObject> position = obj.data["position"].list;
-        PlayerContainerDTG.SpawnMainPlayer((int) position[0].n, (int) position[1].n);
+        var player = PlayerContainerDTG.SpawnMainPlayer((int) position[0].n, (int) position[1].n);
+        MapHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
     }
 
     private void SpawnPlayer(SocketIOEvent obj)

@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
 public class Cell {
     public int X { get; set; }
     public int Y { get; set; }

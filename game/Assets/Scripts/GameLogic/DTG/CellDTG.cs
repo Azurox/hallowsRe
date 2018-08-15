@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CellDTG : MonoBehaviour {
-    [SerializeField]
-    private Cell currentCell;
+    public Cell currentCell;
 
     public void SetCell(Cell cell)
     {
@@ -14,7 +13,11 @@ public class CellDTG : MonoBehaviour {
 
     private void UpdatePosition()
     {
-        this.gameObject.transform.position = new Vector3(currentCell.X, 0, currentCell.Y);
+        gameObject.transform.position = new Vector3(currentCell.X, 0, currentCell.Y);
     }
 	
+    public void OnMouseDown()
+    {
+        transform.parent.gameObject.GetComponent<MapHandler>().TargetCell(currentCell.X, currentCell.Y);
+    }
 }

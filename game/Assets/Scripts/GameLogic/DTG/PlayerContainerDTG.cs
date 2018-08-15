@@ -8,7 +8,7 @@ public class PlayerContainerDTG : MonoBehaviour {
     private Dictionary<string,PlayerDTG> players = new Dictionary<string,PlayerDTG>();
     private MainPlayerDTG mainPlayer;
 
-    public void SpawnMainPlayer(int x, int y)
+    public GameObject SpawnMainPlayer(int x, int y)
     {
         if(mainPlayer == null)
         {
@@ -18,6 +18,7 @@ public class PlayerContainerDTG : MonoBehaviour {
             mainPlayer = mainPlayerGo.GetComponent<MainPlayerDTG>();
             mainPlayer.SetPosition(x, y);
         }
+        return mainPlayer.gameObject;
     }
 
     public void SpawnPlayer(int x, int y, string id)
