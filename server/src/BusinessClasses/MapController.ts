@@ -9,10 +9,23 @@ export default class MapController {
 
   constructor(state: State) {
     this.state = state;
-    this.worldMap = new WorldMap();
+    this.worldMap = new WorldMap("dist/data/worldMap.json");
   }
 
-  async movePlayer(socket: GSocket, position: Position) {
+  async playerIsMoving(socket: GSocket, positions: Position[]) {
+    const map = this.worldMap.getMap(
+      socket.player.mapPosition.x,
+      socket.player.mapPosition.y
+    );
+
+    if (map.checkPath(positions) === true) {
+      console.log("movement is legal");
+      socket.to(map.name).emit("movePlayer", positions);
+    }
+    console.log(positions);
+  }
+
+  async registerNewPosition(socket: GSocket, position: Position) {
     const map = this.worldMap.getMap(
       socket.player.mapPosition.x,
       socket.player.mapPosition.y
@@ -25,8 +38,6 @@ export default class MapController {
       socket.id
     );
   }
-
-  async registerNewPosition(socket: GSocket, position: Position) {}
 
   async spawnPlayer(socket: GSocket) {
     const map = this.worldMap.getMap(

@@ -2,6 +2,7 @@ import Cell from "./Cell";
 import { IPlayer } from "../../Schema/Player";
 import MappedPlayer from "./MappedPlayer";
 import uuidv4 from "uuid/v4";
+import Position from "../RelationalObject/Position";
 
 export default class Map {
   name: string;
@@ -63,5 +64,20 @@ export default class Map {
         this.cells[i][j].removePlayer(id);
       }
     }
+  }
+
+  checkPath(positions: Position[]): boolean {
+    console.log(this.cells);
+    try {
+      for (let i = 0, len = positions.length; i < len; i++) {
+        if (!this.cells[positions[i].x][positions[i].y].isAccessible) {
+          return false;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+    return true;
   }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,13 +9,14 @@ public class Movable : MonoBehaviour {
     private List<Vector2> path;
     private List<Vector2> newPath;
 
-	public void TakePath(List<Vector2> path)
+
+    public void TakePath(List<Vector2> path, Action<int, int> callback)
     {
         path.RemoveAt(0);
         if (!isMoving)
         {
             this.path = path;
-            StartCoroutine(Move());
+            StartCoroutine(Move(callback));
         } else
         {
             newPath = path;
@@ -22,7 +24,7 @@ public class Movable : MonoBehaviour {
 
     }
 
-    private IEnumerator Move()
+    private IEnumerator Move(Action<int, int> callback)
     {
         isMoving = true;
 
@@ -45,6 +47,11 @@ public class Movable : MonoBehaviour {
 
         path.RemoveAt(0);
 
+        if(callback != null)
+        {
+            callback((int)endPos.x, (int)endPos.z);
+        }
+
         if(newPath != null)
         {
             path = newPath;
@@ -52,7 +59,7 @@ public class Movable : MonoBehaviour {
 
         if (path.Count > 0)
         {
-            StartCoroutine(Move());
+            StartCoroutine(Move(callback));
         } else
         {
             isMoving = false;

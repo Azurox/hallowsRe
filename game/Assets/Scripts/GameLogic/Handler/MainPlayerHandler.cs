@@ -9,7 +9,13 @@ public class MainPlayerHandler : MonoBehaviour {
        var path = gameObject.GetComponent<MainPlayerPathFinding>().FindPath(x, y);
        if(path != null)
         {
-            gameObject.GetComponent<Movable>().TakePath(path);
+            gameObject.GetComponent<Movable>().TakePath(path, OnMove);
+            gameObject.GetComponent<MainPlayerEmitter>().NewPath(path.ToArray());
         }
+    }
+
+    public void OnMove(int x, int y)
+    {
+        Debug.Log("new position : " + x + "  " + y);
     }
 }
