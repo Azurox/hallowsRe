@@ -7,9 +7,8 @@ public class MainPlayerPathFinding : MonoBehaviour {
     private Cell[,] currentMap;
     public Node[,] grid;
 
-    public Vector2[] FindPath(int x, int y)
+    public List<Vector2> FindPath(int x, int y)
     {
-        Debug.Log("Find path to X:" + x + "  Y:" + y);
         if (mapDTG == null)
         {
             mapDTG = Object.FindObjectOfType<MapDTG>();
@@ -48,14 +47,12 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
             if (currentNode == targetNode)
             {
-                Debug.Log("found path");
-                Debug.Log(closeSet);
                 List<Vector2> path = new List<Vector2>();
                 foreach(Node node in closeSet)
                 {
                     path.Add(node.position);
                 }
-                return path.ToArray();
+                return path;
             }
 
             foreach (Node neighbour in GetNeighbours(currentNode))

@@ -9,7 +9,7 @@ public class MainPlayerHandler : MonoBehaviour {
        var path = gameObject.GetComponent<MainPlayerPathFinding>().FindPath(x, y);
        if(path != null)
         {
-
+            gameObject.GetComponent<Movable>().TakePath(path);
         }
     }
 }
