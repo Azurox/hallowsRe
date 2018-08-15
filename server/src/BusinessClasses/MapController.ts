@@ -9,11 +9,11 @@ export default class MapController {
 
   constructor(state: State) {
     this.state = state;
-    this.worldMap = new WorldMap("dist/data/worldMap.json");
+    this.worldMap = new WorldMap();
   }
 
   async playerIsMoving(socket: GSocket, positions: Position[]) {
-    const map = this.worldMap.getMap(
+    const map = await this.worldMap.getMap(
       socket.player.mapPosition.x,
       socket.player.mapPosition.y
     );
@@ -21,26 +21,22 @@ export default class MapController {
     if (map.checkPath(positions) === true) {
       console.log("movement is legal");
       socket.to(map.name).emit("movePlayer", positions);
+    } else {
+      console.log("movement is illegal");
     }
-    console.log(positions);
   }
 
   async registerNewPosition(socket: GSocket, position: Position) {
-    const map = this.worldMap.getMap(
+    const map = await this.worldMap.getMap(
       socket.player.mapPosition.x,
       socket.player.mapPosition.y
     );
 
-    const moved = map.movePlayer(
-      position.x,
-      position.y,
-      socket.player,
-      socket.id
-    );
+    const moved = map.movePlayer(position.x, position.y, socket.player);
   }
 
   async spawnPlayer(socket: GSocket) {
-    const map = this.worldMap.getMap(
+    const map = await this.worldMap.getMap(
       socket.player.mapPosition.x,
       socket.player.mapPosition.y
     );
@@ -69,12 +65,12 @@ export default class MapController {
   }
 
   async disconnectPlayer(socket: GSocket) {
-    const map = this.worldMap.getMap(
+    const map = await this.worldMap.getMap(
       socket.player.mapPosition.x,
       socket.player.mapPosition.y
     );
 
-    map.removePlayer(socket.id);
+    await map.removePlayer(socket.id);
     socket
       .to(map.name)
       .emit("disconnectPlayer", { id: socket.player.mappedId });
