@@ -24,7 +24,6 @@ export const CellSchema = new Mongoose.Schema({
 CellSchema.method("addPlayer", async function(id: Mongoose.Types.ObjectId) {
   const cell: ICell = this;
   if (cell.isAccessible) {
-    console.log("player saved in cell : " + cell.x + "  " + cell.y);
     cell.players.push(id);
     await cell.save();
   } else {
@@ -36,7 +35,6 @@ CellSchema.method("getPlayer", function(id: string): Mongoose.Types.ObjectId {
   const cell: ICell = this;
   for (let i = 0; i < cell.players.length; i++) {
     if (cell.players[i].equals(id)) {
-      console.log("found played");
       return cell.players[i];
     }
   }
@@ -44,21 +42,11 @@ CellSchema.method("getPlayer", function(id: string): Mongoose.Types.ObjectId {
 
 CellSchema.method("removePlayer", async function(id: Mongoose.Types.ObjectId) {
   const cell: ICell = this;
-  let found = false;
   for (let i = 0; i < cell.players.length; i++) {
     if (id.equals(cell.players[i])) {
-      console.log("player deleted from cell : " + cell.x + "  " + cell.y);
       cell.players.splice(i, 1);
-      found = true;
       break;
     }
-  }
-
-  if (!found) {
-    console.log("player not found on cell");
-    console.log(cell);
-    console.log(id);
-    console.log("---");
   }
   await cell.save();
 });

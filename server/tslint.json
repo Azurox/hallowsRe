@@ -38,6 +38,6 @@
     "no-null-keyword": true,
     "prefer-const": true,
     "jsdoc-format": true,
-    "max-line-length": [true, 120]
+    "max-line-length": false
   }
 }

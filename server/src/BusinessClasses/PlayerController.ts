@@ -22,7 +22,6 @@ export default class PlayerController {
     socket.player.isMoving = true;
     socket.player.path = positions;
     await socket.player.save();
-    console.log("player is moving");
   }
 
   async movePlayer(socket: GSocket, position: Position): Promise<void> {
@@ -31,7 +30,6 @@ export default class PlayerController {
       if (socket.player.path.length == 0) {
         socket.player.isMoving = false;
       }
-      console.log("player moved to :" + position.x + "  " + position.y);
       socket.player.position = position;
       await socket.player.save();
     }

@@ -26,13 +26,14 @@ public class WorldMapController {
         socket.On("spawnMainPlayer", SpawnMainPlayer);
         socket.On("spawnPlayer", SpawnPlayer);
         socket.On("disconnectPlayer", DisconnectPlayer);
+        socket.On("playerMove", PlayerMove);
     }
 
     private void LoadMap(SocketIOEvent obj)
     {
         Debug.Log("Load new map");
         string mapName = obj.data["mapName"].str;
-        string jsonFile = File.ReadAllText(Application.dataPath + "/Data/Map/" + mapName);
+        string jsonFile = File.ReadAllText("C:/Project/Public/hallowsRe/game/MapData/" + mapName);
         GameMap map = JsonConvert.DeserializeObject<GameMap>(jsonFile);
         MapDTG.SetMap(map);
 
@@ -49,10 +50,38 @@ public class WorldMapController {
     {
         List<JSONObject> position = obj.data["position"].list;
         PlayerContainerDTG.SpawnPlayer((int)position[0].n, (int)position[1].n, obj.data["id"].str);
+        if (!obj.data["path"].IsNull)
+        {
+            Debug.Log("player is currently moving");
+            List<JSONObject> positions = obj.data["path"].list;
+            List<Vector2> path = new List<Vector2>();
+
+            foreach (var pos in positions)
+            {
+                Debug.Log(pos);
+                path.Add(new Vector2(pos["x"].n, pos["y"].n));
+                PlayerContainerDTG.MovePlayer(obj.data["id"].str, path);
+            }
+
+            PlayerContainerDTG.MovePlayer(obj.data["id"].str, path);
+
+        }
     }
 
     private void DisconnectPlayer(SocketIOEvent obj)
     {
         PlayerContainerDTG.DestroyPlayer(obj.data["id"].str);
+    }
+
+    private void PlayerMove(SocketIOEvent obj)
+    {
+        List<Vector2> path = new List<Vector2>();
+        List<JSONObject> positions = obj.data["path"].list;
+        foreach(var position in positions) {
+            Debug.Log(position);
+            path.Add(new Vector2(position["x"].n, position["y"].n));
+        }
+
+        PlayerContainerDTG.MovePlayer(obj.data["id"].str, path);
     }
 }

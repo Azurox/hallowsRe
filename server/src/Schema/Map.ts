@@ -14,6 +14,7 @@ export interface IMap extends Mongoose.Document {
   removePlayer(id: Mongoose.Types.ObjectId): Promise<void>;
   checkPath(positions: Position[]): boolean;
   checkPosition(position: Position, target: Position): boolean;
+  getPlayers(): Mongoose.Types.ObjectId[];
 }
 
 export const MapSchema = new Mongoose.Schema({
@@ -36,14 +37,11 @@ MapSchema.method("spawnPlayer", async function(x: number, y: number, player: IPl
     moved = false;
   }
 
-  console.log("saved player with id " + player._id);
   return moved;
 });
 
 MapSchema.method("movePlayer", async function(player: IPlayer, position: Position): Promise<void> {
   const map: IMap = this;
-  console.log("current player position");
-  console.log(player.position);
   await map.cells[player.position.x][player.position.y].removePlayer(player._id);
   await map.cells[position.x][position.y].addPlayer(player._id);
 });
@@ -83,6 +81,17 @@ MapSchema.method("checkPosition", function(position: Position, target: Position)
     return false;
   }
   return true;
+});
+
+MapSchema.method("getPlayers", function(): Mongoose.Types.ObjectId[] {
+  const map: IMap = this;
+  const players: Mongoose.Types.ObjectId[] = [];
+  for (let i = 0; i < map.cells.length; i++) {
+    for (let j = 0; j < map.cells[0].length; j++) {
+      players.push(...map.cells[i][j].players);
+    }
+  }
+  return players;
 });
 
 const Map = Mongoose.model<IMap>("Map", MapSchema);

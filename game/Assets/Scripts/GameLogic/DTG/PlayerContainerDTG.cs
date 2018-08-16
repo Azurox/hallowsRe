@@ -40,4 +40,13 @@ public class PlayerContainerDTG : MonoBehaviour {
         }
     }
 
+    public void MovePlayer(string id, List<Vector2> path)
+    {
+        if (players.ContainsKey(id))
+        {
+            var player = players[id];
+            player.GetComponent<Movable>().TakePath(new Vector2(player.transform.position.x, player.transform.position.z), path, null);
+        }
+    }
+
 }

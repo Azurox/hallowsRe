@@ -10,9 +10,13 @@ public class Movable : MonoBehaviour {
     private List<Vector2> newPath;
 
 
-    public void TakePath(List<Vector2> path, Action<int, int> callback)
+    public void TakePath(Vector2 currentPosition, List<Vector2> path, Action<int, int> callback)
     {
-        path.RemoveAt(0);
+        if (currentPosition.Equals(path[0]))
+        {
+            path.RemoveAt(0);
+        }
+
         if (!isMoving)
         {
             this.path = path;

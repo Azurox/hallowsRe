@@ -2,7 +2,7 @@ import GSocket from "./GSocket";
 import State from "./State";
 import WorldMap from "./Map/WorldMap";
 import Position from "./RelationalObject/Position";
-import Player from "../Schema/Player";
+import Player, { IPlayer } from "../Schema/Player";
 
 export default class MapController {
   worldMap: WorldMap;
@@ -27,6 +27,18 @@ export default class MapController {
 
     socket.emit("spawnMainPlayer", { position: socket.player.position });
 
+    const players = map.getPlayers();
+    for (let i = 0; i < players.length; i++) {
+      if (!players[i].equals(socket.player._id)) {
+        const player: IPlayer = await Player.findById(players[i]).lean();
+        socket.emit("spawnPlayer", {
+          position: player.position,
+          id: player._id,
+          path: player.isMoving ? player.path : undefined
+        });
+      }
+    }
+
     socket.join(map.name);
   }
 
@@ -38,6 +50,15 @@ export default class MapController {
   async checkMovementPossibility(socket: GSocket, position: Position) {
     const map = await this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y);
     return map.checkPosition(socket.player.position, position);
+  }
+
+  async playerIsMoving(socket: GSocket, positions: Position[]) {
+    const map = await this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y);
+
+    socket.broadcast.to(map.name).emit("playerMove", {
+      id: socket.player._id,
+      path: positions
+    });
   }
 
   async movePlayer(socket: GSocket, position: Position) {

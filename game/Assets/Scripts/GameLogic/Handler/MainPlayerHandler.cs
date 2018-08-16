@@ -9,7 +9,7 @@ public class MainPlayerHandler : MonoBehaviour {
        var path = gameObject.GetComponent<MainPlayerPathFinding>().FindPath(x, y);
        if(path != null)
         {
-            gameObject.GetComponent<Movable>().TakePath(path, OnMove);
+            gameObject.GetComponent<Movable>().TakePath(new Vector2(transform.position.x, transform.position.z), path, OnMove);
             gameObject.GetComponent<MainPlayerEmitter>().NewPath(path.ToArray());
         }
     }

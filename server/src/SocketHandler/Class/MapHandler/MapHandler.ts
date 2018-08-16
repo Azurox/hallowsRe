@@ -33,15 +33,14 @@ export default class MapHandler {
   async initializeMovement(positions: Position[]) {
     const possible = await this.M.checkMovementsPossibility(this.socket, positions);
     if (possible) {
+      await this.M.playerIsMoving(this.socket, positions);
       await this.P.playerIsMoving(this.socket, positions);
-      console.log("master considered the path OK");
     }
   }
 
   async newPosition(position: Position) {
     const possible = await this.M.checkMovementPossibility(this.socket, position);
     if (possible) {
-      console.log("master considered the next movement OK");
       await this.M.movePlayer(this.socket, position);
       await this.P.movePlayer(this.socket, position);
     }

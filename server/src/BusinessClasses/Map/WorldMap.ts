@@ -1,6 +1,8 @@
 import { readFileSync } from "fs";
 import Map, { IMap } from "../../Schema/Map";
 import Cell from "../../Schema/Cell";
+import Account from "../../Schema/Account";
+import Player from "../../Schema/Player";
 
 export default class WorldMap {
   constructor() {
@@ -20,6 +22,7 @@ export default class WorldMap {
       ];
     }*/
     this.saveMap();
+    this.saveAccount();
   }
 
   async saveMap() {
@@ -43,6 +46,27 @@ export default class WorldMap {
       }
     }
     await map.save();
+  }
+
+  async saveAccount() {
+    await Account.remove({});
+    await Player.remove({});
+
+    const player1 = new Player();
+    player1.name = "test1";
+    player1.position = { x: 0, y: 0 };
+    player1.mapPosition = { x: 0, y: 0 };
+    player1.save();
+
+    const player2 = new Player();
+    player2.name = "test1";
+    player2.position = { x: 2, y: 2 };
+    player2.mapPosition = { x: 0, y: 0 };
+    player2.save();
+
+    const account = new Account();
+    account.players = [player1, player2];
+    await account.save();
   }
 
   async getMap(x: number, y: number): Promise<IMap> {
