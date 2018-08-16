@@ -16,6 +16,6 @@ public class MainPlayerHandler : MonoBehaviour {
 
     public void OnMove(int x, int y)
     {
-        Debug.Log("new position : " + x + "  " + y);
+        gameObject.GetComponent<MainPlayerEmitter>().NewPosition(x, y);
     }
 }

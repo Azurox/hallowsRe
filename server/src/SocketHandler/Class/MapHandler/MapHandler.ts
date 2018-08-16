@@ -20,7 +20,7 @@ export default class MapHandler {
     console.log("init socket");
     this.socket.on("initWorld", this.spawnPlayer.bind(this));
     this.socket.on("loadMap", () => console.log("loadMap"));
-    this.socket.on("newPath", this.newPath.bind(this));
+    this.socket.on("initializeMovement", this.initializeMovement.bind(this));
     this.socket.on("newPosition", this.newPosition.bind(this));
     this.socket.on("disconnect", this.disconnect.bind(this));
   }
@@ -30,13 +30,21 @@ export default class MapHandler {
     await this.M.spawnPlayer(this.socket);
   }
 
-  async newPath(positions: Position[]) {
-    console.log("New path");
-    await this.M.playerIsMoving(this.socket, positions);
+  async initializeMovement(positions: Position[]) {
+    const possible = await this.M.checkMovementsPossibility(this.socket, positions);
+    if (possible) {
+      await this.P.playerIsMoving(this.socket, positions);
+      console.log("master considered the path OK");
+    }
   }
 
   async newPosition(position: Position) {
-    await this.M.registerNewPosition(this.socket, position);
+    const possible = await this.M.checkMovementPossibility(this.socket, position);
+    if (possible) {
+      console.log("master considered the next movement OK");
+      await this.M.movePlayer(this.socket, position);
+      await this.P.movePlayer(this.socket, position);
+    }
   }
 
   async disconnect() {

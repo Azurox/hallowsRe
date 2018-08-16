@@ -19,10 +19,12 @@ export default class WorldMap {
         [new Map("0-1.json", 0, 1, cells), new Map("1-1.json", 1, 1, cells)]
       ];
     }*/
-    // this.saveMap();
+    this.saveMap();
   }
 
   async saveMap() {
+    await Map.remove({});
+    await Cell.remove({});
     const map = new Map();
     map.x = 0;
     map.y = 0;
@@ -35,7 +37,7 @@ export default class WorldMap {
         cell.x = i;
         cell.y = j;
         cell.isAccessible = true;
-        cell.players = {};
+        // cell.players = [];
         await cell.save();
         map.cells[i][j] = cell._id;
       }

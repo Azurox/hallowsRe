@@ -1,8 +1,6 @@
 import Mongoose from "mongoose";
-import uuidv4 from "uuid/v4";
 import { ICell } from "./Cell";
 import { IPlayer } from "./Player";
-import MappedPlayer from "../BusinessClasses/Map/MappedPlayer";
 import Position from "../BusinessClasses/RelationalObject/Position";
 
 export interface IMap extends Mongoose.Document {
@@ -10,16 +8,12 @@ export interface IMap extends Mongoose.Document {
   name: string;
   x: number;
   y: number;
-  cells: Mongoose.Types.ObjectId[][] | ICell[][];
-  spawnPlayer(
-    x: number,
-    y: number,
-    player: IPlayer
-  ): Promise<[boolean, string]>;
-  movePlayer(x: number, y: number, player: IPlayer): Promise<boolean>;
-  getPlayers(): MappedPlayer[];
-  removePlayer(id: string): Promise<void>;
+  cells: ICell[][];
+  spawnPlayer(x: number, y: number, player: IPlayer): Promise<boolean>;
+  movePlayer(player: IPlayer, position: Position): Promise<void>;
+  removePlayer(id: Mongoose.Types.ObjectId): Promise<void>;
   checkPath(positions: Position[]): boolean;
+  checkPosition(position: Position, target: Position): boolean;
 }
 
 export const MapSchema = new Mongoose.Schema({
@@ -31,71 +25,58 @@ export const MapSchema = new Mongoose.Schema({
   cells: [[{ type: Mongoose.Schema.Types.ObjectId, ref: "Player" }]]
 });
 
-MapSchema.method("spawnPlayer", async function(
-  x: number,
-  y: number,
-  player: IPlayer
-) {
+MapSchema.method("spawnPlayer", async function(x: number, y: number, player: IPlayer): Promise<boolean> {
+  const map: IMap = this;
   let moved = true;
-  const mappedId = uuidv4();
+
   try {
-    await this.cells[x][y].addPlayer(mappedId, new MappedPlayer(player));
+    await map.cells[x][y].addPlayer(player._id);
   } catch (error) {
     console.log(error);
     moved = false;
   }
 
-  return [moved, mappedId];
-});
-
-MapSchema.method("movePlayer", async function(
-  x: number,
-  y: number,
-  player: IPlayer
-) {
-  let moved = true;
-  try {
-    const mappedPlayer = this.cells[player.position.x][
-      player.position.y
-    ].getPlayer(player.mappedId);
-    await this.cells[x][y].addPlayer(player.mappedId, mappedPlayer);
-    await this.cells[player.position.x][player.position.y].removePlayer(
-      player.mappedId
-    );
-  } catch (error) {
-    console.log(error);
-    moved = false;
-  }
-
+  console.log("saved player with id " + player._id);
   return moved;
 });
 
-MapSchema.method("getPlayers", function() {
-  const players: MappedPlayer[] = [];
-  for (let i = 0; i < this.cells.length; i++) {
-    for (let j = 0; j < this.cells[0].length; j++) {
-      players.push(...this.cells[i][j].getPlayers());
-    }
-  }
-  return players;
+MapSchema.method("movePlayer", async function(player: IPlayer, position: Position): Promise<void> {
+  const map: IMap = this;
+  console.log("current player position");
+  console.log(player.position);
+  await map.cells[player.position.x][player.position.y].removePlayer(player._id);
+  await map.cells[position.x][position.y].addPlayer(player._id);
 });
 
-MapSchema.method("removePlayer", async function(id: string) {
-  for (let i = 0; i < this.cells.length; i++) {
-    for (let j = 0; j < this.cells[0].length; j++) {
-      await this.cells[i][j].removePlayer(id);
+MapSchema.method("removePlayer", async function(id: Mongoose.Types.ObjectId) {
+  const map: IMap = this;
+  for (let i = 0; i < map.cells.length; i++) {
+    for (let j = 0; j < map.cells[0].length; j++) {
+      await map.cells[i][j].removePlayer(id);
     }
   }
 });
 
 MapSchema.method("checkPath", function(positions: Position[]) {
-  // console.log(this.cells);
+  const map: IMap = this;
   try {
     for (let i = 0, len = positions.length; i < len; i++) {
-      console.log(this.cells[positions[i].x][positions[i].y]);
-      if (!this.cells[positions[i].x][positions[i].y].isAccessible) {
+      if (!map.cells[positions[i].x][positions[i].y].isAccessible) {
         return false;
       }
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+  return true;
+});
+
+MapSchema.method("checkPosition", function(position: Position, target: Position): boolean {
+  const map: IMap = this;
+  try {
+    if (!map.cells[target.x][target.y].isAccessible) {
+      return false;
     }
   } catch (error) {
     console.log(error);

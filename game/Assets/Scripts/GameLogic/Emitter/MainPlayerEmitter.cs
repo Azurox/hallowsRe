@@ -26,12 +26,15 @@ public class MainPlayerEmitter : MonoBehaviour {
             jsonPath[i] = new JSONObject(data);
 
         }
-        socket.Emit("newPath", new JSONObject(jsonPath));
+        socket.Emit("initializeMovement", new JSONObject(jsonPath));
     }
 
-    public void NewPosition(Vector2 position)
+    public void NewPosition(int x, int y)
     {
-        socket.Emit("newPosition");
+        Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+        data["x"] = new JSONObject(x);
+        data["y"] = new JSONObject(y);
+        socket.Emit("newPosition", new JSONObject(data));
     }
 	
 }
