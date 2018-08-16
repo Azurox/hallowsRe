@@ -9,6 +9,11 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
     public List<Vector2> FindPath(int x, int y)
     {
+        if(x == transform.position.x && y == transform.position.z)
+        {
+            return null;
+        }
+
         if (mapDTG == null)
         {
             mapDTG = Object.FindObjectOfType<MapDTG>();
@@ -19,7 +24,16 @@ public class MainPlayerPathFinding : MonoBehaviour {
             {
                 for(var j = 0; j < currentMap.GetLength(1); j++)
                 {
-                    grid[i, j] = new Node(true, new Vector2(i, j), i, j);
+                    grid[i, j] = new Node(currentMap[j,i].IsAccessible, new Vector2(i, j), i, j);
+                }
+            }
+        } else
+        {
+            for (var i = 0; i < currentMap.GetLength(0); i++)
+            {
+                for (var j = 0; j < currentMap.GetLength(1); j++)
+                {
+                    grid[i, j].parent = null;
                 }
             }
         }
@@ -47,12 +61,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
             if (currentNode == targetNode)
             {
-                List<Vector2> path = new List<Vector2>();
-                foreach(Node node in closeSet)
-                {
-                    path.Add(node.position);
-                }
-                return path;
+                return ReversePath(currentNode);
             }
 
             foreach (Node neighbour in GetNeighbours(currentNode))
@@ -183,4 +192,16 @@ public class MainPlayerPathFinding : MonoBehaviour {
         return neighbours;
     }
 
+    public List<Vector2> ReversePath(Node currentNode)
+    {
+        List<Vector2> path = new List<Vector2>();
+        var observedNode = currentNode;
+        while(observedNode.parent != null && observedNode.parent.position != observedNode.position)
+        {
+            path.Add(observedNode.position);
+            observedNode = observedNode.parent;
+        }
+        path.Reverse();
+        return path;
+    }
 }

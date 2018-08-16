@@ -35,6 +35,8 @@ export default class MapHandler {
     if (possible) {
       await this.M.playerIsMoving(this.socket, positions);
       await this.P.playerIsMoving(this.socket, positions);
+    } else {
+      console.log("unauthorized movement");
     }
   }
 
@@ -43,6 +45,8 @@ export default class MapHandler {
     if (possible) {
       await this.M.movePlayer(this.socket, position);
       await this.P.movePlayer(this.socket, position);
+    } else {
+      console.log("unauthorized movement");
     }
   }
 
