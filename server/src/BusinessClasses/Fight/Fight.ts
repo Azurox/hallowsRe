@@ -37,6 +37,8 @@ export default class Fight {
       this.io.sockets.connected[this.redTeam[i].socketId].join(this.id);
       this.io.to(this.redTeam[i].socketId).emit("fightStarted");
     }
+
+    console.log("send start to both teams");
   }
 
   tick() {

@@ -18,4 +18,9 @@ public class MainPlayerHandler : MonoBehaviour {
     {
         gameObject.GetComponent<MainPlayerEmitter>().NewPosition(x, y);
     }
+
+    public void StartFight(string id)
+    {
+        gameObject.GetComponent<MainPlayerEmitter>().StartFight(id);
+    }
 }

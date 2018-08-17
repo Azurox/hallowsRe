@@ -21,7 +21,7 @@ export default class FightController {
     }
 
     for (let i = 0; i < secondTeam.length; i++) {
-      fight.addFighter(new Fighter(firstTeam[i]), "red");
+      fight.addFighter(new Fighter(secondTeam[i]), "red");
     }
 
     fight.startFight();

@@ -9,14 +9,16 @@ public class WorldMapController {
     public MapDTG MapDTG;
     public MapHandler MapHandler;
     public PlayerContainerDTG PlayerContainerDTG;
+    public PlayerHandler PlayerHandler;
     private SocketIOComponent socket;
 
     public WorldMapController(SocketIOComponent socket)
     {
         this.socket = socket;
         MapDTG = Object.FindObjectOfType<MapDTG>();
-        MapHandler = MapDTG.gameObject.GetComponent<MapHandler>();
+        MapHandler = MapDTG.GetComponent<MapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
+        PlayerHandler = PlayerContainerDTG.GetComponent<PlayerHandler>();
         InitSocket();
     }
 
@@ -44,6 +46,7 @@ public class WorldMapController {
         List<JSONObject> position = obj.data["position"].list;
         var player = PlayerContainerDTG.SpawnMainPlayer((int) position[0].n, (int) position[1].n);
         MapHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
+        PlayerHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
     }
 
     private void SpawnPlayer(SocketIOEvent obj)

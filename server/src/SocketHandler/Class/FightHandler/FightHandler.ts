@@ -23,9 +23,12 @@ export default class FightHandler {
     this.socket.on("startFight", this.startFight.bind(this));
   }
 
-  async startFight(target: string) {
+  async startFight(target: { id: string }) {
+    console.log("target =>" + target);
+    console.log(target);
+
     const firstTeam = [this.socket.player];
-    const secondTeam = await this.P.RetrievePlayers([target]);
+    const secondTeam = await this.P.RetrievePlayers([target.id]);
     this.F.startFight(firstTeam, secondTeam);
   }
 }
