@@ -28,12 +28,14 @@ export default class Fight {
   startFight() {
     this.started = true;
     this.fightOrder = this.blueTeam.concat(this.redTeam);
-    for (let i = 0; i < this.redTeam.length; i++) {
-      this.io.sockets.connected[this.redTeam[i].socketId].join(this.id);
-      this.io.to(this.redTeam[i].socketId).emit("fightStarted");
+    for (let i = 0; i < this.blueTeam.length; i++) {
+      this.io.sockets.connected[this.blueTeam[i].socketId].leave(this.blueTeam[i].player.mapName);
+      this.io.sockets.connected[this.blueTeam[i].socketId].join(this.id);
+      this.io.to(this.blueTeam[i].socketId).emit("fightStarted");
     }
 
     for (let i = 0; i < this.redTeam.length; i++) {
+      this.io.sockets.connected[this.redTeam[i].socketId].leave(this.redTeam[i].player.mapName);
       this.io.sockets.connected[this.redTeam[i].socketId].join(this.id);
       this.io.to(this.redTeam[i].socketId).emit("fightStarted");
     }

@@ -39,7 +39,9 @@ export default class MapController {
       }
     }
 
+    socket.player.mapName = map.name;
     socket.join(map.name);
+    await socket.player.save();
   }
 
   async checkMovementsPossibility(socket: GSocket, positions: Position[]) {
