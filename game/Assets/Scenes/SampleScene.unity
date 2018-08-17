@@ -229,6 +229,8 @@ GameObject:
   - component: {fileID: 425202452}
   - component: {fileID: 425202451}
   - component: {fileID: 425202453}
+  - component: {fileID: 425202455}
+  - component: {fileID: 425202454}
   m_Layer: 0
   m_Name: MapDTG
   m_TagString: Untagged
@@ -271,6 +273,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 82df6681d291bef44a34739a60ee2e6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &425202454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 425202450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ef71e850e623604aa7aebd039f43ec8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &425202455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 425202450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd60f409efb323543acb212ce4380383, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &486542632

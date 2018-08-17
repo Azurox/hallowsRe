@@ -34,6 +34,13 @@ public class FightMapController {
         Debug.Log("FightStarted !");
         PlayerContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
+        MapHandler.SetIsFighting(true);
+    }
 
+    private void FightFinished()
+    {
+        PlayerContainerDTG.gameObject.SetActive(false);
+        FighterContainerDTG.gameObject.SetActive(true);
+        MapHandler.SetIsFighting(false);
     }
 }
