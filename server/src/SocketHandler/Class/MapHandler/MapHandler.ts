@@ -20,7 +20,8 @@ export default class MapHandler {
     console.log("init socket");
     this.socket.on("initWorld", this.spawnPlayer.bind(this));
     this.socket.on("loadMap", () => console.log("loadMap"));
-    this.socket.on("move", this.move.bind(this));
+    this.socket.on("initializeMovement", this.initializeMovement.bind(this));
+    this.socket.on("newPosition", this.newPosition.bind(this));
     this.socket.on("disconnect", this.disconnect.bind(this));
   }
 
@@ -29,8 +30,24 @@ export default class MapHandler {
     await this.M.spawnPlayer(this.socket);
   }
 
-  async move(position: Position) {
-    await this.M.movePlayer(this.socket, position);
+  async initializeMovement(positions: Position[]) {
+    const possible = await this.M.checkMovementsPossibility(this.socket, positions);
+    if (possible) {
+      await this.M.playerIsMoving(this.socket, positions);
+      await this.P.playerIsMoving(this.socket, positions);
+    } else {
+      console.log("unauthorized movement");
+    }
+  }
+
+  async newPosition(position: Position) {
+    const possible = await this.M.checkMovementPossibility(this.socket, position);
+    if (possible) {
+      await this.M.movePlayer(this.socket, position);
+      await this.P.movePlayer(this.socket, position);
+    } else {
+      console.log("unauthorized movement");
+    }
   }
 
   async disconnect() {

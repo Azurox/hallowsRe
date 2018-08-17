@@ -17,6 +17,11 @@ public class MapDTG : MonoBehaviour {
         }
         ReloadMap();
     }
+    
+    public GameMap GetMap()
+    {
+        return currentMap;
+    }
 
     private void ReloadMap()
     {
@@ -26,7 +31,7 @@ public class MapDTG : MonoBehaviour {
             {
                 GameObject cell = Instantiate(CellGameObject);
                 cell.transform.parent = gameObject.transform;
-                cell.name = i + "-" + j;
+                cell.name = j + "-" + i;
                 cells[i, j] = cell.GetComponent<CellDTG>() ;
                 cells[i,j].SetCell(currentMap.cells[i, j]);
 
