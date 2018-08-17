@@ -12,7 +12,7 @@ export default class FightController {
     setInterval(this.tick, 1000);
   }
 
-  startFight(firstTeam: IPlayer[], secondTeam: IPlayer[]): string {
+  startFight(firstTeam: IPlayer[], secondTeam: IPlayer[]) {
     const fight = new Fight(this.state.io);
     this.fights[fight.id] = fight;
 
@@ -25,8 +25,6 @@ export default class FightController {
     }
 
     fight.startFight();
-
-    return fight.id;
   }
 
   tick() {
