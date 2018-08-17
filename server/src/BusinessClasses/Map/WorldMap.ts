@@ -47,7 +47,7 @@ export default class WorldMap {
     player1.save();
 
     const player2 = new Player();
-    player2.name = "test1";
+    player2.name = "test2";
     player2.position = { x: 2, y: 2 };
     player2.mapPosition = { x: 0, y: 0 };
     player2.save();
