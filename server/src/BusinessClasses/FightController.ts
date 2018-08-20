@@ -9,7 +9,7 @@ export default class FightController {
 
   constructor(state: State) {
     this.state = state;
-    setInterval(this.tick, 1000);
+    setInterval(this.tick.bind(this), 1000);
   }
 
   startFight(firstTeam: IPlayer[], secondTeam: IPlayer[]) {

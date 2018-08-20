@@ -36,7 +36,8 @@ export default class Fight {
         isMainPlayer: true,
         name: "mainPlayer",
         position: this.blueTeam[i].position,
-        side: "blue"
+        side: "blue",
+        order: this.blueTeam[i].order
       });
 
       for (let j = 0; j < this.blueTeam.length; j++) {
@@ -48,7 +49,8 @@ export default class Fight {
           id: this.blueTeam[j].player._id,
           name: this.blueTeam[j].player.name,
           position: this.blueTeam[j].position,
-          side: "blue"
+          side: "blue",
+          order: this.blueTeam[j].order
         });
       }
 
@@ -58,7 +60,8 @@ export default class Fight {
           id: this.redTeam[j].player._id,
           name: this.redTeam[j].player.name,
           position: this.redTeam[j].position,
-          side: "red"
+          side: "red",
+          order: this.redTeam[j].order
         });
       }
 
@@ -74,7 +77,8 @@ export default class Fight {
         isMainPlayer: true,
         name: "mainPlayer",
         position: this.redTeam[i].position,
-        side: "red"
+        side: "red",
+        order: this.redTeam[i].order
       });
 
       for (let j = 0; j < this.redTeam.length; j++) {
@@ -86,7 +90,8 @@ export default class Fight {
           id: this.redTeam[j].player._id,
           name: this.redTeam[j].player.name,
           position: this.redTeam[j].position,
-          side: "red"
+          side: "red",
+          order: this.redTeam[j].order
         });
       }
 
@@ -96,7 +101,8 @@ export default class Fight {
           id: this.blueTeam[j].player._id,
           name: this.blueTeam[j].player.name,
           position: this.blueTeam[j].position,
-          side: "blue"
+          side: "blue",
+          order: this.blueTeam[j].order
         });
       }
       this.io.to(this.redTeam[i].socketId).emit("fightStarted", { players: players });

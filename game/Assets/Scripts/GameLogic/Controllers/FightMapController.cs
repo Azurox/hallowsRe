@@ -11,6 +11,7 @@ public class FightMapController {
     public PlayerHandler PlayerHandler;
     public FighterContainerDTG FighterContainerDTG;
     private SocketIOComponent socket;
+    private Fight Fight;
 
     public FightMapController(SocketIOComponent socket)
     {
@@ -35,6 +36,7 @@ public class FightMapController {
         PlayerContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
         MapHandler.SetIsFighting(true);
+        Fight = new Fight(socket, FighterContainerDTG, obj);
     }
 
     private void FightFinished()

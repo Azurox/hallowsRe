@@ -206,6 +206,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93e7fbaa94d9ede40a7e758ebe98782b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FighterGameObject: {fileID: 1593932034441376, guid: dd38ed638cde9c84bae3082b940700dd,
+    type: 2}
 --- !u!4 &330116908
 Transform:
   m_ObjectHideFlags: 0
