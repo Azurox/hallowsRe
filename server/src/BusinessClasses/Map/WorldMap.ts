@@ -26,7 +26,7 @@ export default class WorldMap {
         cell.y = j;
         cell.isAccessible = true;
         if (i == j) {
-          cell.isAccessible = false;
+          // cell.isAccessible = false;
         }
         // cell.players = [];
         await cell.save();

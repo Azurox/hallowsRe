@@ -26,8 +26,8 @@ export default class Fight {
   }
 
   startFight() {
-    this.started = true;
     this.fightOrder = this.blueTeam.concat(this.redTeam);
+
     for (let i = 0; i < this.blueTeam.length; i++) {
       this.io.sockets.connected[this.blueTeam[i].socketId].leave(this.blueTeam[i].player.mapName);
       this.io.sockets.connected[this.blueTeam[i].socketId].join(this.id);
@@ -62,7 +62,7 @@ export default class Fight {
         });
       }
 
-      this.io.to(this.blueTeam[i].socketId).emit("fightStarted", players);
+      this.io.to(this.blueTeam[i].socketId).emit("fightStarted", { players: players });
     }
 
     for (let i = 0; i < this.redTeam.length; i++) {
@@ -99,8 +99,7 @@ export default class Fight {
           side: "blue"
         });
       }
-
-      this.io.to(this.redTeam[i].socketId).emit("fightStarted", players);
+      this.io.to(this.redTeam[i].socketId).emit("fightStarted", { players: players });
     }
 
     this.started = true;
