@@ -23,6 +23,11 @@ public class MapDTG : MonoBehaviour {
         return currentMap;
     }
 
+    public CellDTG[,] GetCells()
+    {
+        return cells;
+    }
+
     private void ReloadMap()
     {
         for (int i = 0, length = currentMap.cells.GetLength(0); i < length; i++)
@@ -32,9 +37,10 @@ public class MapDTG : MonoBehaviour {
                 GameObject cell = Instantiate(CellGameObject);
                 cell.transform.parent = gameObject.transform;
                 cell.name = j + "-" + i;
-                cells[i, j] = cell.GetComponent<CellDTG>() ;
+                cells[i, j] = cell.GetComponent<CellDTG>();
                 cells[i,j].SetCell(currentMap.cells[i, j]);
-
+                cells[i, j].GetComponent<FightCellDTG>().SetCell(currentMap.cells[i, j]);
+                cells[i, j].GetComponent<FightCellDTG>().enabled = false;
             }
         }
     }

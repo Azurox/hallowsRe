@@ -6,8 +6,11 @@ using UnityEngine;
 public class Fight {
     private SocketIOComponent socket;
     public FighterContainerDTG fighterContainerDTG;
+
+    public string Id;
     public List<Fighter> fightersBlue = new List<Fighter>();
     public List<Fighter> fightersRed = new List<Fighter>();
+
 
 
     public Fight(SocketIOComponent socket, FighterContainerDTG fighterContainerDTG, SocketIOEvent data)
@@ -20,7 +23,7 @@ public class Fight {
     private void ExtractFightData(SocketIOEvent data)
     {
         var playerList = data.data["players"];
-
+        Id = data.data["id"].str;
         for(var  i = 0; i < playerList.Count; i++)
         {
             Fighter fighter = new Fighter(playerList[i]);

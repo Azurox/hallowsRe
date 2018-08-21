@@ -7,6 +7,7 @@ public class FightMapController {
 
     public MapDTG MapDTG;
     public MapHandler MapHandler;
+    public FightMapDTG FightMapDTG; 
     public PlayerContainerDTG PlayerContainerDTG;
     public PlayerHandler PlayerHandler;
     public FighterContainerDTG FighterContainerDTG;
@@ -17,6 +18,7 @@ public class FightMapController {
     {
         this.socket = socket;
         MapDTG = Object.FindObjectOfType<MapDTG>();
+        FightMapDTG = MapDTG.GetComponent<FightMapDTG>();
         MapHandler = MapDTG.GetComponent<MapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         PlayerHandler = PlayerContainerDTG.GetComponent<PlayerHandler>();
@@ -35,14 +37,32 @@ public class FightMapController {
         Debug.Log("FightStarted !");
         PlayerContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
-        MapHandler.SetIsFighting(true);
         Fight = new Fight(socket, FighterContainerDTG, obj);
+        FightMapDTG.Init();
+
+
+        var blueCells = obj.data["blueCells"];
+        for (var i = 0; i < blueCells.Count; i++)
+        {
+            Vector2 position = new Vector2(blueCells[i]["position"]["x"].n, blueCells[i]["position"]["y"].n);
+            bool taken = blueCells[i]["taken"].b;
+            FightMapDTG.SetSpawnCell(Side.blue, position, taken);
+        }
+
+        var redCells = obj.data["redCells"];
+        for (var i = 0; i < blueCells.Count; i++)
+        {
+            Vector2 position = new Vector2(redCells[i]["position"]["x"].n, redCells[i]["position"]["y"].n);
+            bool taken = redCells[i]["taken"].b;
+            FightMapDTG.SetSpawnCell(Side.red, position, taken);
+
+        }
+
     }
 
     private void FightFinished()
     {
         PlayerContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
-        MapHandler.SetIsFighting(false);
     }
 }
