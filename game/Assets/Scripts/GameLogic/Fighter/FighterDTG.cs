@@ -16,10 +16,10 @@ public class FighterDTG : MonoBehaviour {
         SetPosition((int)fighter.Position.x, (int)fighter.Position.y);
         if(fighter.Side == Side.blue)
         {
-            gameObject.GetComponent<Renderer>().material.color = new Color(0, 0, 255);
+            gameObject.GetComponent<Renderer>().material.color = new Color(16/255f, 39/255f, 191/255f);
         }else
         {
-            gameObject.GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            gameObject.GetComponent<Renderer>().material.color = new Color(244/255f, 65/255f, 98/255f);
         }
     }
 

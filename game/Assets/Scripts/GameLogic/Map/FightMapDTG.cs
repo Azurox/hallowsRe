@@ -21,7 +21,7 @@ public class FightMapDTG : MonoBehaviour {
             for (var j = 0; j < oldCells.GetLength(1); j++)
             {
                 oldCells[i, j].GetComponent<FightCellDTG>().enabled = true;
-                cells[i, j] = oldCells[i, j].GetComponent<FightCellDTG>();
+                cells[j, i] = oldCells[i, j].GetComponent<FightCellDTG>(); // Check that
                 oldCells[i, j].enabled = false;
             }
         }
