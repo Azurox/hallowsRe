@@ -8,6 +8,7 @@ public class Fight {
     public FighterContainerDTG fighterContainerDTG;
 
     public string Id;
+    public int phase = 0;
     public List<Fighter> fightersBlue = new List<Fighter>();
     public List<Fighter> fightersRed = new List<Fighter>();
 
@@ -39,6 +40,23 @@ public class Fight {
             fighterContainerDTG.SpawnFighter(fighter);
         }
 
+    }
+
+    public Fighter GetMainPlayer()
+    {
+        for (int i = 0; i < fightersBlue.Count; i++)
+        {
+            if (fightersBlue[i].IsMainPlayer)
+                return fightersBlue[i];
+        }
+
+        for (int i = 0; i < fightersRed.Count; i++)
+        {
+            if (fightersRed[i].IsMainPlayer)
+                return fightersRed[i];
+        }
+
+        return null;
     }
 
 

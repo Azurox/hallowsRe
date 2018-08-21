@@ -5,11 +5,16 @@ using UnityEngine;
 public class FightMapDTG : MonoBehaviour {
 
     private FightCellDTG[,] cells;
+    public List<FightCellDTG> blueCells;
+    public List<FightCellDTG> redCells;
 
 
     public void Init()
     {
         CellDTG[,] oldCells = GetComponent<MapDTG>().GetCells();
+        blueCells = new List<FightCellDTG>();
+        redCells = new List<FightCellDTG>();
+
 
         if (cells == null)
         {
@@ -33,12 +38,12 @@ public class FightMapDTG : MonoBehaviour {
         if(side == Side.blue)
         {
             cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(0, 0, 255);
+            blueCells.Add(cells[(int)position.x, (int)position.y]);
         }else
         {
             cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
-
+            redCells.Add(cells[(int)position.x, (int)position.y]);
         }
-
     }
 
     public void SetCellAvailability(Vector2 position, bool taken)

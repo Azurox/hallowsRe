@@ -7,6 +7,7 @@ public class FightMapController {
 
     public MapDTG MapDTG;
     public MapHandler MapHandler;
+    public FightMapHandler FightMapHandler;
     public FightMapDTG FightMapDTG; 
     public PlayerContainerDTG PlayerContainerDTG;
     public PlayerHandler PlayerHandler;
@@ -20,6 +21,7 @@ public class FightMapController {
         MapDTG = Object.FindObjectOfType<MapDTG>();
         FightMapDTG = MapDTG.GetComponent<FightMapDTG>();
         MapHandler = MapDTG.GetComponent<MapHandler>();
+        FightMapHandler = MapDTG.GetComponent<FightMapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         PlayerHandler = PlayerContainerDTG.GetComponent<PlayerHandler>();
         FighterContainerDTG = Object.FindObjectOfType<FighterContainerDTG>();
@@ -57,6 +59,8 @@ public class FightMapController {
             FightMapDTG.SetSpawnCell(Side.red, position, taken);
 
         }
+
+        FightMapHandler.Init(FightMapDTG, Fight);
 
     }
 
