@@ -3,6 +3,7 @@ import State from "./State";
 import WorldMap from "./Map/WorldMap";
 import Position from "./RelationalObject/Position";
 import Player, { IPlayer } from "../Schema/Player";
+import { IMap } from "../Schema/Map";
 
 export default class MapController {
   worldMap: WorldMap;
@@ -39,7 +40,9 @@ export default class MapController {
       }
     }
 
+    socket.player.mapName = map.name;
     socket.join(map.name);
+    await socket.player.save();
   }
 
   async checkMovementsPossibility(socket: GSocket, positions: Position[]) {
@@ -71,5 +74,10 @@ export default class MapController {
 
     await map.removePlayer(socket.player._id);
     socket.to(map.name).emit("disconnectPlayer", { id: socket.player._id });
+  }
+
+  async getLeanMap(x: number, y: number): Promise<IMap> {
+    const map = await this.worldMap.getLeanMap(x, y);
+    return map;
   }
 }

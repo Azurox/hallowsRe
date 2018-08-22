@@ -8,7 +8,7 @@ const server = require("http").createServer();
 const mongoose = require("mongoose");
 const io = SocketIo(server, { origins: "*:*" });
 const socketHandlers: { [name: string]: SocketHandler } = {};
-const state = new State();
+const state = new State(io);
 
 /** DB */
 mongoose.connect("mongodb://localhost/test");

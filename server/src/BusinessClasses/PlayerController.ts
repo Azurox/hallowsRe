@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import GSocket from "./GSocket";
 import State from "./State";
 import Account, { IAccount } from "../Schema/Account";
-import { IPlayer } from "../Schema/Player";
+import Player, { IPlayer } from "../Schema/Player";
 import Position from "./RelationalObject/Position";
 
 export default class PlayerController {
@@ -15,7 +16,17 @@ export default class PlayerController {
   async RetrievePlayer(socket: GSocket) {
     const randomAccount = await Account.findOne().populate("players");
     socket.player = <IPlayer>randomAccount.players[this.pair % 2];
+    socket.player.socketId = socket.id;
+    await socket.player.save();
     this.pair++;
+  }
+
+  async RetrievePlayers(ids: string[]): Promise<IPlayer[]> {
+    const players: IPlayer[] = [];
+    for (let i = 0; i < ids.length; i++) {
+      players.push(await Player.findById(mongoose.Types.ObjectId(ids[i])));
+    }
+    return players;
   }
 
   async playerIsMoving(socket: GSocket, positions: Position[]): Promise<void> {

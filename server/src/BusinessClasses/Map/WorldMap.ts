@@ -3,6 +3,7 @@ import Map, { IMap } from "../../Schema/Map";
 import Cell from "../../Schema/Cell";
 import Account from "../../Schema/Account";
 import Player from "../../Schema/Player";
+import Position from "../RelationalObject/Position";
 
 export default class WorldMap {
   constructor() {
@@ -26,13 +27,16 @@ export default class WorldMap {
         cell.y = j;
         cell.isAccessible = true;
         if (i == j) {
-          cell.isAccessible = false;
+          // cell.isAccessible = false;
         }
-        // cell.players = [];
         await cell.save();
         map.cells[i][j] = cell._id;
       }
     }
+
+    map.redCells = [new Position(0, 5), new Position(0, 7), new Position(0, 9)];
+    map.blueCells = [new Position(5, 0), new Position(7, 0), new Position(9, 0)];
+
     await map.save();
   }
 
@@ -47,7 +51,7 @@ export default class WorldMap {
     player1.save();
 
     const player2 = new Player();
-    player2.name = "test1";
+    player2.name = "test2";
     player2.position = { x: 2, y: 2 };
     player2.mapPosition = { x: 0, y: 0 };
     player2.save();
@@ -62,6 +66,11 @@ export default class WorldMap {
       path: "cells",
       model: "Cell"
     });
+    return map;
+  }
+
+  async getLeanMap(x: number, y: number): Promise<IMap> {
+    const map = await Map.findOne({ x: x, y: y }).lean();
     return map;
   }
 }

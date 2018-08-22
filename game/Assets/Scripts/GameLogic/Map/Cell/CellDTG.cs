@@ -11,7 +11,7 @@ public class CellDTG : MonoBehaviour {
         UpdatePosition();
         if (!cell.IsAccessible)
         {
-            this.gameObject.GetComponent<Renderer>().material.color = new Color(0,0,0);
+            GetComponent<Renderer>().material.color = new Color(0,0,0);
         }
     }
 
@@ -22,9 +22,10 @@ public class CellDTG : MonoBehaviour {
 	
     public void OnMouseDown()
     {
+        if (!enabled) return;
         if (currentCell.IsAccessible)
         {
-            transform.parent.gameObject.GetComponent<MapHandler>().TargetCell(currentCell.X, currentCell.Y);
+            transform.parent.GetComponent<MapHandler>().TargetCell(currentCell.X, currentCell.Y);
         }else
         {
             Debug.Log("impossible to go here");

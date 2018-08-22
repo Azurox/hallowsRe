@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug",
-      "program": "${workspaceFolder}/dist/server.js",
+      "program": "${workspaceFolder}/server/dist/server.js",
       "outFiles": ["${workspaceFolder}/**/*.js"],
       "sourceMaps": true
     }

@@ -8,4 +8,10 @@ public class PlayerDTG : MonoBehaviour {
     {
         gameObject.transform.position = new Vector3(x, gameObject.transform.position.y, y);
     }
+
+    private void OnMouseDown()
+    {
+        Debug.Log("clicked on player");
+        transform.parent.GetComponent<PlayerHandler>().ClickOnPlayer(this.name);
+    }
 }

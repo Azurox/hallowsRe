@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MapHandler : MonoBehaviour {
-    private MainPlayerHandler mainPlayer;
+    private MainPlayerHandler MainPlayer;
 
     public void SetMainPlayer(MainPlayerHandler player)
     {
-        mainPlayer = player;
+        MainPlayer = player;
     }
-	
+
     public void TargetCell(int x, int y)
     {
-        mainPlayer.TryMovement(x, y);
+        MainPlayer.TryMovement(x, y);
     }
 }

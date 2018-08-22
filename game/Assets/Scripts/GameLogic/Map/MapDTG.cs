@@ -4,39 +4,34 @@ using UnityEngine;
 
 public class MapDTG : MonoBehaviour {
 
-    public GameObject CellGameObject;
     private CellDTG[,] cells;
     private GameMap currentMap;
 
-    public void SetMap(GameMap map)
+    public void Init()
     {
-        currentMap = map;
-        if(cells == null)
+        currentMap = GetComponent<GlobalMapDTG>().GetMap();
+
+        var oldCells = GetComponent<GlobalMapDTG>().GetCells();
+
+        cells = new CellDTG[oldCells.GetLength(0), oldCells.GetLength(1)];
+
+        for (var i = 0; i < oldCells.GetLength(0); i++)
         {
-            cells = new CellDTG[map.cells.GetLength(0), map.cells.GetLength(1)];
+            for (var j = 0; j < oldCells.GetLength(1); j++)
+            {
+                cells[i, j] = oldCells[i, j].GetComponent<CellDTG>();
+            }
         }
-        ReloadMap();
     }
-    
+
     public GameMap GetMap()
     {
         return currentMap;
     }
 
-    private void ReloadMap()
+    public CellDTG[,] GetCells()
     {
-        for (int i = 0, length = currentMap.cells.GetLength(0); i < length; i++)
-        {
-            for (int j = 0, lengthJ = currentMap.cells.GetLength(1); j < lengthJ; j++)
-            {
-                GameObject cell = Instantiate(CellGameObject);
-                cell.transform.parent = gameObject.transform;
-                cell.name = j + "-" + i;
-                cells[i, j] = cell.GetComponent<CellDTG>() ;
-                cells[i,j].SetCell(currentMap.cells[i, j]);
-
-            }
-        }
+        return cells;
     }
 
 }

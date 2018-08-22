@@ -36,5 +36,12 @@ public class MainPlayerEmitter : MonoBehaviour {
         data["y"] = new JSONObject(y);
         socket.Emit("newPosition", new JSONObject(data));
     }
+
+    public void StartFight(string id)
+    {
+        Dictionary<string, string> data = new Dictionary<string, string>();
+        data["id"] = id;
+        socket.Emit("startFight", new JSONObject(data));
+    }
 	
 }
