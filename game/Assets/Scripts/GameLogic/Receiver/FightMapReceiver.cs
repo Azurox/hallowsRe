@@ -10,6 +10,7 @@ public class FightMapReceiver {
     public FightMapDTG FightMapDTG; 
     public PlayerContainerDTG PlayerContainerDTG;
     public FighterContainerDTG FighterContainerDTG;
+    public FighterHandler FighterHandler;
     private SocketIOComponent socket;
     private Fight Fight;
 
@@ -21,6 +22,8 @@ public class FightMapReceiver {
         FightMapHandler = MapDTG.GetComponent<FightMapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         FighterContainerDTG = Object.FindObjectOfType<FighterContainerDTG>();
+        FighterHandler = FighterContainerDTG.GetComponent<FighterHandler>();
+
         FighterContainerDTG.gameObject.SetActive(false);
         InitSocket();
     }
@@ -35,9 +38,12 @@ public class FightMapReceiver {
         Debug.Log("FightStarted !");
         PlayerContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
-        Fight = new Fight(socket, FighterContainerDTG, obj);
-        FightMapDTG.Init();
+        Fight = new Fight(socket, obj);
 
+        FighterContainerDTG.Init(Fight.GetFighters());
+        FightMapDTG.Init();
+        FightMapHandler.Init(FighterContainerDTG.GetMainFighter(), FightMapDTG, Fight);
+        FighterHandler.SetMainFighter(FighterContainerDTG.GetMainFighter());
 
         var blueCells = obj.data["blueCells"];
         for (var i = 0; i < blueCells.Count; i++)
@@ -55,8 +61,6 @@ public class FightMapReceiver {
             FightMapDTG.SetSpawnCell(Side.red, position, taken);
 
         }
-
-        FightMapHandler.Init(FightMapDTG, Fight);
 
     }
 

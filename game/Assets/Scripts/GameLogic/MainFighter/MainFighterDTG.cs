@@ -11,6 +11,11 @@ public class MainFighterDTG : MonoBehaviour {
         this.fighter = fighter;
     }
 
+    public Fighter GetFighter()
+    {
+        return fighter;
+    }
+
     public void InitFighter()
     {
         SetPosition((int)fighter.Position.x, (int)fighter.Position.y);

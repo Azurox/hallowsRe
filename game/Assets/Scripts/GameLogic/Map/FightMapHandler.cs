@@ -7,15 +7,16 @@ public class FightMapHandler : MonoBehaviour {
     private FightMapDTG fightMapDTG;
     private FighterHandler fighterHandler;
     private MainFighterEmitter mainFighterEmitter;
+    private MainFighterDTG mainFighter;
     private Fight fight;
-    private Fighter mainPlayer;
 
-    public void Init(FightMapDTG fightMapDTG, Fight fight)
+    public void Init(MainFighterDTG mainFighter, FightMapDTG fightMapDTG, Fight fight)
     {
         this.fightMapDTG = fightMapDTG;
         this.fight = fight;
+        this.mainFighter = mainFighter;
         fighterHandler = fightMapDTG.GetComponent<FighterHandler>();
-        mainPlayer = fight.GetMainPlayer();
+        mainFighterEmitter = mainFighter.GetComponent<MainFighterEmitter>();
     }
 
     public void TargetCell(int x, int y)
@@ -31,7 +32,7 @@ public class FightMapHandler : MonoBehaviour {
 
     private void TryTeleport(int x, int y)
     {
-        if(mainPlayer.Side == Side.blue)
+        if(mainFighter.GetFighter().Side == Side.blue)
         {
             foreach (var cell in fightMapDTG.blueCells)
             {

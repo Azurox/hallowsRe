@@ -5,9 +5,9 @@ using UnityEngine;
 public class FighterHandler : MonoBehaviour {
     private MainFighterHandler mainFighter;
 
-    public void SetMainFighter(MainFighterHandler fighter)
+    public void SetMainFighter(MainFighterDTG fighter)
     {
-        mainFighter = fighter;
+        mainFighter = fighter.GetComponent<MainFighterHandler>();
     }
 
     public void ClickOnFighter(Fighter fighter)

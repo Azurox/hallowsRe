@@ -1,6 +1,7 @@
 ﻿using SocketIO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Fight {
@@ -9,15 +10,14 @@ public class Fight {
 
     public string Id;
     public int phase = 0;
-    public List<Fighter> fightersBlue = new List<Fighter>();
-    public List<Fighter> fightersRed = new List<Fighter>();
+    private List<Fighter> fightersBlue = new List<Fighter>();
+    private List<Fighter> fightersRed = new List<Fighter>();
 
 
 
-    public Fight(SocketIOComponent socket, FighterContainerDTG fighterContainerDTG, SocketIOEvent data)
+    public Fight(SocketIOComponent socket, SocketIOEvent data)
     {
         this.socket = socket;
-        this.fighterContainerDTG = fighterContainerDTG;
         ExtractFightData(data);
     }
 
@@ -36,28 +36,12 @@ public class Fight {
             {
                 fightersRed.Add(fighter);
             }
-
-            fighterContainerDTG.SpawnFighter(fighter);
         }
-
     }
 
-    public Fighter GetMainPlayer()
+    public List<Fighter> GetFighters()
     {
-        for (int i = 0; i < fightersBlue.Count; i++)
-        {
-            if (fightersBlue[i].IsMainPlayer)
-                return fightersBlue[i];
-        }
 
-        for (int i = 0; i < fightersRed.Count; i++)
-        {
-            if (fightersRed[i].IsMainPlayer)
-                return fightersRed[i];
-        }
-
-        return null;
+        return fightersBlue.Concat(fightersRed).ToList();
     }
-
-
 }

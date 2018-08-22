@@ -6,6 +6,6 @@ public class MainFighterEmitter : MonoBehaviour {
 
 	public void Teleport(Vector2 position)
     {
-
+        Debug.Log("emit the position");
     }
 }
