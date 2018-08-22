@@ -6,14 +6,14 @@ using UnityEngine;
 public class Main {
 
     private SocketIOComponent socket;
-    private WorldMapController worldMapController;
-    private FightMapController fightMapController;
+    private MapReceiver worldMapController;
+    private FightMapReceiver fightMapController;
 
     public Main(SocketIOComponent socket)
     {
         this.socket = socket;
-        worldMapController = new WorldMapController(socket);
-        fightMapController = new FightMapController(socket);
+        worldMapController = new MapReceiver(socket);
+        fightMapController = new FightMapReceiver(socket);
         this.socket.Emit("initWorld");
         Debug.Log("emit worlds");
     }

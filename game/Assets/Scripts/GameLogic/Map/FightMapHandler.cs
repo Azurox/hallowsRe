@@ -5,6 +5,8 @@ using UnityEngine;
 public class FightMapHandler : MonoBehaviour {
 
     private FightMapDTG fightMapDTG;
+    private FighterHandler fighterHandler;
+    private MainFighterEmitter mainFighterEmitter;
     private Fight fight;
     private Fighter mainPlayer;
 
@@ -12,6 +14,7 @@ public class FightMapHandler : MonoBehaviour {
     {
         this.fightMapDTG = fightMapDTG;
         this.fight = fight;
+        fighterHandler = fightMapDTG.GetComponent<FighterHandler>();
         mainPlayer = fight.GetMainPlayer();
     }
 
@@ -34,6 +37,7 @@ public class FightMapHandler : MonoBehaviour {
             {
                 if(cell.currentCell.X == x && cell.currentCell.Y == y)
                 {
+                    mainFighterEmitter.Teleport(new Vector2(x, y));
                     Debug.Log("Movement is legal blue side");
                 }
             }
@@ -43,6 +47,7 @@ public class FightMapHandler : MonoBehaviour {
             {
                 if (cell.currentCell.X == x && cell.currentCell.Y == y)
                 {
+                    mainFighterEmitter.Teleport(new Vector2(x, y));
                     Debug.Log("Movement is legal red side");
                 }
             }

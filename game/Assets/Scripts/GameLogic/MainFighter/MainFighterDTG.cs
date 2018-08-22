@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FighterDTG : MonoBehaviour {
+public class MainFighterDTG : MonoBehaviour {
 
     private Fighter fighter;
 
@@ -14,13 +14,7 @@ public class FighterDTG : MonoBehaviour {
     public void InitFighter()
     {
         SetPosition((int)fighter.Position.x, (int)fighter.Position.y);
-        if(fighter.Side == Side.blue)
-        {
-            gameObject.GetComponent<Renderer>().material.color = new Color(16/255f, 39/255f, 191/255f);
-        }else
-        {
-            gameObject.GetComponent<Renderer>().material.color = new Color(244/255f, 65/255f, 98/255f);
-        }
+        gameObject.GetComponent<Renderer>().material.color = new Color(255 / 255f, 215 / 255f, 0 / 255f);
     }
 
     private void SetPosition(int x, int y)
@@ -30,6 +24,6 @@ public class FighterDTG : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        transform.parent.GetComponent<FighterHandler>().ClickOnFighter(fighter);
+        Debug.Log("Clicked on self");
     }
 }

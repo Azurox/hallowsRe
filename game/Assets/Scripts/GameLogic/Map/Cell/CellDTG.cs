@@ -25,7 +25,7 @@ public class CellDTG : MonoBehaviour {
         if (!enabled) return;
         if (currentCell.IsAccessible)
         {
-            transform.parent.gameObject.GetComponent<WorldMapHandler>().TargetCell(currentCell.X, currentCell.Y);
+            transform.parent.GetComponent<MapHandler>().TargetCell(currentCell.X, currentCell.Y);
         }else
         {
             Debug.Log("impossible to go here");

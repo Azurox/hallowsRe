@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43695447, g: 0.48462766, b: 0.56488794, a: 1}
+  m_IndirectSpecularColor: {r: 0.43695432, g: 0.4846272, b: 0.5648877, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -188,6 +188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 330116908}
   - component: {fileID: 330116907}
+  - component: {fileID: 330116909}
   m_Layer: 0
   m_Name: FighterContainerDTG
   m_TagString: Untagged
@@ -221,6 +222,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &330116909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 330116906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f0765c99870b3f48974b3b1b338e010, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &425202450
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,7 +244,6 @@ GameObject:
   - component: {fileID: 425202451}
   - component: {fileID: 425202456}
   - component: {fileID: 425202453}
-  - component: {fileID: 425202455}
   - component: {fileID: 425202454}
   m_Layer: 0
   m_Name: MapDTG
@@ -289,17 +300,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef71e850e623604aa7aebd039f43ec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &425202455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 425202450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd60f409efb323543acb212ce4380383, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &425202456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,6 +311,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5183824c2e743947aed8b5e27de93fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blueCells: []
+  redCells: []
 --- !u!1 &486542632
 GameObject:
   m_ObjectHideFlags: 0

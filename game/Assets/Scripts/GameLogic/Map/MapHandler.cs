@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MapHandler : MonoBehaviour {
-    private WorldMapHandler WorldMapHandler;
-    private FightMapHandler FightMapHandler;
-
-    private void Start()
-    {
-        WorldMapHandler = GetComponent<WorldMapHandler>();
-        FightMapHandler = GetComponent<FightMapHandler>();
-    }
+    private MainPlayerHandler MainPlayer;
 
     public void SetMainPlayer(MainPlayerHandler player)
     {
-        GetComponent<WorldMapHandler>().SetMainPlayer(player);
+        MainPlayer = player;
+    }
+
+    public void TargetCell(int x, int y)
+    {
+        MainPlayer.TryMovement(x, y);
     }
 }

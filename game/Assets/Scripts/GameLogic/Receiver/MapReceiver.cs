@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class WorldMapController {
+public class MapReceiver {
 
     public MapDTG MapDTG;
     public MapHandler MapHandler;
@@ -12,7 +12,7 @@ public class WorldMapController {
     public PlayerHandler PlayerHandler;
     private SocketIOComponent socket;
 
-    public WorldMapController(SocketIOComponent socket)
+    public MapReceiver(SocketIOComponent socket)
     {
         this.socket = socket;
         MapDTG = Object.FindObjectOfType<MapDTG>();
