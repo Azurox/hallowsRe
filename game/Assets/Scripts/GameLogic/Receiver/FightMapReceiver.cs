@@ -31,6 +31,7 @@ public class FightMapReceiver {
     private void InitSocket()
     {
         socket.On("fightStarted", FightStarted);
+        socket.On("teleportPreFight", TeleportPreFight);
     }
 
     private void FightStarted(SocketIOEvent obj)
@@ -62,6 +63,23 @@ public class FightMapReceiver {
 
         }
 
+    }
+
+    private void TeleportPreFight(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
+        Vector2 oldPosition = FighterContainerDTG.GetMainFighter().GetFighter().Position;
+        FightMapDTG.SetCellAvailability(position, true);
+        FightMapDTG.SetCellAvailability(oldPosition, false);
+        if(FighterContainerDTG.GetMainFighter().GetFighter().Id == id)
+        {
+            FighterContainerDTG.TeleportMainFighter(position);
+        }
+        else
+        {
+            FighterContainerDTG.TeleportFighter(id, position);
+        }
     }
 
     private void FightFinished()

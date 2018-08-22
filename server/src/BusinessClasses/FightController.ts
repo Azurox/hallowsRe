@@ -33,4 +33,8 @@ export default class FightController {
       this.fights[id].tick();
     }
   }
+
+  retrieveFight(id: string): Fight {
+    return this.fights[id];
+  }
 }

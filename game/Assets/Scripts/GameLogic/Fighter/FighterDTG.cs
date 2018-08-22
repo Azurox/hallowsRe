@@ -23,9 +23,10 @@ public class FighterDTG : MonoBehaviour {
         }
     }
 
-    private void SetPosition(int x, int y)
+    public void SetPosition(int x, int y)
     {
         gameObject.transform.position = new Vector3(x, gameObject.transform.position.y, y);
+        fighter.Position = new Vector2(x, y);
     }
 
     private void OnMouseDown()

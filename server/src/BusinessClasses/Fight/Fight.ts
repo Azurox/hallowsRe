@@ -2,6 +2,7 @@ import uuid from "uuid/v4";
 import Fighter from "./Fighter";
 import { IMap } from "../../Schema/Map";
 import Position from "../RelationalObject/Position";
+import { IPlayer } from "../../Schema/Player";
 
 export default class Fight {
   /* CONST */
@@ -24,16 +25,10 @@ export default class Fight {
     this.io = io;
     this.id = uuid();
     this.blueCells = map.blueCells.map(cell => {
-      return {
-        position: cell,
-        taken: false
-      };
+      return { position: cell, taken: false };
     });
     this.redCells = map.redCells.map(cell => {
-      return {
-        position: cell,
-        taken: false
-      };
+      return { position: cell, taken: false };
     });
   }
 
@@ -89,7 +84,7 @@ export default class Fight {
         players: this.fightOrder.map((fighter: Fighter) => {
           return {
             isMainPlayer: fighter.socketId == this.fightOrder[i].socketId,
-            id: fighter.player._id,
+            id: fighter.player.id,
             name: fighter.player.name,
             position: fighter.position,
             side: fighter.side,
@@ -123,6 +118,58 @@ export default class Fight {
       }
     } else {
       // Check if the clock is > of max turn time;
+    }
+  }
+
+  retrieveFighterFromPlayerId(id: string): Fighter {
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      if (this.fightOrder[i].player.id === id) {
+        return this.fightOrder[i];
+      }
+    }
+    throw Error("Fighter not found");
+  }
+  teleportPlayerPhase0(fighter: Fighter, position: Position) {
+    if (fighter.side == "blue") {
+      for (let i = 0; i < this.blueCells.length; i++) {
+        if (
+          this.blueCells[i].position.x === position.x &&
+          this.blueCells[i].position.y === position.y &&
+          this.blueCells[i].taken === false
+        ) {
+          for (let j = 0; j < this.blueCells.length; j++) {
+            if (
+              this.blueCells[j].position.x === fighter.position.x &&
+              this.blueCells[j].position.y === fighter.position.y
+            ) {
+              this.blueCells[j].taken = false;
+            }
+          }
+          fighter.position = position;
+          this.blueCells[i].taken = true;
+          this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.player.id });
+        }
+      }
+    } else {
+      for (let i = 0; i < this.redCells.length; i++) {
+        if (
+          this.redCells[i].position.x === position.x &&
+          this.redCells[i].position.y === position.y &&
+          this.redCells[i].taken === false
+        ) {
+          for (let j = 0; j < this.redCells.length; j++) {
+            if (
+              this.redCells[j].position.x === fighter.position.x &&
+              this.redCells[j].position.y === fighter.position.y
+            ) {
+              this.redCells[j].taken = false;
+            }
+          }
+          fighter.position = position;
+          this.redCells[i].taken = true;
+          this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.player.id });
+        }
+      }
     }
   }
 }

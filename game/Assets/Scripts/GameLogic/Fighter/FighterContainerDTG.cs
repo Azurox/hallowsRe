@@ -6,7 +6,7 @@ public class FighterContainerDTG : MonoBehaviour {
 
     public GameObject FighterGameObject;
     public GameObject MainFighterGameObject;
-    private Dictionary<string, FighterDTG> players = new Dictionary<string, FighterDTG>();
+    private Dictionary<string, FighterDTG> fighters = new Dictionary<string, FighterDTG>();
     private MainFighterDTG mainFighter;
 
 
@@ -34,7 +34,7 @@ public class FighterContainerDTG : MonoBehaviour {
             playerGo.transform.parent = gameObject.transform; // Same.
             playerGo.GetComponent<FighterDTG>().SetFighter(fighter);
             playerGo.GetComponent<FighterDTG>().InitFighter();
-            players.Add(fighter.Id, playerGo.GetComponent<FighterDTG>());
+            fighters.Add(fighter.Id, playerGo.GetComponent<FighterDTG>());
         }
         playerGo.name = fighter.Id;
     }
@@ -51,7 +51,17 @@ public class FighterContainerDTG : MonoBehaviour {
 
     public void TeleportFighter(string id, Vector2 position)
     {
+        if (fighters.ContainsKey(id))
+        {
+            FighterDTG fighter = fighters[id];
+            fighter.SetPosition((int)position.x, (int)position.y);
+        }
+    }
 
+
+    public void TeleportMainFighter(Vector2 position)
+    {
+        mainFighter.SetPosition((int)position.x, (int)position.y);
     }
 
 }

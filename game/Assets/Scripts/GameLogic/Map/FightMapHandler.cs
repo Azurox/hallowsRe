@@ -38,7 +38,7 @@ public class FightMapHandler : MonoBehaviour {
             {
                 if(cell.currentCell.X == x && cell.currentCell.Y == y)
                 {
-                    mainFighterEmitter.Teleport(new Vector2(x, y));
+                    mainFighterEmitter.Teleport(new Vector2(x, y), fight.Id);
                     Debug.Log("Movement is legal blue side");
                 }
             }
@@ -48,7 +48,7 @@ public class FightMapHandler : MonoBehaviour {
             {
                 if (cell.currentCell.X == x && cell.currentCell.Y == y)
                 {
-                    mainFighterEmitter.Teleport(new Vector2(x, y));
+                    mainFighterEmitter.Teleport(new Vector2(x, y), fight.Id);
                     Debug.Log("Movement is legal red side");
                 }
             }

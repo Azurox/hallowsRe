@@ -22,9 +22,10 @@ public class MainFighterDTG : MonoBehaviour {
         gameObject.GetComponent<Renderer>().material.color = new Color(255 / 255f, 215 / 255f, 0 / 255f);
     }
 
-    private void SetPosition(int x, int y)
+    public void SetPosition(int x, int y)
     {
         gameObject.transform.position = new Vector3(x, gameObject.transform.position.y, y);
+        fighter.Position = new Vector2(x, y);
     }
 
     private void OnMouseDown()
