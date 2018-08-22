@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class MapReceiver {
 
+    public GlobalMapDTG WorldMapDTG;
     public MapDTG MapDTG;
     public MapHandler MapHandler;
     public PlayerContainerDTG PlayerContainerDTG;
@@ -15,7 +16,8 @@ public class MapReceiver {
     public MapReceiver(SocketIOComponent socket)
     {
         this.socket = socket;
-        MapDTG = Object.FindObjectOfType<MapDTG>();
+        WorldMapDTG = Object.FindObjectOfType<GlobalMapDTG>();
+        MapDTG = WorldMapDTG.GetComponent<MapDTG>();
         MapHandler = MapDTG.GetComponent<MapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         PlayerHandler = PlayerContainerDTG.GetComponent<PlayerHandler>();
@@ -37,8 +39,9 @@ public class MapReceiver {
         string mapName = obj.data["mapName"].str;
         string jsonFile = File.ReadAllText("C:/Project/Public/hallowsRe/game/MapData/" + mapName);
         GameMap map = JsonConvert.DeserializeObject<GameMap>(jsonFile);
-        MapDTG.SetMap(map);
-
+        WorldMapDTG.SetMap(map);
+        WorldMapDTG.ActivateCell();
+        MapDTG.Init();
     }
 
     private void SpawnMainPlayer(SocketIOEvent obj)

@@ -279,6 +279,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 425202452}
+  - component: {fileID: 425202455}
   - component: {fileID: 425202451}
   - component: {fileID: 425202456}
   - component: {fileID: 425202453}
@@ -301,8 +302,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81698c6954c2e744f973a845ca665891, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CellGameObject: {fileID: 1282426563761112, guid: 0c0aedbcb2b24ce4e8b05bd429da0b10,
-    type: 2}
 --- !u!4 &425202452
 Transform:
   m_ObjectHideFlags: 0
@@ -338,6 +337,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ef71e850e623604aa7aebd039f43ec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &425202455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 425202450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3aad00d9bd95c04eb5ef929b428137f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CellGameObject: {fileID: 1282426563761112, guid: 0c0aedbcb2b24ce4e8b05bd429da0b10,
+    type: 2}
 --- !u!114 &425202456
 MonoBehaviour:
   m_ObjectHideFlags: 0

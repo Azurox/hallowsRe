@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FightMapDTG : MonoBehaviour {
 
+    private GameMap currentMap;
     private FightCellDTG[,] cells;
     public List<FightCellDTG> blueCells;
     public List<FightCellDTG> redCells;
@@ -11,25 +12,25 @@ public class FightMapDTG : MonoBehaviour {
 
     public void Init()
     {
-        CellDTG[,] oldCells = GetComponent<MapDTG>().GetCells();
+        currentMap = GetComponent<GlobalMapDTG>().GetMap();
         blueCells = new List<FightCellDTG>();
         redCells = new List<FightCellDTG>();
 
+        var oldCells = GetComponent<GlobalMapDTG>().GetCells();
+      
+        cells = new FightCellDTG[oldCells.GetLength(0), oldCells.GetLength(1)];
 
-        if (cells == null)
-        {
-            cells = new FightCellDTG[oldCells.GetLength(0), oldCells.GetLength(1)];
-        }
 
         for(var i = 0; i < oldCells.GetLength(0); i++)
         {
             for (var j = 0; j < oldCells.GetLength(1); j++)
             {
-                oldCells[i, j].GetComponent<FightCellDTG>().enabled = true;
-                cells[j, i] = oldCells[i, j].GetComponent<FightCellDTG>(); // Check that
-                oldCells[i, j].enabled = false;
+                    cells[i, j] = oldCells[i, j].GetComponent<FightCellDTG>();
             }
         }
+
+        GetComponent<GlobalMapDTG>().ActivateFightCell();
+
     }
 
     public void SetSpawnCell(Side side, Vector2 position, bool taken)

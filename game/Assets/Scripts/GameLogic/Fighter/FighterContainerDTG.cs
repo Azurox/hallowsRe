@@ -24,21 +24,19 @@ public class FighterContainerDTG : MonoBehaviour {
         if (fighter.IsMainPlayer)
         {
             playerGo = Instantiate(MainFighterGameObject);
-            playerGo.transform.parent = gameObject.transform;
+            playerGo.transform.parent = gameObject.transform; // Need to attribute parent as fast as possible otherwhise the Collider is not working ?
             mainFighter = playerGo.GetComponent<MainFighterDTG>();
             mainFighter.SetFighter(fighter);
             mainFighter.InitFighter();
         } else
         {
             playerGo = Instantiate(FighterGameObject);
-            playerGo.transform.parent = gameObject.transform;
+            playerGo.transform.parent = gameObject.transform; // Same.
             playerGo.GetComponent<FighterDTG>().SetFighter(fighter);
             playerGo.GetComponent<FighterDTG>().InitFighter();
             players.Add(fighter.Id, playerGo.GetComponent<FighterDTG>());
         }
         playerGo.name = fighter.Id;
-        //playerGo.transform.parent = gameObject.transform;
-
     }
 
     public MainFighterDTG GetMainFighter()

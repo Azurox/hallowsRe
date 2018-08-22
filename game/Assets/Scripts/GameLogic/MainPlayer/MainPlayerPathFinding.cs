@@ -16,7 +16,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (mapDTG == null)
         {
-            mapDTG = Object.FindObjectOfType<MapDTG>();
+            mapDTG = FindObjectOfType<MapDTG>();
             currentMap = mapDTG.GetMap().cells;
             grid = new Node[currentMap.GetLength(0), currentMap.GetLength(1)];
 
