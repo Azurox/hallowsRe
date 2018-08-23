@@ -11,6 +11,7 @@ public class FightMapReceiver {
     public PlayerContainerDTG PlayerContainerDTG;
     public FighterContainerDTG FighterContainerDTG;
     public FighterHandler FighterHandler;
+    public GlobalUIManager GlobalUIManager;
     private SocketIOComponent socket;
     private Fight Fight;
 
@@ -23,6 +24,8 @@ public class FightMapReceiver {
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         FighterContainerDTG = Object.FindObjectOfType<FighterContainerDTG>();
         FighterHandler = FighterContainerDTG.GetComponent<FighterHandler>();
+        GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
+
 
         FighterContainerDTG.gameObject.SetActive(false);
         InitSocket();
@@ -63,6 +66,10 @@ public class FightMapReceiver {
 
         }
 
+        GlobalUIManager.SwitchToFightUI();
+        GlobalUIManager.FightUIManager.SetUIPhase0();
+        GlobalUIManager.FightUIManager.UpdateFightTimeline(Fight.GetFighters());
+        GlobalUIManager.FightUIManager.ShowFighterStats(Fight.GetMainFighter());
     }
 
     private void TeleportPreFight(SocketIOEvent obj)

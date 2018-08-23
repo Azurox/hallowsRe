@@ -12,6 +12,7 @@ public class Fight {
     public int phase = 0;
     private List<Fighter> fightersBlue = new List<Fighter>();
     private List<Fighter> fightersRed = new List<Fighter>();
+    private Fighter mainFighter;
 
 
 
@@ -36,6 +37,11 @@ public class Fight {
             {
                 fightersRed.Add(fighter);
             }
+
+            if (fighter.IsMainPlayer)
+            {
+                mainFighter = fighter;
+            }
         }
     }
 
@@ -43,5 +49,10 @@ public class Fight {
     {
 
         return fightersBlue.Concat(fightersRed).ToList();
+    }
+
+    public Fighter GetMainFighter()
+    {
+        return mainFighter;
     }
 }

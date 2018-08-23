@@ -14,13 +14,13 @@ public class GlobalUIManager : MonoBehaviour {
 	
 	public void SwitchToFightUI()
     {
-        FightUIManager.gameObject.SetActive(true);
-        WorldUIManager.gameObject.SetActive(false);
+        WorldUIManager.GetComponent<Canvas>().enabled = false;
+        FightUIManager.GetComponent<Canvas>().enabled = true;
     }
 
-    public void SwitchToWorldtUI()
+    public void SwitchToWorldUI()
     {
-        WorldUIManager.gameObject.SetActive(true);
-        FightUIManager.gameObject.SetActive(false);
+        WorldUIManager.GetComponent<Canvas>().enabled = true;
+        FightUIManager.GetComponent<Canvas>().enabled = false;
     }
 }
