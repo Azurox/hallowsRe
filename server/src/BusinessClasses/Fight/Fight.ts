@@ -129,7 +129,10 @@ export default class Fight {
     }
     throw Error("Fighter not found");
   }
+
   teleportPlayerPhase0(fighter: Fighter, position: Position) {
+    if (this.phase != 0 ) return;
+
     if (fighter.side == "blue") {
       for (let i = 0; i < this.blueCells.length; i++) {
         if (
