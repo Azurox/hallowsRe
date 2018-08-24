@@ -6,24 +6,28 @@ using UnityEngine;
 public class FightUIManager : MonoBehaviour {
 
     public GameObject ReadyButton;
+    public GameObject FinishTurnButton;
     public TimelineUIComponent TimelineUIComponent;
     public StatsUIComponent StatsUIComponent;
+    private MainFighterEmitter MainFighterEmitter;
 
 
 
-    public void Init()
+    public void Init(MainFighterEmitter mainFighterEmitter)
     {
-
+        MainFighterEmitter = mainFighterEmitter;
     }
 
     public void SetUIPhase0()
     {
         ReadyButton.SetActive(true);
+        FinishTurnButton.SetActive(false);
     }
 
     public void SetUIPhase1()
     {
         ReadyButton.SetActive(false);
+        FinishTurnButton.SetActive(true);
     }
 
 
@@ -37,17 +41,22 @@ public class FightUIManager : MonoBehaviour {
         TimelineUIComponent.UpdateFightTimeline(fighters);
     }
 
+    public void HighlightFighter(string id)
+    {
+        TimelineUIComponent.HighlightFighter(id);
+    }
+
 
     /* UI Action */
 
     public void FinishTurn()
     {
-        Debug.Log("finish turn");
+        MainFighterEmitter.FinishTurn();
     }
 
 	public void SetReady()
     {
-        Debug.Log("ready");
+        MainFighterEmitter.Ready();
     }
 
 }

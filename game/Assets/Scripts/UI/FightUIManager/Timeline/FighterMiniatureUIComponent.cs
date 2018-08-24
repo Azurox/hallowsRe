@@ -39,6 +39,11 @@ public class FighterMiniatureUIComponent : MonoBehaviour {
         }
     }
 
+    public Fighter GetFighter()
+    {
+        return fighter;
+    }
+
     public void HighlightBorder(bool highlight)
     {
         if (highlight)

@@ -33,4 +33,19 @@ public class TimelineUIComponent : MonoBehaviour {
             Timeline.Add(min);
         }
     }
+
+    public void HighlightFighter(string id)
+    {
+        foreach (var fighterMin in Timeline)
+        {
+            if(fighterMin.GetFighter().Id == id)
+            {
+                fighterMin.HighlightBorder(true);
+            }
+            else
+            {
+                fighterMin.HighlightBorder(false);
+            }
+        }
+    }
 }

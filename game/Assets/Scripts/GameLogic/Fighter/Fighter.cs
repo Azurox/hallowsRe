@@ -11,6 +11,7 @@ public class Fighter {
     public int Order { get; set; }
     public bool IsMainPlayer { get; set; }
     public Side Side { get; set; }
+    public bool Ready { get; set; }
 
     public Fighter(JSONObject data)
     {
@@ -21,5 +22,6 @@ public class Fighter {
         IsMainPlayer = data["isMainPlayer"] != null ? data["isMainPlayer"].b : false;
         Side = data["side"] != null ? (Side)System.Enum.Parse(typeof(Side), data["side"].str) : Side.blue;
         Position = new Vector2(data["position"]["x"].n, data["position"]["y"].n);
+        Ready = false;
     }
 }

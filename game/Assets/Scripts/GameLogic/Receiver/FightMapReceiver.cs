@@ -12,6 +12,7 @@ public class FightMapReceiver {
     public FighterContainerDTG FighterContainerDTG;
     public FighterHandler FighterHandler;
     public GlobalUIManager GlobalUIManager;
+    public FightUIManager FightUIManager;
     private SocketIOComponent socket;
     private Fight Fight;
 
@@ -25,7 +26,7 @@ public class FightMapReceiver {
         FighterContainerDTG = Object.FindObjectOfType<FighterContainerDTG>();
         FighterHandler = FighterContainerDTG.GetComponent<FighterHandler>();
         GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
-
+        FightUIManager = GlobalUIManager.GetFightUIManager();
 
         FighterContainerDTG.gameObject.SetActive(false);
         InitSocket();
@@ -35,6 +36,9 @@ public class FightMapReceiver {
     {
         socket.On("fightStarted", FightStarted);
         socket.On("teleportPreFight", TeleportPreFight);
+        socket.On("setReady", SetReady);
+        socket.On("fightPhase1", FightPhase1);
+        socket.On("nextTurn", NextTurn);
     }
 
     private void FightStarted(SocketIOEvent obj)
@@ -46,7 +50,11 @@ public class FightMapReceiver {
 
         FighterContainerDTG.Init(Fight.GetFighters());
         FightMapDTG.Init();
-        FightMapHandler.Init(FighterContainerDTG.GetMainFighter(), FightMapDTG, Fight);
+        var mainFighterDTG = FighterContainerDTG.GetMainFighter();
+        var mainFighterEmitter = mainFighterDTG.GetComponent<MainFighterEmitter>();
+        mainFighterEmitter.Init(Fight.Id);
+
+        FightMapHandler.Init(mainFighterDTG, FightMapDTG, Fight);
         FighterHandler.SetMainFighter(FighterContainerDTG.GetMainFighter());
 
         var blueCells = obj.data["blueCells"];
@@ -67,9 +75,10 @@ public class FightMapReceiver {
         }
 
         GlobalUIManager.SwitchToFightUI();
-        GlobalUIManager.FightUIManager.SetUIPhase0();
-        GlobalUIManager.FightUIManager.UpdateFightTimeline(Fight.GetFighters());
-        GlobalUIManager.FightUIManager.ShowFighterStats(Fight.GetMainFighter());
+        FightUIManager.Init(mainFighterEmitter);
+        FightUIManager.SetUIPhase0();
+        FightUIManager.UpdateFightTimeline(Fight.GetFighters());
+        FightUIManager.ShowFighterStats(Fight.GetMainFighter());
     }
 
     private void TeleportPreFight(SocketIOEvent obj)
@@ -87,6 +96,34 @@ public class FightMapReceiver {
         {
             FighterContainerDTG.TeleportFighter(id, position);
         }
+    }
+
+    private void SetReady(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Debug.Log(id + " is ready");
+        foreach (var fighter in Fight.GetFighters())
+        {
+            if(fighter.Id == id)
+            {
+                fighter.Ready = true;
+            }
+        }
+    }
+
+    private void FightPhase1(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Debug.Log("is " + id + " turn ");
+        FightUIManager.SetUIPhase1();
+        FightUIManager.HighlightFighter(id);
+    }
+
+    private void NextTurn(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Debug.Log("is " + id + " turn ");
+        FightUIManager.HighlightFighter(id);
     }
 
     private void FightFinished()

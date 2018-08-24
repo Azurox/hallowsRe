@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GlobalUIManager : MonoBehaviour {
 
-    public FightUIManager FightUIManager;
-    public WorldUIManager WorldUIManager;
+    private FightUIManager FightUIManager;
+    private WorldUIManager WorldUIManager;
 
     void Start () {
         FightUIManager = GetComponentInChildren<FightUIManager>();
@@ -22,5 +22,15 @@ public class GlobalUIManager : MonoBehaviour {
     {
         WorldUIManager.GetComponent<Canvas>().enabled = true;
         FightUIManager.GetComponent<Canvas>().enabled = false;
+    }
+
+    public FightUIManager GetFightUIManager()
+    {
+        return FightUIManager;
+    }
+
+    public WorldUIManager GetWorldUIManager()
+    {
+        return WorldUIManager;
     }
 }

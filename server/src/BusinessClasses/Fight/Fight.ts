@@ -7,7 +7,7 @@ import { IPlayer } from "../../Schema/Player";
 export default class Fight {
   /* CONST */
   PREPARATION_TIME: number = 90;
-  TURN_TIME: number = 90;
+  TURN_TIME: number = 30;
   MAX_MEMBER_BY_SIDE: number = 4;
 
   io: SocketIO.Server;
@@ -20,6 +20,7 @@ export default class Fight {
   clock: number = 0;
   blueCells: { position: Position; taken: boolean }[];
   redCells: { position: Position; taken: boolean }[];
+  acceptedId: string;
 
   constructor(io: SocketIO.Server, map: IMap) {
     this.io = io;
@@ -112,12 +113,12 @@ export default class Fight {
 
     if (this.phase == 0) {
       if (this.clock > this.PREPARATION_TIME) {
-        this.phase = 1;
-        this.clock = 0;
-        console.log("Entered in phase 1");
+        this.startFightPhase1();
       }
     } else {
-      // Check if the clock is > of max turn time;
+      if (this.clock > this.TURN_TIME) {
+        this.nextTurn();
+      }
     }
   }
 
@@ -131,7 +132,7 @@ export default class Fight {
   }
 
   teleportPlayerPhase0(fighter: Fighter, position: Position) {
-    if (this.phase != 0 ) return;
+    if (this.phase != 0) return;
 
     if (fighter.side == "blue") {
       for (let i = 0; i < this.blueCells.length; i++) {
@@ -174,5 +175,60 @@ export default class Fight {
         }
       }
     }
+  }
+
+  setFighterReady(id: string) {
+    const fighter = this.retrieveFighterFromPlayerId(id);
+    fighter.ready = true;
+    if (this.checkEveryFighterReady()) {
+      this.startFightPhase1();
+    } else {
+      this.io.to(this.id).emit("setReady", { playerId: fighter.player.id });
+    }
+  }
+
+  checkEveryFighterReady(): boolean {
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      if (!this.fightOrder[i].ready) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  startFightPhase1() {
+    console.log("Entered in phase 1");
+    this.clock = 0;
+    this.phase = 1;
+
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      this.fightOrder[i].ready = true;
+    }
+
+    this.acceptedId = this.fightOrder[0].player.id;
+    this.io.to(this.id).emit("fightPhase1", { playerId: this.acceptedId });
+  }
+
+  checkPlayerTurn(id: string): boolean {
+    if (this.acceptedId == id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  nextTurn() {
+    this.clock = 0;
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      if (this.fightOrder[i].player.id == this.acceptedId) {
+        if (i + 1 < this.fightOrder.length) {
+          this.acceptedId = this.fightOrder[i + 1].player.id;
+        } else {
+          this.acceptedId = this.fightOrder[0].player.id;
+        }
+        break;
+      }
+    }
+    this.io.to(this.id).emit("nextTurn", { playerId: this.acceptedId });
   }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FightMapHandler : MonoBehaviour {
 
@@ -38,7 +36,7 @@ public class FightMapHandler : MonoBehaviour {
             {
                 if(cell.currentCell.X == x && cell.currentCell.Y == y)
                 {
-                    mainFighterEmitter.Teleport(new Vector2(x, y), fight.Id);
+                    mainFighterEmitter.Teleport(new Vector2(x, y));
                     Debug.Log("Movement is legal blue side");
                 }
             }
@@ -48,7 +46,7 @@ public class FightMapHandler : MonoBehaviour {
             {
                 if (cell.currentCell.X == x && cell.currentCell.Y == y)
                 {
-                    mainFighterEmitter.Teleport(new Vector2(x, y), fight.Id);
+                    mainFighterEmitter.Teleport(new Vector2(x, y));
                     Debug.Log("Movement is legal red side");
                 }
             }
