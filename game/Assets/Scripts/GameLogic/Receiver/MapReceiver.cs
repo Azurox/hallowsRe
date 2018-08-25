@@ -11,6 +11,7 @@ public class MapReceiver {
     public MapHandler MapHandler;
     public PlayerContainerDTG PlayerContainerDTG;
     public PlayerHandler PlayerHandler;
+    public GlobalUIManager GlobalUIManager;
     private SocketIOComponent socket;
 
     public MapReceiver(SocketIOComponent socket)
@@ -21,6 +22,8 @@ public class MapReceiver {
         MapHandler = MapDTG.GetComponent<MapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         PlayerHandler = PlayerContainerDTG.GetComponent<PlayerHandler>();
+        GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
+
         InitSocket();
     }
 
@@ -42,6 +45,7 @@ public class MapReceiver {
         WorldMapDTG.SetMap(map);
         WorldMapDTG.ActivateCell();
         MapDTG.Init();
+        GlobalUIManager.SwitchToWorldUI();
     }
 
     private void SpawnMainPlayer(SocketIOEvent obj)

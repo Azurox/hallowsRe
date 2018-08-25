@@ -11,6 +11,8 @@ public class FightMapReceiver {
     public PlayerContainerDTG PlayerContainerDTG;
     public FighterContainerDTG FighterContainerDTG;
     public FighterHandler FighterHandler;
+    public GlobalUIManager GlobalUIManager;
+    public FightUIManager FightUIManager;
     private SocketIOComponent socket;
     private Fight Fight;
 
@@ -23,6 +25,8 @@ public class FightMapReceiver {
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         FighterContainerDTG = Object.FindObjectOfType<FighterContainerDTG>();
         FighterHandler = FighterContainerDTG.GetComponent<FighterHandler>();
+        GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
+        FightUIManager = GlobalUIManager.GetFightUIManager();
 
         FighterContainerDTG.gameObject.SetActive(false);
         InitSocket();
@@ -32,6 +36,9 @@ public class FightMapReceiver {
     {
         socket.On("fightStarted", FightStarted);
         socket.On("teleportPreFight", TeleportPreFight);
+        socket.On("setReady", SetReady);
+        socket.On("fightPhase1", FightPhase1);
+        socket.On("nextTurn", NextTurn);
     }
 
     private void FightStarted(SocketIOEvent obj)
@@ -41,9 +48,13 @@ public class FightMapReceiver {
         FighterContainerDTG.gameObject.SetActive(true);
         Fight = new Fight(socket, obj);
 
-        FighterContainerDTG.Init(Fight.GetFighters());
+        FighterContainerDTG.Init(FightUIManager, Fight.GetFighters());
         FightMapDTG.Init();
-        FightMapHandler.Init(FighterContainerDTG.GetMainFighter(), FightMapDTG, Fight);
+        var mainFighterDTG = FighterContainerDTG.GetMainFighter();
+        var mainFighterEmitter = mainFighterDTG.GetComponent<MainFighterEmitter>();
+        mainFighterEmitter.Init(Fight.Id);
+
+        FightMapHandler.Init(mainFighterDTG, FightMapDTG, Fight);
         FighterHandler.SetMainFighter(FighterContainerDTG.GetMainFighter());
 
         var blueCells = obj.data["blueCells"];
@@ -63,15 +74,28 @@ public class FightMapReceiver {
 
         }
 
+        GlobalUIManager.SwitchToFightUI();
+        FightUIManager.Init(mainFighterEmitter);
+        FightUIManager.SetUIPhase0();
+        FightUIManager.UpdateFightTimeline(Fight.GetFighters());
+        FightUIManager.ShowFighterStats(Fight.GetMainFighter());
     }
 
     private void TeleportPreFight(SocketIOEvent obj)
     {
         string id = obj.data["playerId"].str;
         Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
-        Vector2 oldPosition = FighterContainerDTG.GetMainFighter().GetFighter().Position;
-        FightMapDTG.SetCellAvailability(position, true);
-        FightMapDTG.SetCellAvailability(oldPosition, false);
+
+        foreach (var fighter in Fight.GetFighters())
+        {
+            if (fighter.Id == id)
+            {
+                Vector2 oldPosition = fighter.Position;
+                FightMapDTG.SetCellAvailability(position, true);
+                FightMapDTG.SetCellAvailability(oldPosition, false);
+            }
+        }
+
         if(FighterContainerDTG.GetMainFighter().GetFighter().Id == id)
         {
             FighterContainerDTG.TeleportMainFighter(position);
@@ -80,6 +104,36 @@ public class FightMapReceiver {
         {
             FighterContainerDTG.TeleportFighter(id, position);
         }
+    }
+
+    private void SetReady(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Debug.Log(id + " is ready");
+        foreach (var fighter in Fight.GetFighters())
+        {
+            if(fighter.Id == id)
+            {
+                fighter.Ready = true;
+                if (fighter.IsMainPlayer) FightUIManager.ActivateReadyButton(false);
+            }
+        }
+    }
+
+    private void FightPhase1(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Debug.Log("is " + id + " turn ");
+        FightMapDTG.ResetDirtyCells();
+        FightUIManager.SetUIPhase1();
+        FightUIManager.HighlightFighter(id);
+    }
+
+    private void NextTurn(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Debug.Log("is " + id + " turn ");
+        FightUIManager.HighlightFighter(id);
     }
 
     private void FightFinished()

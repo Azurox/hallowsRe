@@ -8,11 +8,12 @@ public class FightMapDTG : MonoBehaviour {
     private FightCellDTG[,] cells;
     public List<FightCellDTG> blueCells;
     public List<FightCellDTG> redCells;
-
+    private List<Vector2> dirtyCells;
 
     public void Init()
     {
         currentMap = GetComponent<GlobalMapDTG>().GetMap();
+        dirtyCells = new List<Vector2>();
         blueCells = new List<FightCellDTG>();
         redCells = new List<FightCellDTG>();
 
@@ -38,17 +39,27 @@ public class FightMapDTG : MonoBehaviour {
         SetCellAvailability(position, taken);
         if(side == Side.blue)
         {
-            cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(0, 0, 255);
+            cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(0, 0, 1);
             blueCells.Add(cells[(int)position.x, (int)position.y]);
         }else
         {
-            cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(255, 0, 0);
+            cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(1, 0, 0);
             redCells.Add(cells[(int)position.x, (int)position.y]);
         }
+        dirtyCells.Add(position);
     }
 
     public void SetCellAvailability(Vector2 position, bool taken)
     {
         cells[(int)position.x, (int)position.y].taken = taken;
+    }
+
+    public void ResetDirtyCells()
+    {
+        foreach (var cell in dirtyCells)
+        {
+            cells[(int)cell.x, (int)cell.y].GetComponent<Renderer>().material.color = new Color(1, 1, 1);
+        }
+        dirtyCells.Clear();
     }
 }
