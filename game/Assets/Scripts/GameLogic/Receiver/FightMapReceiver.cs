@@ -48,7 +48,7 @@ public class FightMapReceiver {
         FighterContainerDTG.gameObject.SetActive(true);
         Fight = new Fight(socket, obj);
 
-        FighterContainerDTG.Init(Fight.GetFighters());
+        FighterContainerDTG.Init(FightUIManager, Fight.GetFighters());
         FightMapDTG.Init();
         var mainFighterDTG = FighterContainerDTG.GetMainFighter();
         var mainFighterEmitter = mainFighterDTG.GetComponent<MainFighterEmitter>();

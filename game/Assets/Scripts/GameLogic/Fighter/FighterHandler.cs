@@ -14,4 +14,9 @@ public class FighterHandler : MonoBehaviour {
     {
         mainFighter.ClickOnFighter(fighter);
     }
+
+    public void MouseOverFighter(Fighter fighter)
+    {
+        GetComponent<FighterContainerDTG>().FocusFighter(fighter);
+    }
 }

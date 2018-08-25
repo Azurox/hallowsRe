@@ -6,16 +6,18 @@ public class FighterContainerDTG : MonoBehaviour {
 
     public GameObject FighterGameObject;
     public GameObject MainFighterGameObject;
+    private FightUIManager FightUIManager;
     private Dictionary<string, FighterDTG> fighters = new Dictionary<string, FighterDTG>();
     private MainFighterDTG mainFighter;
 
 
-    public void Init(List<Fighter> fighters)
+    public void Init(FightUIManager fightUIManager, List<Fighter> fighters)
     {
         foreach (var fighter in fighters)
         {
             SpawnFighter(fighter);
         }
+        FightUIManager = fightUIManager;
     }
 
     public void SpawnFighter(Fighter fighter)
@@ -62,6 +64,11 @@ public class FighterContainerDTG : MonoBehaviour {
     public void TeleportMainFighter(Vector2 position)
     {
         mainFighter.SetPosition((int)position.x, (int)position.y);
+    }
+
+    public void FocusFighter(Fighter fighter)
+    {
+        FightUIManager.ShowFighterStats(fighter);
     }
 
 }

@@ -33,4 +33,9 @@ public class FighterDTG : MonoBehaviour {
     {
         transform.parent.GetComponent<FighterHandler>().ClickOnFighter(fighter);
     }
+
+    private void OnMouseEnter()
+    {
+        transform.parent.GetComponent<FighterHandler>().MouseOverFighter(fighter);
+    }
 }

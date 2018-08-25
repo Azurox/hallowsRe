@@ -32,4 +32,9 @@ public class MainFighterDTG : MonoBehaviour {
     {
         Debug.Log("Clicked on self");
     }
+
+    private void OnMouseEnter()
+    {
+        transform.parent.GetComponent<FighterHandler>().MouseOverFighter(fighter);
+    }
 }
