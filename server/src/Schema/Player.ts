@@ -11,7 +11,7 @@ export interface IPlayer extends Mongoose.Document {
   position: { x: number; y: number };
   isMoving: boolean;
   path: Position[];
-  stats: [Mongoose.Types.ObjectId | IStats];
+  stats: IStats;
 }
 
 export const PlayerSchema = new Mongoose.Schema({

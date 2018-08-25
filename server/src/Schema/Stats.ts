@@ -8,8 +8,6 @@ export interface IStats extends Mongoose.Document {
   attackDamage: number;
   movementPoint: number;
   actionPoint: number;
-
-  resetStats(): void;
 }
 
 export const StatsSchema = new Mongoose.Schema({

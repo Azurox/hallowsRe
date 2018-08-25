@@ -5,23 +5,52 @@ using UnityEngine;
 public class Fighter {
     public string Name { get; set; }
     public string Id { get; set; }
-    public int MaxLife { get; set; }
-    public int Life { get; set; }
     public Vector2 Position { get; set; }
-    public int Order { get; set; }
     public bool IsMainPlayer { get; set; }
     public Side Side { get; set; }
     public bool Ready { get; set; }
+
+    #region stats
+    public int Life { get; set; }
+    public int CurrentLife { get; set; }
+    public int Speed { get; set; }
+    public int CurrentSpeed { get; set; }
+    public int Armor { get; set; }
+    public int CurrentArmor { get; set; }
+    public int MagicResistance { get; set; }
+    public int CurrentMagicResistance { get; set; }
+    public int AttackDamage { get; set; }
+    public int CurrentAttackDamage { get; set; }
+    public int MovementPoint { get; set; }
+    public int CurrentMovementPoint { get; set; }
+    public int ActionPoint { get; set; }
+    public int CurrentActionPoint { get; set; }
+    #endregion
 
     public Fighter(JSONObject data)
     {
         Name = data["name"] != null ? data["name"].str : null;
         Id = data["id"] != null ? data["id"].str : null;
-        MaxLife = data["maxLife"] != null ? (int)data["maxLife"].n : 0;
-        Life = data["Life"] != null ? (int)data["Life"].n : 0;
         IsMainPlayer = data["isMainPlayer"] != null ? data["isMainPlayer"].b : false;
         Side = data["side"] != null ? (Side)System.Enum.Parse(typeof(Side), data["side"].str) : Side.blue;
         Position = new Vector2(data["position"]["x"].n, data["position"]["y"].n);
         Ready = false;
+
+        #region stats
+        Life = data["life"] != null ? (int)data["life"].n : 0;
+        CurrentLife = data["currentLife"] != null ? (int)data["currentLife"].n : 0;
+        Speed = data["speed"] != null ? (int)data["speed"].n : 0;
+        CurrentSpeed = Speed;
+        Armor = data["armor"] != null ? (int)data["armor"].n : 0;
+        CurrentArmor = Armor;
+        MagicResistance = data["magicResistance"] != null ? (int)data["magicResistance"].n : 0;
+        CurrentMagicResistance = MagicResistance;
+        AttackDamage = data["attackDamage"] != null ? (int)data["attackDamage"].n : 0;
+        CurrentAttackDamage = AttackDamage;
+        MovementPoint = data["movementPoint"] != null ? (int)data["movementPoint"].n : 0;
+        CurrentMovementPoint = MovementPoint;
+        ActionPoint = data["actionPoint"] != null ? (int)data["actionPoint"].n : 0;
+        CurrentActionPoint = ActionPoint;
+        #endregion
     }
 }

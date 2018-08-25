@@ -42,11 +42,8 @@ export default class Fight {
   }
 
   orderFighter() {
-    // TODO: Order by speed
     this.fightOrder = this.blueTeam.concat(this.redTeam);
-    for (let i = 0; i < this.fightOrder.length; i++) {
-      this.fightOrder[i].order = i;
-    }
+    this.fightOrder.sort((a, b) => b.speed - a.speed);
   }
 
   placeFighter() {
@@ -89,9 +86,14 @@ export default class Fight {
             name: fighter.player.name,
             position: fighter.position,
             side: fighter.side,
-            order: fighter.order,
             life: fighter.life,
-            maxLife: fighter.maxLife
+            currentLife: fighter.currentLife,
+            speed: fighter.speed,
+            armor: fighter.armor,
+            magicResistance: fighter.magicResistance,
+            attackDamage: fighter.attackDamage,
+            movementPoint: fighter.movementPoint,
+            actionPoint: fighter.actionPoint
           };
         }),
         id: this.id,

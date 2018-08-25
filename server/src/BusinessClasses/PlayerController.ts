@@ -25,7 +25,7 @@ export default class PlayerController {
   async RetrievePlayers(ids: string[]): Promise<IPlayer[]> {
     const players: IPlayer[] = [];
     for (let i = 0; i < ids.length; i++) {
-      players.push(await Player.findById(mongoose.Types.ObjectId(ids[i])));
+      players.push(await Player.findById(mongoose.Types.ObjectId(ids[i])).populate("stats"));
     }
     return players;
   }

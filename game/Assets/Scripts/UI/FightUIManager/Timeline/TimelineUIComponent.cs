@@ -17,7 +17,7 @@ public class TimelineUIComponent : MonoBehaviour {
 
     public void UpdateFightTimeline(List<Fighter> fighters)
     {
-        List<Fighter> sortedFighters = fighters.OrderBy(f => f.Order).ToList();
+        List<Fighter> sortedFighters = fighters.OrderByDescending(f => f.Speed).ToList();
         foreach(var go in Timeline)
         {
             Destroy(go);
