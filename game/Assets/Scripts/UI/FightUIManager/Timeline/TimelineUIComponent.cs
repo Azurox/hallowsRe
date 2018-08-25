@@ -34,18 +34,21 @@ public class TimelineUIComponent : MonoBehaviour {
         }
     }
 
-    public void HighlightFighter(string id)
+    public bool HighlightFighter(string id)
     {
+        var isMainPlayer = false;
         foreach (var fighterMin in Timeline)
         {
             if(fighterMin.GetFighter().Id == id)
             {
                 fighterMin.HighlightBorder(true);
+                if (fighterMin.GetFighter().IsMainPlayer) isMainPlayer = true;
             }
             else
             {
                 fighterMin.HighlightBorder(false);
             }
         }
+        return isMainPlayer;
     }
 }

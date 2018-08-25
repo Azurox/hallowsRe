@@ -20,14 +20,25 @@ public class FightUIManager : MonoBehaviour {
 
     public void SetUIPhase0()
     {
-        ReadyButton.SetActive(true);
-        FinishTurnButton.SetActive(false);
+        ActivateReadyButton(true);
+        ActivateFinishTurnButton(false);
     }
 
     public void SetUIPhase1()
     {
-        ReadyButton.SetActive(false);
-        FinishTurnButton.SetActive(true);
+        ActivateReadyButton(false);
+        ActivateFinishTurnButton(true);
+    }
+
+    public void ActivateReadyButton(bool activate)
+    {
+        ReadyButton.SetActive(activate);
+    }
+
+    public void ActivateFinishTurnButton(bool activate)
+    {
+        FinishTurnButton.SetActive(activate);
+
     }
 
 
@@ -43,7 +54,15 @@ public class FightUIManager : MonoBehaviour {
 
     public void HighlightFighter(string id)
     {
-        TimelineUIComponent.HighlightFighter(id);
+        var isMainPlayer = TimelineUIComponent.HighlightFighter(id);
+        if (isMainPlayer)
+        {
+            ActivateFinishTurnButton(true);
+        }
+        else
+        {
+            ActivateFinishTurnButton(false);
+        }
     }
 
 

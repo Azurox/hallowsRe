@@ -107,6 +107,7 @@ public class FightMapReceiver {
             if(fighter.Id == id)
             {
                 fighter.Ready = true;
+                if (fighter.IsMainPlayer) FightUIManager.ActivateReadyButton(false);
             }
         }
     }
