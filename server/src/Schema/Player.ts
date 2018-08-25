@@ -1,5 +1,7 @@
 import Mongoose from "mongoose";
 import Position from "../BusinessClasses/RelationalObject/Position";
+import { IStats } from "./Stats";
+
 export interface IPlayer extends Mongoose.Document {
   _id: Mongoose.Types.ObjectId;
   socketId: string;
@@ -9,6 +11,7 @@ export interface IPlayer extends Mongoose.Document {
   position: { x: number; y: number };
   isMoving: boolean;
   path: Position[];
+  stats: [Mongoose.Types.ObjectId | IStats];
 }
 
 export const PlayerSchema = new Mongoose.Schema({
@@ -18,7 +21,8 @@ export const PlayerSchema = new Mongoose.Schema({
   mapName: String,
   position: { x: Number, y: Number },
   isMoving: Boolean,
-  path: [{ x: Number, y: Number }]
+  path: [{ x: Number, y: Number }],
+  stats: { type: Mongoose.Schema.Types.ObjectId, ref: "Stats" }
 });
 
 const Player = Mongoose.model<IPlayer>("Player", PlayerSchema);

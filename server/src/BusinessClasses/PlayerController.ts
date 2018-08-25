@@ -17,6 +17,7 @@ export default class PlayerController {
     const randomAccount = await Account.findOne().populate("players");
     socket.player = <IPlayer>randomAccount.players[this.pair % 2];
     socket.player.socketId = socket.id;
+    await socket.player.populate("stats").execPopulate();
     await socket.player.save();
     this.pair++;
   }
