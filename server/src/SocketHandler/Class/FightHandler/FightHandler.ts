@@ -37,7 +37,7 @@ export default class FightHandler {
     const fight = this.F.retrieveFight(data.fightId);
     try {
       const fighter = fight.retrieveFighterFromPlayerId(this.socket.player.id);
-      fight.teleportPlayerPhase0(fighter, new Position(data.x, data.y));
+      if (!fighter.ready) fight.teleportPlayerPhase0(fighter, new Position(data.x, data.y));
     } catch (error) {
       console.log(error);
     }

@@ -85,9 +85,17 @@ public class FightMapReceiver {
     {
         string id = obj.data["playerId"].str;
         Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
-        Vector2 oldPosition = FighterContainerDTG.GetMainFighter().GetFighter().Position;
-        FightMapDTG.SetCellAvailability(position, true);
-        FightMapDTG.SetCellAvailability(oldPosition, false);
+
+        foreach (var fighter in Fight.GetFighters())
+        {
+            if (fighter.Id == id)
+            {
+                Vector2 oldPosition = fighter.Position;
+                FightMapDTG.SetCellAvailability(position, true);
+                FightMapDTG.SetCellAvailability(oldPosition, false);
+            }
+        }
+
         if(FighterContainerDTG.GetMainFighter().GetFighter().Id == id)
         {
             FighterContainerDTG.TeleportMainFighter(position);
@@ -116,6 +124,7 @@ public class FightMapReceiver {
     {
         string id = obj.data["playerId"].str;
         Debug.Log("is " + id + " turn ");
+        FightMapDTG.ResetDirtyCells();
         FightUIManager.SetUIPhase1();
         FightUIManager.HighlightFighter(id);
     }
