@@ -32,6 +32,24 @@ public class FightCellDTG : MonoBehaviour {
         }
     }
 
+    public void OnMouseEnter()
+    {
+        if (!enabled) return;
+        if (currentCell.IsAccessible && taken == false)
+        {
+            transform.parent.GetComponent<FightMapHandler>().MouseOverCell(currentCell.X, currentCell.Y);
+        }
+    }
+
+    public void OnMouseExit()
+    {
+        if (!enabled) return;
+        if (currentCell.IsAccessible && taken == false)
+        {
+            transform.parent.GetComponent<FightMapHandler>().MouseLeftCell(currentCell.X, currentCell.Y);
+        }
+    }
+
     public void AddColor(Color color, int priority)
     {
         cellColors.Add(new CellColor(color, priority));

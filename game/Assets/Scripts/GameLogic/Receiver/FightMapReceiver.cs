@@ -35,7 +35,7 @@ public class FightMapReceiver {
         MainFighterHandler.Startup(FightMapHandler);
         FighterHandler.Startup(FightMapHandler);
         FighterContainerDTG.Startup(FightUIManager);
-        FightMapHandler.Startup(FightMapDTG);
+        FightMapHandler.Startup(FighterContainerDTG);
 
         FighterContainerDTG.gameObject.SetActive(false);
         InitSocket();
@@ -131,6 +131,7 @@ public class FightMapReceiver {
 
     private void FightPhase1(SocketIOEvent obj)
     {
+        Fight.phase = 1;
         string id = obj.data["playerId"].str;
         Debug.Log("is " + id + " turn ");
         FightMapDTG.ResetSpawnCells();

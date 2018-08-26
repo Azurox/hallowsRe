@@ -9,6 +9,8 @@ public class FightMapDTG : MonoBehaviour {
     private readonly Color BLUE_COLOR = new Color(1, 0, 0);
     private readonly Color RED_COLOR = new Color(1, 0, 0);
     private readonly Color GREEN_COLOR = new Color(144/255f, 238/255f, 144/255f);
+    private readonly Color ORANGE_COLOR = new Color(255 / 255f, 207 / 255f, 158 / 255f);
+
 
 
 
@@ -18,6 +20,8 @@ public class FightMapDTG : MonoBehaviour {
     public List<FightCellDTG> redCells = new List<FightCellDTG>();
     private List<Vector2> dirtySpawnCells = new List<Vector2>();
     private List<Vector2> dirtyMovementRangeCells = new List<Vector2>();
+    private List<Vector2> dirtyPathCells = new List<Vector2>();
+
 
 
     public void Init()
@@ -39,6 +43,11 @@ public class FightMapDTG : MonoBehaviour {
 
         GetComponent<GlobalMapDTG>().ActivateFightCell();
 
+    }
+
+    public FightCellDTG[,] GetCells()
+    {
+        return cells;
     }
 
     public void SetSpawnCell(Side side, Vector2 position, bool taken)
@@ -80,74 +89,34 @@ public class FightMapDTG : MonoBehaviour {
 
     public void SetCellMovementColor(Vector2 position)
     {
-        cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = GREEN_COLOR;
+        cells[(int)position.x, (int)position.y].AddColor(GREEN_COLOR, 30);
         dirtyMovementRangeCells.Add(position);
     }
 
-    public void ResetMovementCell()
+    public void ResetMovementCells()
     {
-        foreach (var cell in dirtyMovementRangeCells.ToList()) // ToList is here to allow Remove while iterating on the list.
+        foreach (var cell in dirtyMovementRangeCells) // ToList is here to allow Remove while iterating on the list.
         {
             cells[(int)cell.x, (int)cell.y].RemoveColor(GREEN_COLOR);
-            dirtyMovementRangeCells.Remove(cell);
         }
+        dirtyMovementRangeCells.Clear();
     }
 
-    public List<FightCellDTG> FindRange(Vector2 startPosition, int range)
+    public void HighlightPath(List<Vector2> positions)
     {
-        var total = FindRange(cells[(int)startPosition.x, (int)startPosition.y], range);
-        return total.ToList();
+        foreach (var position in positions)
+        {
+            cells[(int)position.x, (int)position.y].AddColor(ORANGE_COLOR, 30);
+        }
+        dirtyPathCells.AddRange(positions);
     }
 
-    private HashSet<FightCellDTG> FindRange(FightCellDTG firstCell, int range)
+    public void ResetPathCells()
     {
-
-        HashSet<FightCellDTG> firstHashset = new HashSet<FightCellDTG>
+        foreach (var cell in dirtyPathCells)
         {
-            firstCell
-        };
-
-        HashSet<FightCellDTG> newCells = FindNeighbors(firstHashset);
-        if(range == 1)
-        {
-            return newCells;
+            cells[(int)cell.x, (int)cell.y].RemoveColor(ORANGE_COLOR);
         }
-
-        HashSet<FightCellDTG> totalCells = new HashSet<FightCellDTG>();
-
-        for (int i = 0; i < range-1; i++)
-        {
-            newCells = FindNeighbors(newCells);
-            totalCells.UnionWith(newCells);
-        }
-
-        return totalCells;
-    }
-
-    private HashSet<FightCellDTG> FindNeighbors (HashSet<FightCellDTG> oldCellDTGs)
-    {
-        HashSet<FightCellDTG> newCellDTGs = new HashSet<FightCellDTG>();
-        foreach (var cell in oldCellDTGs)
-        {
-            int x = cell.currentCell.X;
-            int y = cell.currentCell.Y;
-            if (x + 1 < cells.GetLength(0) && cells[x + 1, y].currentCell.IsAccessible && !cells[x + 1, y].taken)
-            {
-                newCellDTGs.Add(cells[x + 1, y]);
-            }
-            if (x - 1 >= 0 && cells[x - 1, y].currentCell.IsAccessible && !cells[x-1,y].taken)
-            {
-                newCellDTGs.Add(cells[x - 1, y]);
-            }
-            if (y + 1 < cells.GetLength(1) && cells[x, y + 1].currentCell.IsAccessible && !cells[x,y+1].taken)
-            {
-                newCellDTGs.Add(cells[x, y + 1]);
-            }
-            if (y - 1 >= 0 && cells[x, y - 1].currentCell.IsAccessible && !cells[x, y-1].taken)
-            {
-                newCellDTGs.Add(cells[x, y - 1]);
-            }
-        }
-        return newCellDTGs;
+        dirtyPathCells.Clear();
     }
 }

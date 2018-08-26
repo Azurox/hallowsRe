@@ -34,6 +34,7 @@ public class FighterContainerDTG : MonoBehaviour {
             mainFighter = playerGo.GetComponent<MainFighterDTG>();
             mainFighter.SetFighter(fighter);
             mainFighter.InitFighter();
+            GetComponent<MainFighterHandler>().Init(mainFighter);
         } else
         {
             playerGo = Instantiate(FighterGameObject);

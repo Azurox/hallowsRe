@@ -1,17 +1,20 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class FightMapHandler : MonoBehaviour {
 
     private FightMapDTG fightMapDTG;
     private FighterHandler fighterHandler;
+    private MainFighterHandler mainFighterHandler;
     private MainFighterEmitter mainFighterEmitter;
     private MainFighterDTG mainFighter;
     private Fight fight;
 
-    public void Startup(FightMapDTG fightMapDTG)
+    public void Startup(FighterContainerDTG fighterContainerDTG)
     {
-        this.fightMapDTG = fightMapDTG;
-        fighterHandler = fightMapDTG.GetComponent<FighterHandler>();
+        fightMapDTG = GetComponent<FightMapDTG>();
+        fighterHandler = fighterContainerDTG.GetComponent<FighterHandler>();
+        mainFighterHandler = fighterContainerDTG.GetComponent<MainFighterHandler>();
     }
 
     public void Init(MainFighterDTG mainFighter, Fight fight)
@@ -26,24 +29,55 @@ public class FightMapHandler : MonoBehaviour {
         if(fight.phase == 0)
         {
             TryTeleport(x, y);
-        } else
-        {
-           Debug.Log("why you do dis to me");
         }
+    }
+
+    public void MouseOverCell(int x, int y)
+    {
+        if(fight.phase == 1)
+        {
+            FindPath(new Vector2(x, y));
+        }
+    }
+
+    public void MouseLeftCell(int x, int y)
+    {
+        fightMapDTG.ResetPathCells();
     }
 
     public void ShowMovementRange(Vector2 position, int range)
     {
-        var cells = fightMapDTG.FindRange(position, range);
+        var cells = GetComponent<FightMapPathFinding>().FindRange(position, range);
         foreach (var cell in cells)
         {
             fightMapDTG.SetCellMovementColor(new Vector2(cell.currentCell.X, cell.currentCell.Y));
         }
     }
 
+    public List<Vector2> GetMovementRange(Vector2 position, int range)
+    {
+        var cells = GetComponent<FightMapPathFinding>().FindRange(position, range);
+        List<Vector2> positions = new List<Vector2>();
+        foreach (var cell in cells)
+        {
+            positions.Add(new Vector2(cell.currentCell.X, cell.currentCell.Y));
+        }
+        return positions;
+    }
+
     public void HideMovementRange()
     {
-        fightMapDTG.ResetMovementCell();
+        fightMapDTG.ResetMovementCells();
+    }
+
+    public void FindPath(Vector2 position)
+    {
+        if (mainFighterHandler.isMovementPossible(position))
+        {
+           var path = GetComponent<FightMapPathFinding>().FindPath(mainFighter.GetFighter().Position, position);
+           fightMapDTG.HighlightPath(path);
+        }
+
     }
 
     private void TryTeleport(int x, int y)
