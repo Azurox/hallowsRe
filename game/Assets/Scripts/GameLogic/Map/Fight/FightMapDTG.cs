@@ -6,7 +6,7 @@ using UnityEngine;
 public class FightMapDTG : MonoBehaviour {
 
     private readonly Color BASE_COLOR = new Color(1, 1, 1);
-    private readonly Color BLUE_COLOR = new Color(1, 0, 0);
+    private readonly Color BLUE_COLOR = new Color(0, 0, 1);
     private readonly Color RED_COLOR = new Color(1, 0, 0);
     private readonly Color GREEN_COLOR = new Color(144/255f, 238/255f, 144/255f);
     private readonly Color ORANGE_COLOR = new Color(255 / 255f, 207 / 255f, 158 / 255f);
@@ -21,6 +21,7 @@ public class FightMapDTG : MonoBehaviour {
     private List<Vector2> dirtySpawnCells = new List<Vector2>();
     private List<Vector2> dirtyMovementRangeCells = new List<Vector2>();
     private List<Vector2> dirtyPathCells = new List<Vector2>();
+    private bool isPathHighlightingBlocked = false;
 
 
 
@@ -104,11 +105,17 @@ public class FightMapDTG : MonoBehaviour {
 
     public void HighlightPath(List<Vector2> positions)
     {
+        if (isPathHighlightingBlocked) return;
         foreach (var position in positions)
         {
             cells[(int)position.x, (int)position.y].AddColor(ORANGE_COLOR, 30);
         }
         dirtyPathCells.AddRange(positions);
+    }
+
+    public List<Vector2> GetHighlightedPath()
+    {
+        return dirtyPathCells;
     }
 
     public void ResetPathCells()
@@ -119,4 +126,10 @@ public class FightMapDTG : MonoBehaviour {
         }
         dirtyPathCells.Clear();
     }
+
+    public void BlockPathHighlighting(bool blockIt)
+    {
+        isPathHighlightingBlocked = blockIt;
+    }
+
 }

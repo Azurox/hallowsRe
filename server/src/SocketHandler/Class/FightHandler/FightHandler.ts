@@ -24,6 +24,7 @@ export default class FightHandler {
     this.socket.on("teleportPreFight", this.teleportPreFight.bind(this));
     this.socket.on("fighterReady", this.fighterReady.bind(this));
     this.socket.on("fighterFinishTurn", this.fighterFinishTurn.bind(this));
+    this.socket.on("fighterMove", this.fighterMove.bind(this));
   }
 
   async startFight(target: { id: string }) {
@@ -59,6 +60,19 @@ export default class FightHandler {
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async fighterMove(data: { fightId: string; path: Position[] }) {
+    console.log(data);
+    const fight = this.F.retrieveFight(data.fightId);
+    const possible = await this.M.checkMovementsPossibility(this.socket, data.path);
+    if (possible) {
+      try {
+        fight.moveFighter(this.socket.player.id, data.path);
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 }

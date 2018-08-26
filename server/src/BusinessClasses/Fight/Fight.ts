@@ -233,4 +233,44 @@ export default class Fight {
     }
     this.io.to(this.id).emit("nextTurn", { playerId: this.acceptedId });
   }
+
+  moveFighter(id: string, path: Position[]) {
+    if (!this.checkPlayerTurn(id)) return;
+    const fighter = this.retrieveFighterFromPlayerId(id);
+    let canMove = true;
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      for (let j = 0; j < path.length; j++) {
+        if (
+          this.fightOrder[i].player.id != id &&
+          this.fightOrder[i].position.x == path[j].x &&
+          this.fightOrder[i].position.y == path[j].y
+        ) {
+          canMove = false;
+        }
+      }
+    }
+
+    if (path.length > fighter.currentMovementPoint) {
+      canMove = false;
+    }
+
+    for (let i = 0; i < path.length; i++) {
+      const appliedMove = this.applyCell(fighter, path[i]);
+      if (appliedMove) {
+        fighter.currentMovementPoint--;
+        fighter.position = path[i];
+      }
+    }
+
+    if (canMove) {
+      this.io.to(this.id).emit("fighterMove", { playerId: id, path: path });
+    }
+  }
+
+  /** Apply cell effect, return false if player cannot continue his path
+   * will be usefull later if trap remove Movement point or if invisible item block the pah
+   */
+  applyCell(fighter: Fighter, position: Position): boolean {
+    return true;
+  }
 }

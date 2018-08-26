@@ -22,7 +22,7 @@ public class MainFighterHandler : MonoBehaviour {
 
     public void MouseOverMainFighter(Fighter fighter)
     {
-        fightMapHandler.ShowMovementRange(fighter.Position, fighter.MovementPoint);
+        fightMapHandler.ShowMovementRange(fighter.Position, fighter.CurrentMovementPoint);
         GetComponent<FighterContainerDTG>().FocusFighter(fighter);
     }
 
@@ -31,11 +31,11 @@ public class MainFighterHandler : MonoBehaviour {
         fightMapHandler.HideMovementRange();
     }
 
-    public bool isMovementPossible(Vector2 position)
+    public bool IsMovementPossible(Vector2 position)
     {
         if(possibleMovementPosition == null || possibleMovementPositionDirty)
         {
-            possibleMovementPosition = fightMapHandler.GetMovementRange(mainFighterDTG.GetFighter().Position, mainFighterDTG.GetFighter().MovementPoint);
+            possibleMovementPosition = fightMapHandler.GetMovementRange(mainFighterDTG.GetFighter().Position, mainFighterDTG.GetFighter().CurrentMovementPoint);
             possibleMovementPositionDirty = false;
         }
 
@@ -47,5 +47,11 @@ public class MainFighterHandler : MonoBehaviour {
             return true;
         }
 
+    }
+
+    public void MainFighterMoved()
+    {
+        possibleMovementPositionDirty = true;
+        possibleMovementPosition = null;
     }
 }

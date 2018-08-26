@@ -172,16 +172,17 @@ public class FightMapPathFinding : MonoBehaviour {
 #region range Finding
     public List<FightCellDTG> FindRange(Vector2 startPosition, int range)
     {
-        if(currentMap == null)
-        {
-            Init();
-        }
+        Init();
         var total = FindRange(currentMap[(int)startPosition.x, (int)startPosition.y], range);
         return total.ToList();
     }
 
     private HashSet<FightCellDTG> FindRange(FightCellDTG firstCell, int range)
     {
+        if(range == 0)
+        {
+            return new HashSet<FightCellDTG>();
+        }
 
         HashSet<FightCellDTG> firstHashset = new HashSet<FightCellDTG>
         {
@@ -194,7 +195,7 @@ public class FightMapPathFinding : MonoBehaviour {
             return newCells;
         }
 
-        HashSet<FightCellDTG> totalCells = new HashSet<FightCellDTG>();
+        HashSet<FightCellDTG> totalCells = new HashSet<FightCellDTG>(newCells);
 
         for (int i = 0; i < range-1; i++)
         {

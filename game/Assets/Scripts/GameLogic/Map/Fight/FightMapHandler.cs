@@ -30,11 +30,18 @@ public class FightMapHandler : MonoBehaviour {
         {
             TryTeleport(x, y);
         }
+        else
+        {
+            if (fight.IsMainFighterTurn())
+            {
+                mainFighterEmitter.Move(fightMapDTG.GetHighlightedPath());
+            }
+        }
     }
 
     public void MouseOverCell(int x, int y)
     {
-        if(fight.phase == 1)
+        if(fight.phase == 1 && fight.IsMainFighterTurn())
         {
             FindPath(new Vector2(x, y));
         }
@@ -72,7 +79,7 @@ public class FightMapHandler : MonoBehaviour {
 
     public void FindPath(Vector2 position)
     {
-        if (mainFighterHandler.isMovementPossible(position))
+        if (mainFighterHandler.IsMovementPossible(position))
         {
            var path = GetComponent<FightMapPathFinding>().FindPath(mainFighter.GetFighter().Position, position);
            fightMapDTG.HighlightPath(path);

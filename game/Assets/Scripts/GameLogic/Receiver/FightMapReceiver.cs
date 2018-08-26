@@ -34,7 +34,7 @@ public class FightMapReceiver {
         /* Main Startups dependencies */
         MainFighterHandler.Startup(FightMapHandler);
         FighterHandler.Startup(FightMapHandler);
-        FighterContainerDTG.Startup(FightUIManager);
+        FighterContainerDTG.Startup(FightUIManager, FightMapDTG);
         FightMapHandler.Startup(FighterContainerDTG);
 
         FighterContainerDTG.gameObject.SetActive(false);
@@ -48,6 +48,7 @@ public class FightMapReceiver {
         socket.On("setReady", SetReady);
         socket.On("fightPhase1", FightPhase1);
         socket.On("nextTurn", NextTurn);
+        socket.On("fighterMove", FighterMove);
     }
 
     private void FightStarted(SocketIOEvent obj)
@@ -133,7 +134,7 @@ public class FightMapReceiver {
     {
         Fight.phase = 1;
         string id = obj.data["playerId"].str;
-        Debug.Log("is " + id + " turn ");
+        Fight.SetTurnId(id);
         FightMapDTG.ResetSpawnCells();
         FightUIManager.SetUIPhase1();
         FightUIManager.HighlightFighter(id);
@@ -142,8 +143,29 @@ public class FightMapReceiver {
     private void NextTurn(SocketIOEvent obj)
     {
         string id = obj.data["playerId"].str;
-        Debug.Log("is " + id + " turn ");
+        Fight.SetTurnId(id);
         FightUIManager.HighlightFighter(id);
+    }
+
+    private void FighterMove(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+
+        List<Vector2> path = new List<Vector2>();
+        List<JSONObject> positions = obj.data["path"].list;
+        foreach (var position in positions)
+        {
+            path.Add(new Vector2(position["x"].n, position["y"].n));
+        }
+
+        if (FighterContainerDTG.GetMainFighter().GetFighter().Id == id)
+        {
+            FighterContainerDTG.MoveMainFighter(path);
+        }
+        else
+        {
+            FighterContainerDTG.MoveFighter(id, path);
+        }
     }
 
     private void FightFinished()

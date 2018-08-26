@@ -29,6 +29,11 @@ public class FighterDTG : MonoBehaviour {
         fighter.Position = new Vector2(x, y);
     }
 
+    public Fighter GetFighter()
+    {
+        return fighter;
+    }
+
     private void OnMouseDown()
     {
         transform.parent.GetComponent<FighterHandler>().ClickOnFighter(fighter);
