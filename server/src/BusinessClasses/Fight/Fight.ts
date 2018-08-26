@@ -3,6 +3,7 @@ import Fighter from "./Fighter";
 import { IMap } from "../../Schema/Map";
 import Position from "../RelationalObject/Position";
 import { IPlayer } from "../../Schema/Player";
+import { ISpell } from "../../Schema/Spell";
 
 export default class Fight {
   /* CONST */
@@ -280,4 +281,6 @@ export default class Fight {
   applyCell(fighter: Fighter, position: Position): boolean {
     return true;
   }
+
+  useSpell(id: string, spell: ISpell, position: Position) {}
 }

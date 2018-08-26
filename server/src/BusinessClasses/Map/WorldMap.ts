@@ -4,11 +4,12 @@ import Account from "../../Schema/Account";
 import Player from "../../Schema/Player";
 import Position from "../RelationalObject/Position";
 import Stats from "../../Schema/Stats";
+import Spell from "../../Schema/Spell";
 
 export default class WorldMap {
   constructor() {
     this.saveMap();
-    this.saveAccount();
+    // this.saveAccount();
   }
 
   async saveMap() {
@@ -44,6 +45,16 @@ export default class WorldMap {
     await Account.remove({});
     await Player.remove({});
     await Stats.remove({});
+    await Spell.remove({});
+
+    const spell = new Spell();
+    spell.hitArea = [new Position(0, 0)];
+    spell.name = "Punch";
+    spell.actionPointCost = 4;
+    spell.physicalDamage = 7;
+    spell.magicDamage = 0;
+    spell.range = 1;
+    await spell.save();
 
     const stats1 = new Stats();
     stats1.life = 25;
@@ -53,13 +64,14 @@ export default class WorldMap {
     stats1.attackDamage = 6;
     stats1.movementPoint = 3;
     stats1.actionPoint = 6;
-    stats1.save();
+    await stats1.save();
 
     const player1 = new Player();
     player1.name = "test1";
     player1.position = { x: 0, y: 0 };
     player1.mapPosition = { x: 0, y: 0 };
     player1.stats = stats1;
+    player1.spells = [spell];
     await player1.save();
 
     const stats2 = new Stats();
@@ -77,6 +89,7 @@ export default class WorldMap {
     player2.position = { x: 2, y: 2 };
     player2.mapPosition = { x: 0, y: 0 };
     player2.stats = stats2;
+    player2.spells = [spell];
     await player2.save();
 
     const account = new Account();

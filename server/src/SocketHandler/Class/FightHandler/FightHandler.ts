@@ -4,6 +4,7 @@ import PlayerController from "../../../BusinessClasses/PlayerController";
 import State from "../../../BusinessClasses/State";
 import FightController from "../../../BusinessClasses/FightController";
 import Position from "../../../BusinessClasses/RelationalObject/Position";
+import Spell from "../../../Schema/Spell";
 
 export default class FightHandler {
   socket: GSocket;
@@ -25,6 +26,7 @@ export default class FightHandler {
     this.socket.on("fighterReady", this.fighterReady.bind(this));
     this.socket.on("fighterFinishTurn", this.fighterFinishTurn.bind(this));
     this.socket.on("fighterMove", this.fighterMove.bind(this));
+    this.socket.on("fighterUseSpell", this.fighterUseSpell.bind(this));
   }
 
   async startFight(target: { id: string }) {
@@ -74,6 +76,18 @@ export default class FightHandler {
       } catch (error) {
         console.log(error);
       }
+    }
+  }
+
+  async fighterUseSpell(data: { fightId: string; spellId: string; position: Position }) {
+    const fight = this.F.retrieveFight(data.fightId);
+    try {
+      if (this.socket.player.hasSpell(data.spellId)) {
+        const spell = await Spell.findById(data.spellId).lean();
+        fight.useSpell(this.socket.player.id, spell, data.position);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 }
