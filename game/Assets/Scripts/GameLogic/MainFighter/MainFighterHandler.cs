@@ -6,8 +6,6 @@ using UnityEngine;
 public class MainFighterHandler : MonoBehaviour {
 
     private FightMapHandler fightMapHandler;
-    private List<Vector2> possibleMovementPosition;
-    private bool possibleMovementPositionDirty = false;
     private MainFighterDTG mainFighterDTG;
 
     public void Startup(FightMapHandler fightMapHandler)
@@ -33,25 +31,19 @@ public class MainFighterHandler : MonoBehaviour {
 
     public bool IsMovementPossible(Vector2 position)
     {
-        if(possibleMovementPosition == null || possibleMovementPositionDirty)
-        {
-            possibleMovementPosition = fightMapHandler.GetMovementRange(mainFighterDTG.GetFighter().Position, mainFighterDTG.GetFighter().CurrentMovementPoint);
-            possibleMovementPositionDirty = false;
-        }
+        var fighterPosition = mainFighterDTG.GetFighter().Position;
+        var movementPoint = mainFighterDTG.GetFighter().CurrentMovementPoint;
 
-        if(!possibleMovementPosition.Any(i => i == position))
+        var totalVector = position - fighterPosition;
+        var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);
+
+        if(distance > movementPoint)
         {
             return false;
         }
-        else{
+        else
+        {
             return true;
         }
-
-    }
-
-    public void MainFighterMoved()
-    {
-        possibleMovementPositionDirty = true;
-        possibleMovementPosition = null;
     }
 }

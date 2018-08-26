@@ -53,4 +53,10 @@ public class Fighter {
         CurrentActionPoint = ActionPoint;
         #endregion
     }
+
+    public void ResetTurnStats()
+    {
+        this.CurrentActionPoint = ActionPoint;
+        this.CurrentMovementPoint = MovementPoint;
+    }
 }

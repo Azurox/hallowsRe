@@ -70,28 +70,15 @@ public class FightMapPathFinding : MonoBehaviour {
 
     private void Init()
     {
-        if (fightMapDTG == null)
-        {
-            fightMapDTG = GetComponent<FightMapDTG>();
-            currentMap = fightMapDTG.GetCells();
-            grid = new Node[currentMap.GetLength(0), currentMap.GetLength(1)];
+        fightMapDTG = GetComponent<FightMapDTG>();
+        currentMap = fightMapDTG.GetCells();
+        grid = new Node[currentMap.GetLength(0), currentMap.GetLength(1)];
 
-            for (var i = 0; i < currentMap.GetLength(0); i++)
-            {
-                for (var j = 0; j < currentMap.GetLength(1); j++)
-                {
-                    grid[i, j] = new Node(!currentMap[i, j].taken && currentMap[i, j].currentCell.IsAccessible, new Vector2(i, j), i, j);
-                }
-            }
-        }
-        else
+        for (var i = 0; i < currentMap.GetLength(0); i++)
         {
-            for (var i = 0; i < currentMap.GetLength(0); i++)
+            for (var j = 0; j < currentMap.GetLength(1); j++)
             {
-                for (var j = 0; j < currentMap.GetLength(1); j++)
-                {
-                    grid[i, j].parent = null;
-                }
+                grid[i, j] = new Node(!currentMap[i, j].taken && currentMap[i, j].currentCell.IsAccessible, new Vector2(i, j), i, j);
             }
         }
     }

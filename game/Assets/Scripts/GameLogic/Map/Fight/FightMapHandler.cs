@@ -32,7 +32,7 @@ public class FightMapHandler : MonoBehaviour {
         }
         else
         {
-            if (fight.IsMainFighterTurn())
+            if (fight.IsMainFighterTurn() && fightMapDTG.GetHighlightedPath().Count != 0)
             {
                 mainFighterEmitter.Move(fightMapDTG.GetHighlightedPath());
             }
@@ -82,7 +82,10 @@ public class FightMapHandler : MonoBehaviour {
         if (mainFighterHandler.IsMovementPossible(position))
         {
            var path = GetComponent<FightMapPathFinding>().FindPath(mainFighter.GetFighter().Position, position);
-           fightMapDTG.HighlightPath(path);
+            if(path != null && path.Count <= mainFighter.GetFighter().CurrentMovementPoint)
+            {
+                fightMapDTG.HighlightPath(path);
+            }
         }
 
     }

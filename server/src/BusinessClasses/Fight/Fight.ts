@@ -221,6 +221,7 @@ export default class Fight {
 
   nextTurn() {
     this.clock = 0;
+    this.softResetCurrentPlayerStats();
     for (let i = 0; i < this.fightOrder.length; i++) {
       if (this.fightOrder[i].player.id == this.acceptedId) {
         if (i + 1 < this.fightOrder.length) {
@@ -232,6 +233,12 @@ export default class Fight {
       }
     }
     this.io.to(this.id).emit("nextTurn", { playerId: this.acceptedId });
+  }
+
+  softResetCurrentPlayerStats() {
+    const fighter = this.retrieveFighterFromPlayerId(this.acceptedId);
+    fighter.currentActionPoint = fighter.actionPoint;
+    fighter.currentMovementPoint = fighter.movementPoint;
   }
 
   moveFighter(id: string, path: Position[]) {

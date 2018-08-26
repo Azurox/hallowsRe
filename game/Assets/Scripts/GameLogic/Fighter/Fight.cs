@@ -71,6 +71,14 @@ public class Fight {
 
     public void SetTurnId(string id)
     {
+        /* Reset previous player stats */
+        var fighter = GetFighter(turnId);
+        if(fighter != null)
+        {
+            fighter.ResetTurnStats();
+        }
+
+
         turnId = id;
     }
 

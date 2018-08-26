@@ -5,6 +5,7 @@ using UnityEngine;
 public class MainFighterDTG : MonoBehaviour {
 
     private Fighter fighter;
+    private bool isHoveringBlocked = false;
 
     public void SetFighter(Fighter fighter)
     {
@@ -35,11 +36,19 @@ public class MainFighterDTG : MonoBehaviour {
 
     private void OnMouseEnter()
     {
-        transform.parent.GetComponent<MainFighterHandler>().MouseOverMainFighter(fighter);
+        if (!isHoveringBlocked)
+        {
+            transform.parent.GetComponent<MainFighterHandler>().MouseOverMainFighter(fighter);
+        }
     }
 
     private void OnMouseExit()
     {
         transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter();
+    }
+
+    public void BlockHovering(bool blockIt)
+    {
+        isHoveringBlocked = blockIt;
     }
 }

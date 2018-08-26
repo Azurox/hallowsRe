@@ -105,12 +105,19 @@ public class FightMapDTG : MonoBehaviour {
 
     public void HighlightPath(List<Vector2> positions)
     {
-        if (isPathHighlightingBlocked) return;
-        foreach (var position in positions)
+        if (isPathHighlightingBlocked)
         {
-            cells[(int)position.x, (int)position.y].AddColor(ORANGE_COLOR, 30);
+            return;
         }
-        dirtyPathCells.AddRange(positions);
+
+        if (positions != null)
+        {
+            foreach (var position in positions)
+            {
+                cells[(int)position.x, (int)position.y].AddColor(ORANGE_COLOR, 30);
+            }
+            dirtyPathCells.AddRange(positions);
+        }
     }
 
     public List<Vector2> GetHighlightedPath()
@@ -129,6 +136,7 @@ public class FightMapDTG : MonoBehaviour {
 
     public void BlockPathHighlighting(bool blockIt)
     {
+        Debug.Log("someone set the blocking to : " + blockIt);
         isPathHighlightingBlocked = blockIt;
     }
 

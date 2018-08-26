@@ -64,9 +64,12 @@ public class FighterContainerDTG : MonoBehaviour {
             {
                 fighter.GetFighter().CurrentMovementPoint--;
                 fighter.GetFighter().Position = new Vector2(x, y);
+                if (path.Count == 0)
+                {
+                    FightMapDTG.SetCellAvailability(fighter.GetFighter().Position, true);
+                }
             });
 
-            FightMapDTG.SetCellAvailability(fighter.GetFighter().Position, true);
         }
     }
 
@@ -75,7 +78,11 @@ public class FighterContainerDTG : MonoBehaviour {
         var fighter = mainFighter.GetFighter();
         FightMapDTG.SetCellAvailability(fighter.Position, false);
         FightMapDTG.ResetPathCells();
+        Debug.Log("Init move main fighter");
+        Debug.Log("with path : ");
+        Debug.Log(path);
         FightMapDTG.BlockPathHighlighting(true);
+        mainFighter.BlockHovering(true);
         mainFighter.GetComponent<Movable>().TakePath(new Vector2(mainFighter.transform.position.x, mainFighter.gameObject.transform.position.z), path, (x, y) =>
         {
             fighter.CurrentMovementPoint--;
@@ -84,7 +91,7 @@ public class FighterContainerDTG : MonoBehaviour {
             if (path.Count == 0)
             {
                 FightMapDTG.BlockPathHighlighting(false);
-                GetComponent<MainFighterHandler>().MainFighterMoved();
+                mainFighter.BlockHovering(false);
                 FightMapDTG.SetCellAvailability(fighter.Position, true);
             }
         });

@@ -66,6 +66,7 @@ export default class FightHandler {
   async fighterMove(data: { fightId: string; path: Position[] }) {
     console.log(data);
     const fight = this.F.retrieveFight(data.fightId);
+    if (data.path.length == 0) return;
     const possible = await this.M.checkMovementsPossibility(this.socket, data.path);
     if (possible) {
       try {
