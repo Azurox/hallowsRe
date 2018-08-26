@@ -8,12 +8,16 @@ public class FightMapHandler : MonoBehaviour {
     private MainFighterDTG mainFighter;
     private Fight fight;
 
-    public void Init(MainFighterDTG mainFighter, FightMapDTG fightMapDTG, Fight fight)
+    public void Startup(FightMapDTG fightMapDTG)
     {
         this.fightMapDTG = fightMapDTG;
+        fighterHandler = fightMapDTG.GetComponent<FighterHandler>();
+    }
+
+    public void Init(MainFighterDTG mainFighter, Fight fight)
+    {
         this.fight = fight;
         this.mainFighter = mainFighter;
-        fighterHandler = fightMapDTG.GetComponent<FighterHandler>();
         mainFighterEmitter = mainFighter.GetComponent<MainFighterEmitter>();
     }
 
@@ -26,6 +30,20 @@ public class FightMapHandler : MonoBehaviour {
         {
            Debug.Log("why you do dis to me");
         }
+    }
+
+    public void ShowMovementRange(Vector2 position, int range)
+    {
+        var cells = fightMapDTG.FindRange(position, range);
+        foreach (var cell in cells)
+        {
+            fightMapDTG.SetCellMovementColor(new Vector2(cell.currentCell.X, cell.currentCell.Y));
+        }
+    }
+
+    public void HideMovementRange()
+    {
+        fightMapDTG.ResetMovementCell();
     }
 
     private void TryTeleport(int x, int y)
@@ -52,4 +70,6 @@ public class FightMapHandler : MonoBehaviour {
             }
         }
     }
+
+
 }

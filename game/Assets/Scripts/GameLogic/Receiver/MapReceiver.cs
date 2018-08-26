@@ -88,7 +88,6 @@ public class MapReceiver {
         List<Vector2> path = new List<Vector2>();
         List<JSONObject> positions = obj.data["path"].list;
         foreach(var position in positions) {
-            Debug.Log(position);
             path.Add(new Vector2(position["x"].n, position["y"].n));
         }
 

@@ -11,13 +11,17 @@ public class FighterContainerDTG : MonoBehaviour {
     private MainFighterDTG mainFighter;
 
 
-    public void Init(FightUIManager fightUIManager, List<Fighter> fighters)
+    public void Startup(FightUIManager fightUIManager)
+    {
+        FightUIManager = fightUIManager;
+    }
+
+    public void Init(List<Fighter> fighters)
     {
         foreach (var fighter in fighters)
         {
             SpawnFighter(fighter);
         }
-        FightUIManager = fightUIManager;
     }
 
     public void SpawnFighter(Fighter fighter)

@@ -29,7 +29,6 @@ public class Fight {
         for(var  i = 0; i < playerList.Count; i++)
         {
             Fighter fighter = new Fighter(playerList[i]);
-            Debug.Log(playerList[i]);
             if(fighter.Side == Side.blue)
             {
                 fightersBlue.Add(fighter);

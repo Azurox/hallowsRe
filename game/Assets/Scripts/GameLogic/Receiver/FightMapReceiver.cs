@@ -11,6 +11,7 @@ public class FightMapReceiver {
     public PlayerContainerDTG PlayerContainerDTG;
     public FighterContainerDTG FighterContainerDTG;
     public FighterHandler FighterHandler;
+    public MainFighterHandler MainFighterHandler;
     public GlobalUIManager GlobalUIManager;
     public FightUIManager FightUIManager;
     private SocketIOComponent socket;
@@ -25,8 +26,16 @@ public class FightMapReceiver {
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         FighterContainerDTG = Object.FindObjectOfType<FighterContainerDTG>();
         FighterHandler = FighterContainerDTG.GetComponent<FighterHandler>();
+        MainFighterHandler = FighterContainerDTG.GetComponent<MainFighterHandler>();
         GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
         FightUIManager = GlobalUIManager.GetFightUIManager();
+
+
+        /* Main Startups dependencies */
+        MainFighterHandler.Startup(FightMapHandler);
+        FighterHandler.Startup(FightMapHandler);
+        FighterContainerDTG.Startup(FightUIManager);
+        FightMapHandler.Startup(FightMapDTG);
 
         FighterContainerDTG.gameObject.SetActive(false);
         InitSocket();
@@ -48,13 +57,13 @@ public class FightMapReceiver {
         FighterContainerDTG.gameObject.SetActive(true);
         Fight = new Fight(socket, obj);
 
-        FighterContainerDTG.Init(FightUIManager, Fight.GetFighters());
+        FighterContainerDTG.Init(Fight.GetFighters());
         FightMapDTG.Init();
         var mainFighterDTG = FighterContainerDTG.GetMainFighter();
         var mainFighterEmitter = mainFighterDTG.GetComponent<MainFighterEmitter>();
         mainFighterEmitter.Init(Fight.Id);
 
-        FightMapHandler.Init(mainFighterDTG, FightMapDTG, Fight);
+        FightMapHandler.Init(mainFighterDTG, Fight);
         FighterHandler.SetMainFighter(FighterContainerDTG.GetMainFighter());
 
         var blueCells = obj.data["blueCells"];
@@ -124,7 +133,7 @@ public class FightMapReceiver {
     {
         string id = obj.data["playerId"].str;
         Debug.Log("is " + id + " turn ");
-        FightMapDTG.ResetDirtyCells();
+        FightMapDTG.ResetSpawnCells();
         FightUIManager.SetUIPhase1();
         FightUIManager.HighlightFighter(id);
     }

@@ -35,6 +35,11 @@ public class MainFighterDTG : MonoBehaviour {
 
     private void OnMouseEnter()
     {
-        transform.parent.GetComponent<FighterHandler>().MouseOverFighter(fighter);
+        transform.parent.GetComponent<MainFighterHandler>().MouseOverMainFighter(fighter);
+    }
+
+    private void OnMouseExit()
+    {
+        transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter();
     }
 }

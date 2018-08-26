@@ -4,8 +4,21 @@ using UnityEngine;
 
 public class MainFighterHandler : MonoBehaviour {
 
-    public void ClickOnFighter(Fighter fighter)
+    private FightMapHandler fightMapHandler;
+
+    public void Startup(FightMapHandler fightMapHandler)
     {
-        Debug.Log(fighter);
+        this.fightMapHandler = fightMapHandler;
+    }
+
+    public void MouseOverMainFighter(Fighter fighter)
+    {
+        fightMapHandler.ShowMovementRange(fighter.Position, fighter.MovementPoint);
+        GetComponent<FighterContainerDTG>().FocusFighter(fighter);
+    }
+
+    public void MouseExitMainFighter()
+    {
+        fightMapHandler.HideMovementRange();
     }
 }

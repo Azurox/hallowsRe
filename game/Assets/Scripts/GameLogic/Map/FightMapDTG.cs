@@ -1,21 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FightMapDTG : MonoBehaviour {
 
+    private readonly Color BASE_COLOR = new Color(1, 1, 1);
+    private readonly Color BLUE_COLOR = new Color(1, 0, 0);
+    private readonly Color RED_COLOR = new Color(1, 0, 0);
+    private readonly Color GREEN_COLOR = new Color(144/255f, 238/255f, 144/255f);
+
+
+
     private GameMap currentMap;
     private FightCellDTG[,] cells;
-    public List<FightCellDTG> blueCells;
-    public List<FightCellDTG> redCells;
-    private List<Vector2> dirtyCells;
+    public List<FightCellDTG> blueCells = new List<FightCellDTG>();
+    public List<FightCellDTG> redCells = new List<FightCellDTG>();
+    private List<Vector2> dirtySpawnCells = new List<Vector2>();
+    private List<Vector2> dirtyMovementRangeCells = new List<Vector2>();
+
 
     public void Init()
     {
         currentMap = GetComponent<GlobalMapDTG>().GetMap();
-        dirtyCells = new List<Vector2>();
-        blueCells = new List<FightCellDTG>();
-        redCells = new List<FightCellDTG>();
 
         var oldCells = GetComponent<GlobalMapDTG>().GetCells();
       
@@ -39,14 +46,14 @@ public class FightMapDTG : MonoBehaviour {
         SetCellAvailability(position, taken);
         if(side == Side.blue)
         {
-            cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(0, 0, 1);
+            cells[(int)position.x, (int)position.y].AddColor(BLUE_COLOR, 20);
             blueCells.Add(cells[(int)position.x, (int)position.y]);
         }else
         {
-            cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = new Color(1, 0, 0);
+            cells[(int)position.x, (int)position.y].AddColor(RED_COLOR, 20);
             redCells.Add(cells[(int)position.x, (int)position.y]);
         }
-        dirtyCells.Add(position);
+        dirtySpawnCells.Add(position);
     }
 
     public void SetCellAvailability(Vector2 position, bool taken)
@@ -54,12 +61,93 @@ public class FightMapDTG : MonoBehaviour {
         cells[(int)position.x, (int)position.y].taken = taken;
     }
 
-    public void ResetDirtyCells()
+    public void ResetSpawnCells()
     {
-        foreach (var cell in dirtyCells)
+        foreach (var cell in dirtySpawnCells.ToList()) // ToList is here to allow Remove while iterating on the list.
         {
-            cells[(int)cell.x, (int)cell.y].GetComponent<Renderer>().material.color = new Color(1, 1, 1);
+            if(cells[(int)cell.x, (int)cell.y].GetComponent<Renderer>().material.color == BLUE_COLOR)
+            {
+                cells[(int)cell.x, (int)cell.y].RemoveColor(BLUE_COLOR);
+                dirtySpawnCells.Remove(cell);
+            }
+            if (cells[(int)cell.x, (int)cell.y].GetComponent<Renderer>().material.color == RED_COLOR)
+            {
+                cells[(int)cell.x, (int)cell.y].RemoveColor(RED_COLOR);
+                dirtySpawnCells.Remove(cell);
+            }
         }
-        dirtyCells.Clear();
+    }
+
+    public void SetCellMovementColor(Vector2 position)
+    {
+        cells[(int)position.x, (int)position.y].GetComponent<Renderer>().material.color = GREEN_COLOR;
+        dirtyMovementRangeCells.Add(position);
+    }
+
+    public void ResetMovementCell()
+    {
+        foreach (var cell in dirtyMovementRangeCells.ToList()) // ToList is here to allow Remove while iterating on the list.
+        {
+            cells[(int)cell.x, (int)cell.y].RemoveColor(GREEN_COLOR);
+            dirtyMovementRangeCells.Remove(cell);
+        }
+    }
+
+    public List<FightCellDTG> FindRange(Vector2 startPosition, int range)
+    {
+        var total = FindRange(cells[(int)startPosition.x, (int)startPosition.y], range);
+        return total.ToList();
+    }
+
+    private HashSet<FightCellDTG> FindRange(FightCellDTG firstCell, int range)
+    {
+
+        HashSet<FightCellDTG> firstHashset = new HashSet<FightCellDTG>
+        {
+            firstCell
+        };
+
+        HashSet<FightCellDTG> newCells = FindNeighbors(firstHashset);
+        if(range == 1)
+        {
+            return newCells;
+        }
+
+        HashSet<FightCellDTG> totalCells = new HashSet<FightCellDTG>();
+
+        for (int i = 0; i < range-1; i++)
+        {
+            newCells = FindNeighbors(newCells);
+            totalCells.UnionWith(newCells);
+        }
+
+        return totalCells;
+    }
+
+    private HashSet<FightCellDTG> FindNeighbors (HashSet<FightCellDTG> oldCellDTGs)
+    {
+        HashSet<FightCellDTG> newCellDTGs = new HashSet<FightCellDTG>();
+        foreach (var cell in oldCellDTGs)
+        {
+            int x = cell.currentCell.X;
+            int y = cell.currentCell.Y;
+            if (x + 1 < cells.GetLength(0) && cells[x + 1, y].currentCell.IsAccessible && !cells[x + 1, y].taken)
+            {
+                newCellDTGs.Add(cells[x + 1, y]);
+            }
+            if (x - 1 >= 0 && cells[x - 1, y].currentCell.IsAccessible && !cells[x-1,y].taken)
+            {
+                newCellDTGs.Add(cells[x - 1, y]);
+            }
+            if (y + 1 < cells.GetLength(1) && cells[x, y + 1].currentCell.IsAccessible && !cells[x,y+1].taken)
+            {
+                newCellDTGs.Add(cells[x, y + 1]);
+            }
+            if (y - 1 >= 0 && cells[x, y - 1].currentCell.IsAccessible && !cells[x, y-1].taken)
+            {
+                newCellDTGs.Add(cells[x, y - 1]);
+            }
+        }
+        return newCellDTGs;
     }
 }
