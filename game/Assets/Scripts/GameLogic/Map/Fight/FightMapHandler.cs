@@ -9,6 +9,8 @@ public class FightMapHandler : MonoBehaviour {
     private MainFighterEmitter mainFighterEmitter;
     private MainFighterDTG mainFighter;
     private Fight fight;
+    private Spell selectedSpell;
+
 
     public void Startup(FighterContainerDTG fighterContainerDTG)
     {
@@ -32,9 +34,20 @@ public class FightMapHandler : MonoBehaviour {
         }
         else
         {
-            if (fight.IsMainFighterTurn() && fightMapDTG.GetHighlightedPath().Count != 0)
+            if (fight.IsMainFighterTurn())
             {
-                mainFighterEmitter.Move(fightMapDTG.GetHighlightedPath());
+
+                if(selectedSpell != null)
+                {
+                    //mainFighterEmitter.UseSpell(selectedSpell)
+                }
+                else
+                {
+                    if (fightMapDTG.GetHighlightedPath().Count != 0)
+                    {
+                        mainFighterEmitter.Move(fightMapDTG.GetHighlightedPath());
+                    }
+                }
             }
         }
     }
@@ -43,38 +56,65 @@ public class FightMapHandler : MonoBehaviour {
     {
         if(fight.phase == 1 && fight.IsMainFighterTurn())
         {
-            FindPath(new Vector2(x, y));
+            if(selectedSpell != null && fightMapDTG.SpellImpactIsInRange(new Vector2(x, y)))
+            {
+                fightMapDTG.HighlightSpellImpact(selectedSpell.hitArea, new Vector2(x, y));
+            }
+            else
+            {
+                FindPath(new Vector2(x, y));
+            }
         }
     }
 
     public void MouseLeftCell(int x, int y)
     {
-        fightMapDTG.ResetPathCells();
+        if(selectedSpell != null)
+        {
+            fightMapDTG.ResetSpellImpact();
+        }else
+        {
+            fightMapDTG.ResetPathCells();
+        }
     }
 
     public void ShowMovementRange(Vector2 position, int range)
     {
+        /*
         var cells = GetComponent<FightMapPathFinding>().FindRange(position, range);
         foreach (var cell in cells)
         {
             fightMapDTG.SetCellMovementColor(new Vector2(cell.currentCell.X, cell.currentCell.Y));
-        }
-    }
+        }*/
 
-    public List<Vector2> GetMovementRange(Vector2 position, int range)
-    {
-        var cells = GetComponent<FightMapPathFinding>().FindRange(position, range);
-        List<Vector2> positions = new List<Vector2>();
-        foreach (var cell in cells)
+        var spell = new Spell()
         {
-            positions.Add(new Vector2(cell.currentCell.X, cell.currentCell.Y));
-        }
-        return positions;
+            id = "0",
+            range = 7,
+            hitArea = new Vector2[] {new Vector2(0,0)}
+        };
+        ShowSpellRange(spell, position);
     }
 
     public void HideMovementRange()
     {
         fightMapDTG.ResetMovementCells();
+    }
+
+    public void ShowSpellRange(Spell spell, Vector2 position)
+    {
+        selectedSpell = spell;
+        var cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range);
+        fightMapDTG.HighlightSpellRange(cells);
+    }
+
+    public void HideSpellRange()
+    {
+        if (selectedSpell != null)
+        {
+            selectedSpell = null;
+            fightMapDTG.ResetSpellRangeCells();
+        }
     }
 
     public void FindPath(Vector2 position)

@@ -10,7 +10,7 @@ public class FightMapDTG : MonoBehaviour {
     private readonly Color RED_COLOR = new Color(1, 0, 0);
     private readonly Color GREEN_COLOR = new Color(144/255f, 238/255f, 144/255f);
     private readonly Color ORANGE_COLOR = new Color(255 / 255f, 207 / 255f, 158 / 255f);
-
+    private readonly Color LIGHT_BLUE_COLOR = new Color(135 / 255f, 206 / 255f, 158 / 235f);
 
 
 
@@ -21,6 +21,9 @@ public class FightMapDTG : MonoBehaviour {
     private List<Vector2> dirtySpawnCells = new List<Vector2>();
     private List<Vector2> dirtyMovementRangeCells = new List<Vector2>();
     private List<Vector2> dirtyPathCells = new List<Vector2>();
+    private List<Vector2> dirtySpellRangeCells = new List<Vector2>();
+    private List<Vector2> dirtySpellImpactCells = new List<Vector2>();
+
     private bool isPathHighlightingBlocked = false;
 
 
@@ -140,4 +143,53 @@ public class FightMapDTG : MonoBehaviour {
         isPathHighlightingBlocked = blockIt;
     }
 
+
+    public void HighlightSpellRange(List<Vector2> positions)
+    {
+        if (positions != null)
+        {
+            foreach (var position in positions)
+            {
+                cells[(int)position.x, (int)position.y].AddColor(LIGHT_BLUE_COLOR, 30);
+            }
+            dirtySpellRangeCells.AddRange(positions);
+        }
+    }
+
+    public void ResetSpellRangeCells()
+    {
+        foreach (var cell in dirtySpellRangeCells)
+        {
+            cells[(int)cell.x, (int)cell.y].RemoveColor(LIGHT_BLUE_COLOR);
+        }
+        dirtySpellRangeCells.Clear();
+    }
+
+    public void HighlightSpellImpact(Vector2[] area, Vector2 position)
+    {
+        for(int i = 0; i < area.Length; i++)
+        {
+            Vector2 target = area[i] + position;
+            if(target.x >= 0 && target.x < cells.GetLength(0)
+                && target.y >= 0 && target.y < cells.GetLength(1))
+            {
+                cells[(int)target.x, (int)target.y].AddColor(RED_COLOR, 40);
+                dirtySpellImpactCells.Add(target);
+            }
+        }
+    }
+
+    public void ResetSpellImpact()
+    {
+        foreach (var cell in dirtySpellImpactCells)
+        {
+            cells[(int)cell.x, (int)cell.y].RemoveColor(RED_COLOR);
+        }
+        dirtySpellImpactCells.Clear();
+    }
+
+    public bool SpellImpactIsInRange(Vector2 position)
+    {
+        if()
+    }
 }
