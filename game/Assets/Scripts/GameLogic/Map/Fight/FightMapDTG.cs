@@ -190,6 +190,14 @@ public class FightMapDTG : MonoBehaviour {
 
     public bool SpellImpactIsInRange(Vector2 position)
     {
-        if()
+        bool inRange = false;
+        foreach (var pos in dirtySpellRangeCells)
+        {
+            if(position == pos)
+            {
+                inRange = true;
+            }
+        }
+        return inRange;
     }
 }

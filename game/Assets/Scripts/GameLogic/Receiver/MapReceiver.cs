@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using SocketIO;
+﻿using SocketIO;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class MapReceiver {
@@ -40,8 +38,7 @@ public class MapReceiver {
     {
         Debug.Log("Load new map");
         string mapName = obj.data["mapName"].str;
-        string jsonFile = File.ReadAllText("C:/Project/Public/hallowsRe/game/MapData/" + mapName);
-        GameMap map = JsonConvert.DeserializeObject<GameMap>(jsonFile);
+        GameMap map = ResourcesLoader.Instance.GetGameMap(mapName);
         WorldMapDTG.SetMap(map);
         WorldMapDTG.ActivateCell();
         MapDTG.Init();

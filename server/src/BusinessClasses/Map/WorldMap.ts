@@ -18,7 +18,7 @@ export default class WorldMap {
     const map = new Map();
     map.x = 0;
     map.y = 0;
-    map.name = "0-0.json";
+    map.name = "0-0";
     map.cells = [];
     for (let i = 0; i < 10; i++) {
       map.cells[i] = [];

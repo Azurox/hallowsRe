@@ -80,20 +80,11 @@ public class FightMapHandler : MonoBehaviour {
 
     public void ShowMovementRange(Vector2 position, int range)
     {
-        /*
         var cells = GetComponent<FightMapPathFinding>().FindRange(position, range);
         foreach (var cell in cells)
         {
             fightMapDTG.SetCellMovementColor(new Vector2(cell.currentCell.X, cell.currentCell.Y));
-        }*/
-
-        var spell = new Spell()
-        {
-            id = "0",
-            range = 7,
-            hitArea = new Vector2[] {new Vector2(0,0)}
-        };
-        ShowSpellRange(spell, position);
+        }
     }
 
     public void HideMovementRange()
