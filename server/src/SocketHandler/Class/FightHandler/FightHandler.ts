@@ -81,8 +81,9 @@ export default class FightHandler {
 
   async fighterUseSpell(data: { fightId: string; spellId: string; position: Position }) {
     const fight = this.F.retrieveFight(data.fightId);
+    const possible = await this.M.checkMovementPossibility(this.socket, data.position);
     try {
-      if (this.socket.player.hasSpell(data.spellId)) {
+      if (possible && this.socket.player.hasSpell(data.spellId)) {
         const spell = await Spell.findById(data.spellId).lean();
         fight.useSpell(this.socket.player.id, spell, data.position);
       }

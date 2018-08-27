@@ -4,6 +4,7 @@ import { IMap } from "../../Schema/Map";
 import Position from "../RelationalObject/Position";
 import { IPlayer } from "../../Schema/Player";
 import { ISpell } from "../../Schema/Spell";
+import SpellProcessor from "./SpellProcessor";
 
 export default class Fight {
   /* CONST */
@@ -282,5 +283,15 @@ export default class Fight {
     return true;
   }
 
-  useSpell(id: string, spell: ISpell, position: Position) {}
+  useSpell(id: string, spell: ISpell, position: Position) {
+    const fighter = this.retrieveFighterFromPlayerId(id);
+    const processor = new SpellProcessor(this, spell, fighter, position);
+    const impacts = processor.process();
+    this.io.to(this.id).emit("fighterUseSpell", {
+       playerId: id,
+       position: position,
+       spellId: spell.id,
+       impacts: impacts
+    });
+  }
 }
