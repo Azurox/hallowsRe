@@ -9,13 +9,18 @@ public class FightUIManager : MonoBehaviour {
     public GameObject FinishTurnButton;
     public TimelineUIComponent TimelineUIComponent;
     public StatsUIComponent StatsUIComponent;
+    public SpellsUIComponent SpellsUIComponent;
+
     private MainFighterEmitter MainFighterEmitter;
+    private FightMapHandler FightMapHandler;
 
 
 
-    public void Init(MainFighterEmitter mainFighterEmitter)
+
+    public void Init(MainFighterEmitter mainFighterEmitter, FightMapHandler fightMapHandler)
     {
         MainFighterEmitter = mainFighterEmitter;
+        FightMapHandler = fightMapHandler;
     }
 
     public void SetUIPhase0()
@@ -64,6 +69,18 @@ public class FightUIManager : MonoBehaviour {
             ActivateFinishTurnButton(false);
         }
     }
+
+    public void ShowSpells(List<Spell> spells)
+    {
+        SpellsUIComponent.SetSpells(spells);
+    }
+
+
+    public void UseSpell(Spell spell)
+    {
+        FightMapHandler.ShowSpellRange(spell);
+    }
+
 
 
     /* UI Action */

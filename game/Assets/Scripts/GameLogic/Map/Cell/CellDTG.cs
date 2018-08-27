@@ -14,7 +14,7 @@ public class CellDTG : MonoBehaviour {
         AddColor(new Color(1, 1, 1), 1);
         if (!cell.IsAccessible)
         {
-            AddColor(new Color(0, 0, 0), 10);
+            AddColor(new Color(0, 0, 0), 100);
         }
     }
 

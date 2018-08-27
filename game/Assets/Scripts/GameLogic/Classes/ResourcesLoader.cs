@@ -6,9 +6,11 @@ using Newtonsoft.Json;
 
 public class ResourcesLoader : Singleton<ResourcesLoader>
 {
-    protected ResourcesLoader() { } // guarantee this will be always a singleton only - can't use the constructor!
+    protected ResourcesLoader() { }
 
     private Dictionary<string, GameMap> gameMaps = new Dictionary<string, GameMap>();
+    private Dictionary<string, Spell> spells = new Dictionary<string, Spell>();
+
 
     public GameMap GetGameMap(string name)
     {
@@ -27,6 +29,27 @@ public class ResourcesLoader : Singleton<ResourcesLoader>
             }
 
             Debug.Log("Cannot find map named : " + name);
+            return null;
+        }
+    }
+
+    public Spell GetSpell(string id)
+    {
+        if (spells.ContainsKey(id))
+        {
+            return spells[id];
+        }
+        else
+        {
+            var jsonTextFile = Resources.Load<TextAsset>("Spell/" + id);
+            if (jsonTextFile != null)
+            {
+                Spell spell = JsonConvert.DeserializeObject<Spell>(jsonTextFile.text);
+                spells[id] = spell;
+                return spell;
+            }
+
+            Debug.Log("Cannot find spell named : " + id);
             return null;
         }
     }

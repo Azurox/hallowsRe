@@ -9,6 +9,7 @@ public class Fighter {
     public bool IsMainPlayer { get; set; }
     public Side Side { get; set; }
     public bool Ready { get; set; }
+    private List<Spell> spells;
 
     #region stats
     public int Life { get; set; }
@@ -36,6 +37,16 @@ public class Fighter {
         Position = new Vector2(data["position"]["x"].n, data["position"]["y"].n);
         Ready = false;
 
+        spells = new List<Spell>();
+        var spellsData = data["spells"];
+        if(spellsData != null)
+        {
+            foreach (var spell in spellsData.list)
+            {
+                spells.Add(ResourcesLoader.Instance.GetSpell(spell.str));
+            }
+        }
+
         #region stats
         Life = data["life"] != null ? (int)data["life"].n : 0;
         CurrentLife = data["currentLife"] != null ? (int)data["currentLife"].n : 0;
@@ -52,6 +63,12 @@ public class Fighter {
         ActionPoint = data["actionPoint"] != null ? (int)data["actionPoint"].n : 0;
         CurrentActionPoint = ActionPoint;
         #endregion
+    }
+
+    public List<Spell> GetSpells()
+    {
+        if (!IsMainPlayer) Debug.LogError("!!!!! Cannot get spell of a basic fighter !!!!");
+        return spells;
     }
 
     public void ResetTurnStats()

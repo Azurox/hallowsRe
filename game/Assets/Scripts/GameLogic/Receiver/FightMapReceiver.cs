@@ -85,10 +85,11 @@ public class FightMapReceiver {
         }
 
         GlobalUIManager.SwitchToFightUI();
-        FightUIManager.Init(mainFighterEmitter);
+        FightUIManager.Init(mainFighterEmitter, FightMapHandler);
         FightUIManager.SetUIPhase0();
         FightUIManager.UpdateFightTimeline(Fight.GetFighters());
         FightUIManager.ShowFighterStats(Fight.GetMainFighter());
+        FightUIManager.ShowSpells(Fight.GetMainFighter().GetSpells());
     }
 
     private void TeleportPreFight(SocketIOEvent obj)

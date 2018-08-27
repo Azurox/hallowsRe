@@ -1323,6 +1323,7 @@ MonoBehaviour:
   FinishTurnButton: {fileID: 802869725}
   TimelineUIComponent: {fileID: 991262996}
   StatsUIComponent: {fileID: 842568248}
+  SpellsUIComponent: {fileID: 716961565}
 --- !u!223 &518317655
 Canvas:
   m_ObjectHideFlags: 0
@@ -1562,6 +1563,8 @@ GameObject:
   - component: {fileID: 716961563}
   - component: {fileID: 716961562}
   - component: {fileID: 716961564}
+  - component: {fileID: 716961566}
+  - component: {fileID: 716961565}
   m_Layer: 0
   m_Name: Spells
   m_TagString: Untagged
@@ -1640,6 +1643,42 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &716961565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 716961560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edb27a82f3ff43046a3f4dc347fd682d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpellMiniature: {fileID: 1423923861964016, guid: 057e3bf31d119a24c82e0f2e4e86550c,
+    type: 2}
+--- !u!114 &716961566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 716961560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2095666955, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 0
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 40, y: 40}
+  m_Spacing: {x: 10, y: 10}
+  m_Constraint: 0
+  m_ConstraintCount: 2
 --- !u!1 &773190229
 GameObject:
   m_ObjectHideFlags: 0

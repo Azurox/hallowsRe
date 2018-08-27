@@ -95,7 +95,8 @@ export default class Fight {
             magicResistance: fighter.magicResistance,
             attackDamage: fighter.attackDamage,
             movementPoint: fighter.movementPoint,
-            actionPoint: fighter.actionPoint
+            actionPoint: fighter.actionPoint,
+            spells: fighter.socketId == this.fightOrder[i].socketId ? this.fightOrder[i].player.spells : undefined
           };
         }),
         id: this.id,
@@ -288,10 +289,10 @@ export default class Fight {
     const processor = new SpellProcessor(this, spell, fighter, position);
     const impacts = processor.process();
     this.io.to(this.id).emit("fighterUseSpell", {
-       playerId: id,
-       position: position,
-       spellId: spell.id,
-       impacts: impacts
+      playerId: id,
+      position: position,
+      spellId: spell.id,
+      impacts: impacts
     });
   }
 }

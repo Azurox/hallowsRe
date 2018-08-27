@@ -37,30 +37,35 @@ public class FightMapHandler : MonoBehaviour {
             if (fight.IsMainFighterTurn())
             {
 
-                if(selectedSpell != null)
+                if(selectedSpell != null && fightMapDTG.SpellImpactIsInRange(new Vector2(x, y)))
                 {
+                    Debug.Log("Use spell !");
+                    HideSpellRange();
                     //mainFighterEmitter.UseSpell(selectedSpell)
                 }
                 else
                 {
+                    HideSpellRange();
                     if (fightMapDTG.GetHighlightedPath().Count != 0)
                     {
                         mainFighterEmitter.Move(fightMapDTG.GetHighlightedPath());
                     }
                 }
+            }else
+            {
+                HideSpellRange();
             }
         }
     }
 
     public void MouseOverCell(int x, int y)
     {
-        if(fight.phase == 1 && fight.IsMainFighterTurn())
+        if(fight.phase == 1)
         {
-            if(selectedSpell != null && fightMapDTG.SpellImpactIsInRange(new Vector2(x, y)))
+            if (selectedSpell != null && fightMapDTG.SpellImpactIsInRange(new Vector2(x, y)))
             {
                 fightMapDTG.HighlightSpellImpact(selectedSpell.hitArea, new Vector2(x, y));
-            }
-            else
+            }else if (fight.IsMainFighterTurn())
             {
                 FindPath(new Vector2(x, y));
             }
@@ -80,6 +85,7 @@ public class FightMapHandler : MonoBehaviour {
 
     public void ShowMovementRange(Vector2 position, int range)
     {
+        if (selectedSpell != null) return;
         var cells = GetComponent<FightMapPathFinding>().FindRange(position, range);
         foreach (var cell in cells)
         {
@@ -94,17 +100,29 @@ public class FightMapHandler : MonoBehaviour {
 
     public void ShowSpellRange(Spell spell, Vector2 position)
     {
-        selectedSpell = spell;
-        var cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range);
-        fightMapDTG.HighlightSpellRange(cells);
+        if(fight.phase == 1)
+        {
+            fightMapDTG.BlockPathHighlighting(true);
+            selectedSpell = spell;
+            var cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range);
+            fightMapDTG.HighlightSpellRange(cells);
+        }
     }
+
+    public void ShowSpellRange(Spell spell)
+    {
+        ShowSpellRange(spell, mainFighter.GetFighter().Position);
+    }
+
 
     public void HideSpellRange()
     {
         if (selectedSpell != null)
         {
+            fightMapDTG.BlockPathHighlighting(false); 
             selectedSpell = null;
             fightMapDTG.ResetSpellRangeCells();
+            fightMapDTG.ResetSpellImpact();
         }
     }
 
