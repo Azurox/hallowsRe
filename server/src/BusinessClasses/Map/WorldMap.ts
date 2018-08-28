@@ -54,6 +54,9 @@ export default class WorldMap {
     spell.physicalDamage = 7;
     spell.magicDamage = 0;
     spell.range = 1;
+    spell.selfUse = false;
+    spell.line = false;
+    spell.heal = false;
     await spell.save();
 
     const stats1 = new Stats();
