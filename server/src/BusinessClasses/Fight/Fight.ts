@@ -287,12 +287,16 @@ export default class Fight {
   useSpell(id: string, spell: ISpell, position: Position) {
     const fighter = this.retrieveFighterFromPlayerId(id);
     const processor = new SpellProcessor(this, spell, fighter, position);
-    const impacts = processor.process();
-    this.io.to(this.id).emit("fighterUseSpell", {
-      playerId: id,
-      position: position,
-      spellId: spell.id,
-      impacts: impacts
-    });
+    try {
+      const impacts = processor.process();
+      this.io.to(this.id).emit("fighterUseSpell", {
+        playerId: id,
+        position: position,
+        spellId: spell.id,
+        impacts: impacts
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
