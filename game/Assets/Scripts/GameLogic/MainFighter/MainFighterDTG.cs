@@ -31,7 +31,7 @@ public class MainFighterDTG : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        Debug.Log("Clicked on self");
+        transform.parent.GetComponent<MainFighterHandler>().ClickOnMainFighter(fighter);
     }
 
     private void OnMouseEnter()
@@ -44,7 +44,7 @@ public class MainFighterDTG : MonoBehaviour {
 
     private void OnMouseExit()
     {
-        transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter();
+        transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter(fighter);
     }
 
     public void BlockHovering(bool blockIt)

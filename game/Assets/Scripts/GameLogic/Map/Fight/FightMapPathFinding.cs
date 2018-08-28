@@ -224,7 +224,7 @@ public class FightMapPathFinding : MonoBehaviour {
 
     #region Spell region
 
-    public List<Vector2> FindSpellRange(Vector2 startPosition, int range)
+    public List<Vector2> FindSpellRange(Vector2 startPosition, int range, bool includeStartPosition, bool inLine)
     {
         if(currentMap == null)
         {
@@ -239,7 +239,31 @@ public class FightMapPathFinding : MonoBehaviour {
                 var position = new Vector2(i, j);
                 var totalVector = position - startPosition;
                 var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);
+                bool include = false;
                 if (distance <= range && currentMap[i, j].currentCell.IsAccessible)
+                {
+                    if(includeStartPosition == false)
+                    {
+                        if (position != startPosition)
+                        {
+                            include = true;
+                        }
+                    }
+                    else
+                    {
+                        include = true;
+                    }
+
+                    if (inLine)
+                    {
+                        if(!(totalVector.x == 0 || totalVector.y == 0))
+                        {
+                            include = false;
+                        }
+                    }
+                }
+
+                if (include)
                 {
                     rangeList.Add(position);
                 }

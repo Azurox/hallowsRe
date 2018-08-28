@@ -104,7 +104,7 @@ public class FightMapHandler : MonoBehaviour {
         {
             fightMapDTG.BlockPathHighlighting(true);
             selectedSpell = spell;
-            var cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range);
+            var cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range, true, spell.line);
             fightMapDTG.HighlightSpellRange(cells);
         }
     }

@@ -1,5 +1,5 @@
 {
-  "id": "5b8305412fcbcd5f6004bc95",
+  "id": "5b8526d77e833d1c18e75128",
   "name": "Punch",
   "actionPointCost": 4,
   "range": 5,
@@ -26,5 +26,8 @@
     }
   ],
   "physicalDamage": 7,
-  "magicDamage": 0
+  "magicDamage": 0,
+  "selfUse": false,
+  "line": false,
+  "heal": false
 }

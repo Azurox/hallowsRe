@@ -46,6 +46,6 @@ public class FighterDTG : MonoBehaviour {
 
     private void OnMouseExit()
     {
-        transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter();
+        transform.parent.GetComponent<FighterHandler>().MouseExitFighter(fighter);
     }
 }

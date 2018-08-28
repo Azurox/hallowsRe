@@ -18,17 +18,19 @@ public class FighterHandler : MonoBehaviour {
 
     public void ClickOnFighter(Fighter fighter)
     {
-
+        fightMapHandler.TargetCell((int)fighter.Position.x, (int)fighter.Position.y);
     }
 
     public void MouseOverFighter(Fighter fighter)
     {
+        fightMapHandler.MouseOverCell((int)fighter.Position.x, (int)fighter.Position.y);
         fightMapHandler.ShowMovementRange(fighter.Position, fighter.CurrentMovementPoint);
         GetComponent<FighterContainerDTG>().FocusFighter(fighter);
     }
 
-    public void MouseExitFighter()
+    public void MouseExitFighter(Fighter fighter)
     {
+        fightMapHandler.MouseLeftCell((int)fighter.Position.x, (int)fighter.Position.y);
         fightMapHandler.HideMovementRange();
     }
 }

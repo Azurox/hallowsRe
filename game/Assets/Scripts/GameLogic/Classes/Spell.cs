@@ -10,4 +10,7 @@ public class Spell {
     public Vector2[] hitArea;
     public int physicalDamage;
     public int magicDamage;
+    public bool selfUse;
+    public bool line;
+    public bool heal;
 }
