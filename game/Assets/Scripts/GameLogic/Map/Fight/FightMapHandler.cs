@@ -40,8 +40,8 @@ public class FightMapHandler : MonoBehaviour {
                 if(selectedSpell != null && fightMapDTG.SpellImpactIsInRange(new Vector2(x, y)))
                 {
                     Debug.Log("Use spell !");
+                    mainFighterEmitter.UseSpell(selectedSpell, new Vector2(x, y));
                     HideSpellRange();
-                    //mainFighterEmitter.UseSpell(selectedSpell)
                 }
                 else
                 {

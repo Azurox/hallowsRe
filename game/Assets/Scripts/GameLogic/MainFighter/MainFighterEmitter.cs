@@ -65,4 +65,18 @@ public class MainFighterEmitter : MonoBehaviour {
 
         socket.Emit("fighterMove", new JSONObject(data));
     }
+
+    public void UseSpell(Spell spell, Vector2 position)
+    {
+        Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
+        data["spellId"] = new JSONObject(string.Format("\"{0}\"", spell.id));
+
+        Dictionary<string, JSONObject> pos = new Dictionary<string, JSONObject>();
+        pos["x"] = new JSONObject((int)position.x);
+        pos["y"] = new JSONObject((int)position.y);
+        data["position"] = new JSONObject(pos);
+
+        socket.Emit("fighterUseSpell", new JSONObject(data));
+    }
 }
