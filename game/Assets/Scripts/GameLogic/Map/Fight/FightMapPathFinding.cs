@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -222,7 +223,7 @@ public class FightMapPathFinding : MonoBehaviour {
     #endregion
 
 
-    #region Spell region
+#region Spell region
 
     public List<Vector2> FindSpellRange(Vector2 startPosition, int range, bool includeStartPosition, bool inLine)
     {
@@ -272,5 +273,74 @@ public class FightMapPathFinding : MonoBehaviour {
         return rangeList;
     }
 
+
+    public List<Vector2> FindSpellRangeWithObstacle(Vector2 startPosition, List<Vector2> obstacles ,int range, bool includeStartPosition, bool inLine)
+    {
+        List<Vector2> rangeList = FindSpellRange(startPosition, range, includeStartPosition, inLine);
+        List<Vector2> obstacleInRange = new List<Vector2>();
+        foreach (var obs in obstacles)
+        {
+            var totalVector = obs - startPosition;
+            var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);
+            if(distance <= range)
+            {
+                Debug.Log("Add obstacle at X" + obs.x + " Y" + obs.y);
+                obstacleInRange.Add(obs);
+            }
+        }
+
+        foreach (var obs in obstacleInRange)
+        {
+            var magn = new Vector2(obs.x - startPosition.x, obs.y - startPosition.y);
+            List<Vector2> cellAfterObs = new List<Vector2>();
+            foreach (var cell in rangeList)
+            {
+                if(Vector2.Distance(startPosition, cell) > Vector2.Distance(startPosition, obs))
+                {
+                    cellAfterObs.Add(cell);
+                    Debug.Log("Add cell after obs at X" + cell.x + " Y" + cell.y);
+                }
+            }
+
+
+            List<Vector2> cellBehindObs = new List<Vector2>();
+            foreach (var cell in cellAfterObs)
+            {
+                if (Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)) < 45 * Math.Pow(0.59034f, magn.magnitude - 1))
+                {
+                    rangeList.Remove(cell);
+                    cellBehindObs.Add(cell);
+                    Debug.Log("Add cell behind obs at X" + cell.x + " Y" + cell.y);
+                    Debug.Log("With angle : " + Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)));
+                    // Debug.Log("With magnitude : " + Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)));
+
+                }
+            }
+/*
+            foreach (var cell in cellBehindObs)
+            {
+                var distance = CalculateDistance(startPosition, obs, cell.x, cell.y);
+                Debug.Log("distance for cell " + cell.x + " Y" + cell.y);
+                Debug.Log(" distance : " + distance);
+                if(distance <= 1 && !(Math.Abs(startPosition.x - cell.x) == Math.Abs(startPosition.y - cell.y)))
+                {
+                    rangeList.Remove(cell);
+                }
+            }*/
+        }
+
+        return rangeList;
+    }
+
+    private double CalculateDistance(Vector2 point1, Vector2 point2, double x0, double y0)
+    {
+        return ((Math.Abs((point2.y - point1.y) * x0 -
+                         (point2.x - point1.x) * y0 +
+                         point2.x * point1.y -
+                         point2.y * point1.x)) /
+                (Math.Pow((Math.Pow(point2.y - point1.y, 2) +
+                           Math.Pow(point2.x - point1.x, 2)),
+                          0.5)));
+    }
     #endregion
 }

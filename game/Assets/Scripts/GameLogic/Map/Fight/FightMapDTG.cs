@@ -18,6 +18,7 @@ public class FightMapDTG : MonoBehaviour {
     private FightCellDTG[,] cells;
     public List<FightCellDTG> blueCells = new List<FightCellDTG>();
     public List<FightCellDTG> redCells = new List<FightCellDTG>();
+    private List<Vector2> obstacleCells = new List<Vector2>();
     private List<Vector2> dirtySpawnCells = new List<Vector2>();
     private List<Vector2> dirtyMovementRangeCells = new List<Vector2>();
     private List<Vector2> dirtyPathCells = new List<Vector2>();
@@ -41,7 +42,10 @@ public class FightMapDTG : MonoBehaviour {
         {
             for (var j = 0; j < oldCells.GetLength(1); j++)
             {
-                    cells[i, j] = oldCells[i, j].GetComponent<FightCellDTG>();
+                cells[i, j] = oldCells[i, j].GetComponent<FightCellDTG>();
+                if(cells[i, j].currentCell.Obstacle) {
+                    obstacleCells.Add(new Vector2(i, j));
+                }
             }
         }
 
@@ -199,5 +203,10 @@ public class FightMapDTG : MonoBehaviour {
             }
         }
         return inRange;
+    }
+
+    public List<Vector2> GetObstacles()
+    {
+        return obstacleCells;
     }
 }

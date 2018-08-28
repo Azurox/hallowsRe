@@ -15,7 +15,14 @@ public class FightCellDTG : MonoBehaviour {
         AddColor(new Color(1, 1, 1), 1);
         if (!cell.IsAccessible)
         {
-            AddColor(new Color(0, 0, 0), 100);
+            if (cell.Obstacle)
+            {
+                AddColor(new Color(0.3f, 0.3f, 0.3f), 100);
+            }
+            else
+            {
+                AddColor(new Color(0, 0, 0), 100);
+            }
         }
     }
 

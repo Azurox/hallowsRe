@@ -1,8 +1,8 @@
 {
-  "id": "5b8526d77e833d1c18e75128",
+  "id": "5b85a3206650c42390becb87",
   "name": "Punch",
   "actionPointCost": 4,
-  "range": 5,
+  "range": 15,
   "hitArea": [
     {
       "x": 0,
@@ -29,5 +29,6 @@
   "magicDamage": 0,
   "selfUse": false,
   "line": false,
-  "heal": false
+  "heal": false,
+  "ignoreObstacle": false
 }

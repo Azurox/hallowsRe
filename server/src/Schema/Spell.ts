@@ -11,6 +11,7 @@ export interface ISpell extends Mongoose.Document {
   selfUse: boolean;
   line: boolean;
   heal: boolean;
+  ignoreObstacle: boolean;
 }
 
 export const SpellSchema = new Mongoose.Schema({
@@ -22,7 +23,8 @@ export const SpellSchema = new Mongoose.Schema({
   magicDamage: Number,
   selfUse: Boolean,
   line: Boolean,
-  heal: Boolean
+  heal: Boolean,
+  ignoreObstacle: Boolean
 });
 
 const Spell = Mongoose.model<ISpell>("Spell", SpellSchema);

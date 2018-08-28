@@ -13,4 +13,5 @@ public class Spell {
     public bool selfUse;
     public bool line;
     public bool heal;
+    public bool ignoreObstacle;
 }

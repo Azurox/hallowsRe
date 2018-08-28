@@ -91,4 +91,17 @@ public class Fight {
     {
         return turnId == mainFighter.Id;
     }
+
+    public List<Vector2> GetFightersPositionsButMainFighter()
+    {
+        List<Vector2> positions = new List<Vector2>();
+        foreach (var fighter in fightersBlue.Concat(fightersRed).ToList())
+        {
+            if (fighter.Id != mainFighter.Id)
+            {
+                positions.Add(fighter.Position);
+            }
+        }
+        return positions;
+    }
 }

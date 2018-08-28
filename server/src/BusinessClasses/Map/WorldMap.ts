@@ -27,9 +27,12 @@ export default class WorldMap {
         cell.x = i;
         cell.y = j;
         cell.isAccessible = true;
-        if (i == j) {
-          // cell.isAccessible = false;
+        cell.obstacle = false;
+        if ((i == 2 && j == 4) || (i == 6 && j == 5)) {
+          cell.isAccessible = false;
+          cell.obstacle = true;
         }
+
         await cell.save();
         map.cells[i][j] = cell._id;
       }
@@ -57,6 +60,7 @@ export default class WorldMap {
     spell.selfUse = false;
     spell.line = false;
     spell.heal = false;
+    spell.ignoreObstacle = false;
     await spell.save();
 
     const stats1 = new Stats();

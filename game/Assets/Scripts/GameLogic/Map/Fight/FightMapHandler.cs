@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FightMapHandler : MonoBehaviour {
@@ -104,7 +105,16 @@ public class FightMapHandler : MonoBehaviour {
         {
             fightMapDTG.BlockPathHighlighting(true);
             selectedSpell = spell;
-            var cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range, true, spell.line);
+            List<Vector2> cells;
+            if (!spell.ignoreObstacle)
+            {
+                var physicalObstacles = fightMapDTG.GetObstacles();
+                var fightersPosition = fight.GetFightersPositionsButMainFighter();
+                cells = GetComponent<FightMapPathFinding>().FindSpellRangeWithObstacle(position, physicalObstacles.Concat(fightersPosition).ToList(), spell.range, true, spell.line);
+            }
+            else{
+                cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range, true, spell.line);
+            }
             fightMapDTG.HighlightSpellRange(cells);
         }
     }
