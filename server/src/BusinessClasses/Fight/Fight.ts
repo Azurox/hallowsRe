@@ -22,7 +22,6 @@ export default class Fight {
   clock: number = 0;
   blueCells: { position: Position; taken: boolean }[];
   redCells: { position: Position; taken: boolean }[];
-
   obstacles: Position[];
   acceptedId: string;
 
@@ -297,6 +296,7 @@ export default class Fight {
   }
 
   useSpell(id: string, spell: ISpell, position: Position) {
+    if (!this.checkPlayerTurn(id)) return;
     const fighter = this.retrieveFighterFromPlayerId(id);
     const processor = new SpellProcessor(
       this,
