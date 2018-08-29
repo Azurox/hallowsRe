@@ -32,7 +32,7 @@ export default class FightHandler {
   async startFight(target: { id: string }) {
     const firstTeam = [this.socket.player];
     const secondTeam = await this.P.RetrievePlayers([target.id]);
-    const map = await this.M.getLeanMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
+    const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
     this.F.startFight(firstTeam, secondTeam, map);
   }
 

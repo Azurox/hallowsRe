@@ -226,14 +226,14 @@ public class FightMapPathFinding : MonoBehaviour
 
     #region Spell region
 
-    public List<Vector2> FindSpellRange(Vector2 startPosition, int range, bool includeStartPosition, bool inLine)
+    public HashSet<Vector2> FindSpellRange(Vector2 startPosition, int range, bool includeStartPosition, bool inLine)
     {
         if (currentMap == null)
         {
             Init();
         }
 
-        List<Vector2> rangeList = new List<Vector2>();
+        HashSet<Vector2> rangeList = new HashSet<Vector2>();
         for (int i = 0; i < currentMap.GetLength(0); i++)
         {
             for (int j = 0; j < currentMap.GetLength(1); j++)
@@ -275,10 +275,12 @@ public class FightMapPathFinding : MonoBehaviour
     }
 
 
-    public List<Vector2> FindSpellRangeWithObstacle(Vector2 startPosition, List<Vector2> obstacles, int range, bool includeStartPosition, bool inLine)
+    public HashSet<Vector2> FindSpellRangeWithObstacle(Vector2 startPosition, HashSet<Vector2> obstacles, int range, bool includeStartPosition, bool inLine)
     {
-        List<Vector2> rangeList = FindSpellRange(startPosition, range, includeStartPosition, inLine);
-        List<Vector2> obstacleInRange = new List<Vector2>();
+        HashSet<Vector2> rangeList = FindSpellRange(startPosition, range, includeStartPosition, inLine);
+        HashSet<Vector2> obstacleInRange = new HashSet<Vector2>();
+        HashSet<Vector2> toRemove = new HashSet<Vector2>();
+
         foreach (var obs in obstacles)
         {
             var totalVector = obs - startPosition;
@@ -291,42 +293,47 @@ public class FightMapPathFinding : MonoBehaviour
 
         foreach (var obs in obstacleInRange)
         {
-            List<Vector2> cellAfterObs = new List<Vector2>();
+            // Micro optimization, they may be needed later.
+            /* HashSet<Vector2> cellAfterObs = new HashSet<Vector2>();
+             foreach (var cell in rangeList)
+             {
+                 if (Vector2.Distance(startPosition, cell) > Vector2.Distance(startPosition, obs))
+                 {
+                     cellAfterObs.Add(cell);
+                 }
+             }
+
+
+             HashSet<Vector2> cellBehindObs = new HashSet<Vector2>();
+             foreach (var cell in cellAfterObs)
+             {
+                 if (Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)) < 45)
+                 {
+                     cellBehindObs.Add(cell);
+                 }
+             }*/
+
             foreach (var cell in rangeList)
             {
-                if (Vector2.Distance(startPosition, cell) > Vector2.Distance(startPosition, obs))
-                {
-                    cellAfterObs.Add(cell);
-                }
-            }
-
-
-            List<Vector2> cellBehindObs = new List<Vector2>();
-            foreach (var cell in cellAfterObs)
-            {
-                if (Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)) < 45)
-                {
-                    cellBehindObs.Add(cell);
-                }
-            }
-
-            foreach (var cell in cellBehindObs)
-            {
+                if (cell == obs) continue;
                 if (Bresenham((int)cell.x, (int)cell.y, (int)startPosition.x, (int)startPosition.y).Contains(obs))
                 {
-                    rangeList.Remove(cell);
+                    toRemove.Add(cell);
+                }else if (Bresenham((int)startPosition.x, (int)startPosition.y, (int)cell.x, (int)cell.y).Contains(obs))
+                {
+                    toRemove.Add(cell);
                 }
             }
 
         }
-
+        rangeList.ExceptWith(toRemove);
         return rangeList;
     }
 
 
-    private List<Vector2> Bresenham(int x0, int y0, int x1, int y1)
+    private HashSet<Vector2> Bresenham(int x0, int y0, int x1, int y1)
     {
-        var arr = new List<Vector2>();
+        var arr = new HashSet<Vector2>();
 
         var distanceX = x1 - x0;
         var distanceY = y1 - y0;

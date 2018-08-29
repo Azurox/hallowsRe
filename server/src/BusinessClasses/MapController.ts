@@ -80,4 +80,9 @@ export default class MapController {
     const map = await this.worldMap.getLeanMap(x, y);
     return map;
   }
+
+  async getMap(x: number, y: number): Promise<IMap> {
+    const map = await this.worldMap.getMap(x, y);
+    return map;
+  }
 }

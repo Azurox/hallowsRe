@@ -18,12 +18,12 @@ public class FightMapDTG : MonoBehaviour {
     private FightCellDTG[,] cells;
     public List<FightCellDTG> blueCells = new List<FightCellDTG>();
     public List<FightCellDTG> redCells = new List<FightCellDTG>();
-    private List<Vector2> obstacleCells = new List<Vector2>();
-    private List<Vector2> dirtySpawnCells = new List<Vector2>();
-    private List<Vector2> dirtyMovementRangeCells = new List<Vector2>();
+    private HashSet<Vector2> obstacleCells = new HashSet<Vector2>();
+    private HashSet<Vector2> dirtySpawnCells = new HashSet<Vector2>();
+    private HashSet<Vector2> dirtyMovementRangeCells = new HashSet<Vector2>();
     private List<Vector2> dirtyPathCells = new List<Vector2>();
-    private List<Vector2> dirtySpellRangeCells = new List<Vector2>();
-    private List<Vector2> dirtySpellImpactCells = new List<Vector2>();
+    private HashSet<Vector2> dirtySpellRangeCells = new HashSet<Vector2>();
+    private HashSet<Vector2> dirtySpellImpactCells = new HashSet<Vector2>();
 
     private bool isPathHighlightingBlocked = false;
 
@@ -148,7 +148,7 @@ public class FightMapDTG : MonoBehaviour {
     }
 
 
-    public void HighlightSpellRange(List<Vector2> positions)
+    public void HighlightSpellRange(HashSet<Vector2> positions)
     {
         if (positions != null)
         {
@@ -156,7 +156,7 @@ public class FightMapDTG : MonoBehaviour {
             {
                 cells[(int)position.x, (int)position.y].AddColor(LIGHT_BLUE_COLOR, 30);
             }
-            dirtySpellRangeCells.AddRange(positions);
+            dirtySpellRangeCells.UnionWith(positions);
         }
     }
 
@@ -205,7 +205,7 @@ public class FightMapDTG : MonoBehaviour {
         return inRange;
     }
 
-    public List<Vector2> GetObstacles()
+    public HashSet<Vector2> GetObstacles()
     {
         return obstacleCells;
     }

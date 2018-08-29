@@ -22,6 +22,8 @@ export default class Fight {
   clock: number = 0;
   blueCells: { position: Position; taken: boolean }[];
   redCells: { position: Position; taken: boolean }[];
+
+  obstacles: Position[];
   acceptedId: string;
 
   constructor(io: SocketIO.Server, map: IMap) {
@@ -33,6 +35,8 @@ export default class Fight {
     this.redCells = map.redCells.map(cell => {
       return { position: cell, taken: false };
     });
+
+    this.obstacles = map.getObstacles();
   }
 
   addFighter(fighter: Fighter) {
@@ -284,9 +288,23 @@ export default class Fight {
     return true;
   }
 
+  getFightersPosition(): Position[] {
+    const positions = [];
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      positions.push(this.fightOrder[i].position);
+    }
+    return positions;
+  }
+
   useSpell(id: string, spell: ISpell, position: Position) {
     const fighter = this.retrieveFighterFromPlayerId(id);
-    const processor = new SpellProcessor(this, spell, fighter, position);
+    const processor = new SpellProcessor(
+      this,
+      spell,
+      fighter,
+      position,
+      this.getFightersPosition().concat(this.obstacles)
+    );
     try {
       const impacts = processor.process();
       this.io.to(this.id).emit("fighterUseSpell", {
@@ -295,6 +313,7 @@ export default class Fight {
         spellId: spell.id,
         impacts: impacts
       });
+      fighter.currentActionPoint -= spell.actionPointCost;
     } catch (error) {
       console.log(error);
     }

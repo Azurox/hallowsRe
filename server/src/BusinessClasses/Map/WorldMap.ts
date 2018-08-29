@@ -56,12 +56,13 @@ export default class WorldMap {
     spell.actionPointCost = 4;
     spell.physicalDamage = 7;
     spell.magicDamage = 0;
-    spell.range = 1;
+    spell.range = 4;
     spell.selfUse = false;
     spell.line = false;
     spell.heal = false;
     spell.ignoreObstacle = false;
     await spell.save();
+    console.log("spell saved with id : " + spell.id);
 
     const stats1 = new Stats();
     stats1.life = 25;
