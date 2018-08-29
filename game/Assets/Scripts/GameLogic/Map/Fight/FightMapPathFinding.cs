@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FightMapPathFinding : MonoBehaviour {
+public class FightMapPathFinding : MonoBehaviour
+{
     private FightMapDTG fightMapDTG;
     private FightCellDTG[,] currentMap;
     public Node[,] grid;
@@ -157,7 +158,7 @@ public class FightMapPathFinding : MonoBehaviour {
         return path;
     }
 
-#region range Finding
+    #region range Finding
     public List<FightCellDTG> FindRange(Vector2 startPosition, int range)
     {
         Init();
@@ -167,7 +168,7 @@ public class FightMapPathFinding : MonoBehaviour {
 
     private HashSet<FightCellDTG> FindRange(FightCellDTG firstCell, int range)
     {
-        if(range == 0)
+        if (range == 0)
         {
             return new HashSet<FightCellDTG>();
         }
@@ -178,14 +179,14 @@ public class FightMapPathFinding : MonoBehaviour {
         };
 
         HashSet<FightCellDTG> newCells = FindNeighbors(firstHashset);
-        if(range == 1)
+        if (range == 1)
         {
             return newCells;
         }
 
         HashSet<FightCellDTG> totalCells = new HashSet<FightCellDTG>(newCells);
 
-        for (int i = 0; i < range-1; i++)
+        for (int i = 0; i < range - 1; i++)
         {
             newCells = FindNeighbors(newCells);
             totalCells.UnionWith(newCells);
@@ -194,7 +195,7 @@ public class FightMapPathFinding : MonoBehaviour {
         return totalCells;
     }
 
-    private HashSet<FightCellDTG> FindNeighbors (HashSet<FightCellDTG> oldCellDTGs)
+    private HashSet<FightCellDTG> FindNeighbors(HashSet<FightCellDTG> oldCellDTGs)
     {
         HashSet<FightCellDTG> newCellDTGs = new HashSet<FightCellDTG>();
         foreach (var cell in oldCellDTGs)
@@ -205,15 +206,15 @@ public class FightMapPathFinding : MonoBehaviour {
             {
                 newCellDTGs.Add(currentMap[x + 1, y]);
             }
-            if (x - 1 >= 0 && currentMap[x - 1, y].currentCell.IsAccessible && !currentMap[x-1,y].taken)
+            if (x - 1 >= 0 && currentMap[x - 1, y].currentCell.IsAccessible && !currentMap[x - 1, y].taken)
             {
                 newCellDTGs.Add(currentMap[x - 1, y]);
             }
-            if (y + 1 < currentMap.GetLength(1) && currentMap[x, y + 1].currentCell.IsAccessible && !currentMap[x,y+1].taken)
+            if (y + 1 < currentMap.GetLength(1) && currentMap[x, y + 1].currentCell.IsAccessible && !currentMap[x, y + 1].taken)
             {
                 newCellDTGs.Add(currentMap[x, y + 1]);
             }
-            if (y - 1 >= 0 && currentMap[x, y - 1].currentCell.IsAccessible && !currentMap[x, y-1].taken)
+            if (y - 1 >= 0 && currentMap[x, y - 1].currentCell.IsAccessible && !currentMap[x, y - 1].taken)
             {
                 newCellDTGs.Add(currentMap[x, y - 1]);
             }
@@ -223,19 +224,19 @@ public class FightMapPathFinding : MonoBehaviour {
     #endregion
 
 
-#region Spell region
+    #region Spell region
 
     public List<Vector2> FindSpellRange(Vector2 startPosition, int range, bool includeStartPosition, bool inLine)
     {
-        if(currentMap == null)
+        if (currentMap == null)
         {
             Init();
         }
 
         List<Vector2> rangeList = new List<Vector2>();
-        for(int i = 0; i < currentMap.GetLength(0); i++)
+        for (int i = 0; i < currentMap.GetLength(0); i++)
         {
-            for(int j = 0; j < currentMap.GetLength(1); j++)
+            for (int j = 0; j < currentMap.GetLength(1); j++)
             {
                 var position = new Vector2(i, j);
                 var totalVector = position - startPosition;
@@ -243,7 +244,7 @@ public class FightMapPathFinding : MonoBehaviour {
                 bool include = false;
                 if (distance <= range && currentMap[i, j].currentCell.IsAccessible)
                 {
-                    if(includeStartPosition == false)
+                    if (includeStartPosition == false)
                     {
                         if (position != startPosition)
                         {
@@ -257,7 +258,7 @@ public class FightMapPathFinding : MonoBehaviour {
 
                     if (inLine)
                     {
-                        if(!(totalVector.x == 0 || totalVector.y == 0))
+                        if (!(totalVector.x == 0 || totalVector.y == 0))
                         {
                             include = false;
                         }
@@ -274,31 +275,28 @@ public class FightMapPathFinding : MonoBehaviour {
     }
 
 
-    public List<Vector2> FindSpellRangeWithObstacle(Vector2 startPosition, List<Vector2> obstacles ,int range, bool includeStartPosition, bool inLine)
+    public List<Vector2> FindSpellRangeWithObstacle(Vector2 startPosition, List<Vector2> obstacles, int range, bool includeStartPosition, bool inLine)
     {
         List<Vector2> rangeList = FindSpellRange(startPosition, range, includeStartPosition, inLine);
         List<Vector2> obstacleInRange = new List<Vector2>();
         foreach (var obs in obstacles)
         {
             var totalVector = obs - startPosition;
-            var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);
-            if(distance <= range)
+            var distance = Math.Abs(totalVector.x) + Math.Abs(totalVector.y);
+            if (distance <= range)
             {
-                Debug.Log("Add obstacle at X" + obs.x + " Y" + obs.y);
                 obstacleInRange.Add(obs);
             }
         }
 
         foreach (var obs in obstacleInRange)
         {
-            var magn = new Vector2(obs.x - startPosition.x, obs.y - startPosition.y);
             List<Vector2> cellAfterObs = new List<Vector2>();
             foreach (var cell in rangeList)
             {
-                if(Vector2.Distance(startPosition, cell) > Vector2.Distance(startPosition, obs))
+                if (Vector2.Distance(startPosition, cell) > Vector2.Distance(startPosition, obs))
                 {
                     cellAfterObs.Add(cell);
-                    Debug.Log("Add cell after obs at X" + cell.x + " Y" + cell.y);
                 }
             }
 
@@ -306,41 +304,65 @@ public class FightMapPathFinding : MonoBehaviour {
             List<Vector2> cellBehindObs = new List<Vector2>();
             foreach (var cell in cellAfterObs)
             {
-                if (Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)) < 45 * Math.Pow(0.59034f, magn.magnitude - 1))
+                if (Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)) < 45)
                 {
-                    rangeList.Remove(cell);
                     cellBehindObs.Add(cell);
-                    Debug.Log("Add cell behind obs at X" + cell.x + " Y" + cell.y);
-                    Debug.Log("With angle : " + Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)));
-                    // Debug.Log("With magnitude : " + Vector2.Angle(new Vector2(obs.x - startPosition.x, obs.y - startPosition.y), new Vector2(cell.x - startPosition.x, cell.y - startPosition.y)));
-
                 }
             }
-/*
+
             foreach (var cell in cellBehindObs)
             {
-                var distance = CalculateDistance(startPosition, obs, cell.x, cell.y);
-                Debug.Log("distance for cell " + cell.x + " Y" + cell.y);
-                Debug.Log(" distance : " + distance);
-                if(distance <= 1 && !(Math.Abs(startPosition.x - cell.x) == Math.Abs(startPosition.y - cell.y)))
+                if (Bresenham((int)cell.x, (int)cell.y, (int)startPosition.x, (int)startPosition.y).Contains(obs))
                 {
                     rangeList.Remove(cell);
                 }
-            }*/
+            }
+
         }
 
         return rangeList;
     }
 
-    private double CalculateDistance(Vector2 point1, Vector2 point2, double x0, double y0)
+
+    private List<Vector2> Bresenham(int x0, int y0, int x1, int y1)
     {
-        return ((Math.Abs((point2.y - point1.y) * x0 -
-                         (point2.x - point1.x) * y0 +
-                         point2.x * point1.y -
-                         point2.y * point1.x)) /
-                (Math.Pow((Math.Pow(point2.y - point1.y, 2) +
-                           Math.Pow(point2.x - point1.x, 2)),
-                          0.5)));
+        var arr = new List<Vector2>();
+
+        var distanceX = x1 - x0;
+        var distanceY = y1 - y0;
+        var distanceXAbs = Math.Abs(distanceX);
+        var distanceYAbs = Math.Abs(distanceY);
+        var eps = 0;
+        var sx = distanceX > 0 ? 1 : -1;
+        var sy = distanceY > 0 ? 1 : -1;
+        if (distanceXAbs > distanceYAbs)
+        {
+            for (int x = x0, y = y0; sx < 0 ? x >= x1 : x <= x1; x += sx)
+            {
+                arr.Add(new Vector2(x, y));
+                eps += distanceYAbs;
+                if ((eps << 1) >= distanceXAbs)
+                {
+                    y += sy;
+                    eps -= distanceXAbs;
+                }
+            }
+        }
+        else
+        {
+            for (int x = x0, y = y0; sy < 0 ? y >= y1 : y <= y1; y += sy)
+            {
+                arr.Add(new Vector2(x, y));
+                eps += distanceXAbs;
+                if ((eps << 1) >= distanceYAbs)
+                {
+                    x += sx;
+                    eps -= distanceYAbs;
+                }
+            }
+        }
+        return arr;
     }
+
     #endregion
 }
