@@ -76,4 +76,9 @@ public class Fighter {
         this.CurrentActionPoint = ActionPoint;
         this.CurrentMovementPoint = MovementPoint;
     }
+
+    public void TakeImpact(Impact impact)
+    {
+        CurrentLife =+ impact.life;
+    }
 }

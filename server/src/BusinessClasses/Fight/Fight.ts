@@ -5,6 +5,7 @@ import Position from "../RelationalObject/Position";
 import { IPlayer } from "../../Schema/Player";
 import { ISpell } from "../../Schema/Spell";
 import SpellProcessor from "./SpellProcessor";
+import SpellImpact from "./SpellImpact";
 
 export default class Fight {
   /* CONST */
@@ -314,8 +315,24 @@ export default class Fight {
         impacts: impacts
       });
       fighter.currentActionPoint -= spell.actionPointCost;
+      this.applySpellImpacts(impacts);
     } catch (error) {
       console.log(error);
     }
+  }
+
+  applySpellImpacts(impacts: SpellImpact[]) {
+    for (let i = 0; i < impacts.length; i++) {
+      const fighter = this.retrieveFighterFromPlayerId(impacts[i].playerId);
+      fighter.currentLife += impacts[i].life;
+      /* Need to apply other effect as Buff or Debuff */
+      if (fighter.currentLife <= 0) {
+        this.killFighter(fighter);
+      }
+    }
+  }
+
+  killFighter(fighter: Fighter) {
+    console.log(`${fighter.player.name} is dead !`);
   }
 }

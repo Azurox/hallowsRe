@@ -49,6 +49,7 @@ public class FightMapReceiver {
         socket.On("fightPhase1", FightPhase1);
         socket.On("nextTurn", NextTurn);
         socket.On("fighterMove", FighterMove);
+        socket.On("fighterUseSpell", FighterUseSpell);
     }
 
     private void FightStarted(SocketIOEvent obj)
@@ -167,6 +168,23 @@ public class FightMapReceiver {
         {
             FighterContainerDTG.MoveFighter(id, path);
         }
+    }
+
+    private void FighterUseSpell(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Fighter user = Fight.GetFighter(id);
+        Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
+        string spellId = obj.data["playerId"].str;
+        Spell spell = ResourcesLoader.Instance.GetSpell(spellId);
+        var rawImpacts = obj.data["impacts"];
+        List<Impact> impacts =  new List<Impact>();
+        for (var i = 0; i < rawImpacts.Count; i++)
+        {
+            Impact impact = new Impact(rawImpacts[i]);
+        }
+
+        FighterContainerDTG.FighterUseSpell(user, spell, position, impacts);
     }
 
     private void FightFinished()

@@ -117,4 +117,9 @@ public class FighterContainerDTG : MonoBehaviour {
         FightUIManager.ShowFighterStats(fighter);
     }
 
+    public void FighterUseSpell(Fighter fighter, Spell spell, Vector2 position, List<Impact> impacts)
+    {
+        // do everything but UI
+    }
+
 }
