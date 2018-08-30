@@ -26,7 +26,7 @@ public class MainFighterHandler : MonoBehaviour {
     public void MouseOverMainFighter(Fighter fighter)
     {
         fightMapHandler.MouseOverCell((int)fighter.Position.x, (int)fighter.Position.y);
-        fightMapHandler.ShowMovementRange(fighter.Position, fighter.CurrentMovementPoint);
+        fightMapHandler.ShowMovementRange(fighter.Position, fighter.GetCurrentMovementPoint());
         GetComponent<FighterContainerDTG>().FocusFighter(fighter);
     }
 
@@ -39,7 +39,7 @@ public class MainFighterHandler : MonoBehaviour {
     public bool IsMovementPossible(Vector2 position)
     {
         var fighterPosition = mainFighterDTG.GetFighter().Position;
-        var movementPoint = mainFighterDTG.GetFighter().CurrentMovementPoint;
+        var movementPoint = mainFighterDTG.GetFighter().GetCurrentMovementPoint();
 
         var totalVector = position - fighterPosition;
         var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);

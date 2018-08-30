@@ -11,21 +11,24 @@ public class Fighter {
     public bool Ready { get; set; }
     private List<Spell> spells;
 
+    public delegate void OnStatsChange();
+    public OnStatsChange StatsChange;
+
     #region stats
-    public int Life { get; set; }
-    public int CurrentLife { get; set; }
-    public int Speed { get; set; }
-    public int CurrentSpeed { get; set; }
-    public int Armor { get; set; }
-    public int CurrentArmor { get; set; }
-    public int MagicResistance { get; set; }
-    public int CurrentMagicResistance { get; set; }
-    public int AttackDamage { get; set; }
-    public int CurrentAttackDamage { get; set; }
-    public int MovementPoint { get; set; }
-    public int CurrentMovementPoint { get; set; }
-    public int ActionPoint { get; set; }
-    public int CurrentActionPoint { get; set; }
+    private int Life;
+    private int CurrentLife;
+    private int Speed;
+    private int CurrentSpeed;
+    private int Armor;
+    private int CurrentArmor;
+    private int MagicResistance;
+    private int CurrentMagicResistance;
+    private int AttackDamage;
+    private int CurrentAttackDamage;
+    private int MovementPoint;
+    private int CurrentMovementPoint;
+    private int ActionPoint;
+    private int CurrentActionPoint;
     #endregion
 
     public Fighter(JSONObject data)
@@ -73,12 +76,83 @@ public class Fighter {
 
     public void ResetTurnStats()
     {
-        this.CurrentActionPoint = ActionPoint;
-        this.CurrentMovementPoint = MovementPoint;
+        CurrentActionPoint = ActionPoint;
+        CurrentMovementPoint = MovementPoint;
+        if (StatsChange != null)
+        {
+            StatsChange();
+        }
     }
 
     public void TakeImpact(Impact impact)
     {
-        CurrentLife += impact.life;
+        UpdateCurrentLife(impact.life);
+    }
+
+    public int GetCurrentLife()
+    {
+        return CurrentLife;
+    }
+
+    public int GetLife()
+    {
+        return Life;
+    }
+
+    public void UpdateCurrentLife(int num)
+    {
+        CurrentLife += num;
+        if(StatsChange != null)
+        {
+            StatsChange();
+        }
+    }
+
+    public int GetMovementPoint()
+    {
+        return MovementPoint;
+    }
+
+    public int GetCurrentMovementPoint()
+    {
+        return CurrentMovementPoint;
+    }
+
+    public void UpdateCurrentMovementPoint(int num)
+    {
+        CurrentMovementPoint += num;
+        if (StatsChange != null)
+        {
+            StatsChange();
+        }
+    }
+
+    public int GetActionPoint()
+    {
+        return ActionPoint;
+    }
+
+    public int GetCurrentActionPoint()
+    {
+        return CurrentActionPoint;
+    }
+
+    public void UpdateCurrentActionPoint(int num)
+    {
+        CurrentActionPoint += num;
+        if (StatsChange != null)
+        {
+            StatsChange();
+        }
+    }
+
+    public int GetCurrentSpeed()
+    {
+        return CurrentSpeed;
+    }
+
+    public int GetSpeed()
+    {
+        return Speed;
     }
 }

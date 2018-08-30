@@ -142,7 +142,7 @@ public class FightMapHandler : MonoBehaviour {
         if (mainFighterHandler.IsMovementPossible(position))
         {
            var path = GetComponent<FightMapPathFinding>().FindPath(mainFighter.GetFighter().Position, position);
-            if(path != null && path.Count <= mainFighter.GetFighter().CurrentMovementPoint)
+            if(path != null && path.Count <= mainFighter.GetFighter().GetCurrentMovementPoint())
             {
                 fightMapDTG.HighlightPath(path);
             }

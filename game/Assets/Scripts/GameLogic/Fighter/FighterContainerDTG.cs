@@ -62,7 +62,7 @@ public class FighterContainerDTG : MonoBehaviour {
 
             fighter.GetComponent<Movable>().TakePath(new Vector2(fighter.gameObject.transform.position.x, fighter.gameObject.transform.position.z) ,path, (x, y)=>
             {
-                fighter.GetFighter().CurrentMovementPoint--;
+                fighter.GetFighter().UpdateCurrentMovementPoint(-1);
                 fighter.GetFighter().Position = new Vector2(x, y);
                 if (path.Count == 0)
                 {
@@ -85,7 +85,7 @@ public class FighterContainerDTG : MonoBehaviour {
         mainFighter.BlockHovering(true);
         mainFighter.GetComponent<Movable>().TakePath(new Vector2(mainFighter.transform.position.x, mainFighter.gameObject.transform.position.z), path, (x, y) =>
         {
-            fighter.CurrentMovementPoint--;
+            fighter.UpdateCurrentMovementPoint(-1);
             fighter.Position = new Vector2(x, y);
 
             if (path.Count == 0)

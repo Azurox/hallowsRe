@@ -24,7 +24,7 @@ public class FighterHandler : MonoBehaviour {
     public void MouseOverFighter(Fighter fighter)
     {
         fightMapHandler.MouseOverCell((int)fighter.Position.x, (int)fighter.Position.y);
-        fightMapHandler.ShowMovementRange(fighter.Position, fighter.CurrentMovementPoint);
+        fightMapHandler.ShowMovementRange(fighter.Position, fighter.GetCurrentMovementPoint());
         GetComponent<FighterContainerDTG>().FocusFighter(fighter);
     }
 

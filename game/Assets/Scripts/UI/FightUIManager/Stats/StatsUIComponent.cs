@@ -14,7 +14,13 @@ public class StatsUIComponent : MonoBehaviour {
 
     public void SetFighter(Fighter fighter)
     {
+        if (this.fighter != null)
+        {
+            this.fighter.StatsChange -= RefreshStatsHUD; 
+        }
+
         this.fighter = fighter;
+        this.fighter.StatsChange += RefreshStatsHUD;
         RefreshStatsHUD();
     }
 
@@ -22,10 +28,10 @@ public class StatsUIComponent : MonoBehaviour {
     {
         PlayerName.text = fighter.Name;
         PlayerLevel.text = "Level: 0";
-        PlayerLife.text = fighter.CurrentLife + "/" + fighter.Life;
-        PlayerSpeed.text = fighter.CurrentSpeed + " Speed";
-        PlayerActionPoint.text = fighter.CurrentActionPoint + " AP";
-        PlayerMovementPoint.text = fighter.CurrentMovementPoint + " MP";
+        PlayerLife.text = fighter.GetCurrentLife() + "/" + fighter.GetLife();
+        PlayerSpeed.text = fighter.GetCurrentSpeed() + " Speed";
+        PlayerActionPoint.text = fighter.GetCurrentActionPoint() + " AP";
+        PlayerMovementPoint.text = fighter.GetCurrentMovementPoint() + " MP";
     }
 
 }

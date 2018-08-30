@@ -42,7 +42,7 @@ public class FighterDTG : MonoBehaviour {
 
     public void UseSpell(Spell spell, Vector2 position, System.Action callback )
     {
-        fighter.CurrentActionPoint -= spell.actionPointCost;
+        fighter.UpdateCurrentActionPoint(-spell.actionPointCost);
         //play an animation
         if(callback != null)
         {
