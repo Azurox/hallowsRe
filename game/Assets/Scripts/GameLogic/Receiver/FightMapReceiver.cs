@@ -175,7 +175,7 @@ public class FightMapReceiver {
         string id = obj.data["playerId"].str;
         Fighter user = Fight.GetFighter(id);
         Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
-        string spellId = obj.data["playerId"].str;
+        string spellId = obj.data["spellId"].str;
         Spell spell = ResourcesLoader.Instance.GetSpell(spellId);
         var rawImpacts = obj.data["impacts"];
         List<Impact> impacts =  new List<Impact>();

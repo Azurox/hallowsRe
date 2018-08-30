@@ -22,7 +22,7 @@ public class StatsUIComponent : MonoBehaviour {
     {
         PlayerName.text = fighter.Name;
         PlayerLevel.text = "Level: 0";
-        PlayerLife.text = fighter.CurrentLife + "/" + fighter.CurrentLife;
+        PlayerLife.text = fighter.CurrentLife + "/" + fighter.Life;
         PlayerSpeed.text = fighter.CurrentSpeed + " Speed";
         PlayerActionPoint.text = fighter.CurrentActionPoint + " AP";
         PlayerMovementPoint.text = fighter.CurrentMovementPoint + " MP";

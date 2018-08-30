@@ -79,6 +79,6 @@ public class Fighter {
 
     public void TakeImpact(Impact impact)
     {
-        CurrentLife =+ impact.life;
+        CurrentLife += impact.life;
     }
 }

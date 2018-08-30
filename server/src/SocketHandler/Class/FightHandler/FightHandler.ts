@@ -84,7 +84,8 @@ export default class FightHandler {
     const possible = await this.M.checkMovementPossibility(this.socket, data.position);
     try {
       if (possible && this.socket.player.hasSpell(data.spellId)) {
-        const spell = await Spell.findById(data.spellId).lean();
+        const spell = await Spell.findById(data.spellId);
+        console.log("spell found  " + spell.id);
         fight.useSpell(this.socket.player.id, spell, data.position);
       }
     } catch (error) {
