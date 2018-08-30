@@ -10,6 +10,7 @@ public class FightUIManager : MonoBehaviour {
     public TimelineUIComponent TimelineUIComponent;
     public StatsUIComponent StatsUIComponent;
     public SpellsUIComponent SpellsUIComponent;
+    public ImpactUIComponent ImpactUIComponent;
 
     private MainFighterEmitter MainFighterEmitter;
     private FightMapHandler FightMapHandler;
@@ -81,6 +82,10 @@ public class FightUIManager : MonoBehaviour {
         FightMapHandler.ShowSpellRange(spell);
     }
 
+    public void ShowImpact(Impact impact, Vector2 position)
+    {
+        ImpactUIComponent.ShowImpact(impact, position);
+    }
 
 
     /* UI Action */

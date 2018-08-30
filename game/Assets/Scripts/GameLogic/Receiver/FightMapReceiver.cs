@@ -182,6 +182,7 @@ public class FightMapReceiver {
         for (var i = 0; i < rawImpacts.Count; i++)
         {
             Impact impact = new Impact(rawImpacts[i]);
+            impacts.Add(impact);
         }
 
         FighterContainerDTG.FighterUseSpell(user, spell, position, impacts);

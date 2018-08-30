@@ -119,6 +119,42 @@ public class FighterContainerDTG : MonoBehaviour {
 
     public void FighterUseSpell(Fighter fighter, Spell spell, Vector2 position, List<Impact> impacts)
     {
+        if (fighter.IsMainPlayer)
+        {
+            mainFighter.UseSpell(spell, position, () =>
+            {
+                foreach (var impact in impacts)
+                {
+                    var target = fighters[impact.playerId];
+                    target.TakeImpact(impact);
+                    FightUIManager.ShowImpact(impact, target.GetFighter().Position);
+                }
+            });
+        }
+        else
+        {
+            fighters[fighter.Id].UseSpell(spell, position, () =>
+            {
+                foreach (var impact in impacts)
+                {
+                    if(impact.playerId == mainFighter.GetFighter().Id)
+                    {
+                        mainFighter.TakeImpact(impact);
+                        FightUIManager.ShowImpact(impact, mainFighter.GetFighter().Position);
+                    }
+                    else
+                    {
+                        var target = fighters[impact.playerId];
+                        target.TakeImpact(impact);
+                        FightUIManager.ShowImpact(impact, target.GetFighter().Position);
+                    }
+
+                }
+            });
+        }
+
+
+
         // do everything but UI
     }
 

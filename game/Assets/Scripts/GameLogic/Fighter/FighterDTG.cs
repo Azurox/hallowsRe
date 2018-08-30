@@ -34,6 +34,22 @@ public class FighterDTG : MonoBehaviour {
         return fighter;
     }
 
+    public void TakeImpact(Impact impact)
+    {
+        fighter.TakeImpact(impact);
+        //play an animation
+    }
+
+    public void UseSpell(Spell spell, Vector2 position, System.Action callback )
+    {
+        fighter.CurrentActionPoint -= spell.actionPointCost;
+        //play an animation
+        if(callback != null)
+        {
+            callback();
+        }
+    }
+
     private void OnMouseDown()
     {
         transform.parent.GetComponent<FighterHandler>().ClickOnFighter(fighter);
