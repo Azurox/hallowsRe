@@ -23,6 +23,8 @@ export default class Fighter {
   currentMovementPoint: number;
   readonly actionPoint: number;
   currentActionPoint: number;
+  dead: boolean = false;
+
 
   constructor(player: IPlayer, side: Side) {
     this.player = player;

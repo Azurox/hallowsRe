@@ -9,6 +9,7 @@ export default class SpellImpact {
     actionPoint: number;
     movementPoint: number;
     position: Position;
+    death: boolean = false;
 
     constructor(id: string) {
         this.playerId = id;

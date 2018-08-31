@@ -6,6 +6,7 @@ import { IPlayer } from "../../Schema/Player";
 import { ISpell } from "../../Schema/Spell";
 import SpellProcessor from "./SpellProcessor";
 import SpellImpact from "./SpellImpact";
+import FightEndProcessor from "./FightEndProcessor";
 
 export default class Fight {
   /* CONST */
@@ -25,6 +26,7 @@ export default class Fight {
   redCells: { position: Position; taken: boolean }[];
   obstacles: Position[];
   acceptedId: string;
+  winners: Side;
 
   constructor(io: SocketIO.Server, map: IMap) {
     this.io = io;
@@ -308,31 +310,95 @@ export default class Fight {
     );
     try {
       const impacts = processor.process();
-      this.io.to(this.id).emit("fighterUseSpell", {
-        playerId: id,
-        position: position,
-        spellId: spell.id,
-        impacts: impacts
-      });
       fighter.currentActionPoint -= spell.actionPointCost;
-      this.applySpellImpacts(impacts);
+      const fightIsFinished = this.applySpellImpacts(impacts);
+
+      if (fightIsFinished) {
+        this.io.to(this.id).emit("fighterUseSpell", {
+          playerId: id,
+          position: position,
+          spellId: spell.id,
+          impacts: impacts
+        });
+      } else {
+        const fighters =  this.blueTeam.concat(this.redTeam);
+        for (let i = 0 ; i < fighters.length; i++) {
+
+          const fightEndProcessor =  new FightEndProcessor();
+          this.io.to(fighters[i].socketId).emit("fighterUseSpell", {
+            playerId: id,
+            position: position,
+            spellId: spell.id,
+            impacts: impacts,
+            fightEnd: fightEndProcessor.process()
+          });
+        }
+      }
     } catch (error) {
       console.log(error);
     }
   }
 
-  applySpellImpacts(impacts: SpellImpact[]) {
+  applySpellImpacts(impacts: SpellImpact[]): boolean {
+    let fightIsFinished = false;
     for (let i = 0; i < impacts.length; i++) {
       const fighter = this.retrieveFighterFromPlayerId(impacts[i].playerId);
       fighter.currentLife += impacts[i].life;
       /* Need to apply other effect as Buff or Debuff */
-      if (fighter.currentLife <= 0) {
-        this.killFighter(fighter);
+      if (impacts[i].death) {
+        const finish = this.killFighter(fighter);
+        fightIsFinished = fightIsFinished === false ? finish : true;
       }
     }
+    return fightIsFinished;
   }
 
-  killFighter(fighter: Fighter) {
+  killFighter(fighter: Fighter): boolean {
+    fighter.dead = true;
+    for (let i =  this.fightOrder.length - 1; i >= 0; --i) {
+      if (this.fightOrder[i].player.id == fighter.player.id) {
+        this.fightOrder.splice(i, 1);
+        break;
+      }
+    }
+
+    let fightIsFinished = false;
+    let isAPlayerAlive = false;
+
+    if (fighter.side == "blue") {
+      for (let i = 0; i < this.blueTeam.length; i++) {
+        if (!this.blueTeam[i].dead) {
+          isAPlayerAlive = true;
+          break;
+        }
+      }
+
+      if (!isAPlayerAlive) {
+        console.log(`Red team won`);
+        this.winners = "red";
+        fightIsFinished = true;
+      }
+
+    } else {
+      for (let i = 0; i < this.redTeam.length; i++) {
+        if (!this.redTeam[i].dead) {
+          isAPlayerAlive = true;
+          break;
+        }
+      }
+
+      if (!isAPlayerAlive) {
+        console.log(`Blue team won`);
+        this.winners = "blue";
+        fightIsFinished = true;
+      }
+    }
+
+    if (this.acceptedId == fighter.player.id) {
+      this.nextTurn();
+    }
     console.log(`${fighter.player.name} is dead !`);
+    return fightIsFinished;
   }
+
 }
