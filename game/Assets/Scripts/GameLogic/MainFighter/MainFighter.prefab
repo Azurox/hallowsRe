@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 114647189788534720}
   - component: {fileID: 114681720312789628}
   - component: {fileID: 114756495151453754}
-  - component: {fileID: 114314252615159658}
   m_Layer: 0
   m_Name: MainFighter
   m_TagString: Untagged
@@ -88,17 +87,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1441481002818822}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114314252615159658
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1441481002818822}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 169d664b196f8a94a89a618dbd42df8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114647189788534720
 MonoBehaviour:
   m_ObjectHideFlags: 1

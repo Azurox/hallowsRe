@@ -29,6 +29,27 @@ public class FighterDTG : MonoBehaviour {
         fighter.Position = new Vector2(x, y);
     }
 
+    public Fighter GetFighter()
+    {
+        return fighter;
+    }
+
+    public void TakeImpact(Impact impact)
+    {
+        fighter.TakeImpact(impact);
+        //play an animation
+    }
+
+    public void UseSpell(Spell spell, Vector2 position, System.Action callback )
+    {
+        fighter.UpdateCurrentActionPoint(-spell.actionPointCost);
+        //play an animation
+        if(callback != null)
+        {
+            callback();
+        }
+    }
+
     private void OnMouseDown()
     {
         transform.parent.GetComponent<FighterHandler>().ClickOnFighter(fighter);
@@ -37,5 +58,10 @@ public class FighterDTG : MonoBehaviour {
     private void OnMouseEnter()
     {
         transform.parent.GetComponent<FighterHandler>().MouseOverFighter(fighter);
+    }
+
+    private void OnMouseExit()
+    {
+        transform.parent.GetComponent<FighterHandler>().MouseExitFighter(fighter);
     }
 }

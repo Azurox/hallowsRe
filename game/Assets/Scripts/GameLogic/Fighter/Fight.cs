@@ -13,6 +13,7 @@ public class Fight {
     private List<Fighter> fightersBlue = new List<Fighter>();
     private List<Fighter> fightersRed = new List<Fighter>();
     private Fighter mainFighter;
+    private string turnId;
 
 
 
@@ -29,7 +30,6 @@ public class Fight {
         for(var  i = 0; i < playerList.Count; i++)
         {
             Fighter fighter = new Fighter(playerList[i]);
-            Debug.Log(playerList[i]);
             if(fighter.Side == Side.blue)
             {
                 fightersBlue.Add(fighter);
@@ -51,8 +51,57 @@ public class Fight {
         return fightersBlue.Concat(fightersRed).ToList();
     }
 
+    public Fighter GetFighter(string id)
+    {
+        foreach(var fighter in fightersBlue.Concat(fightersRed).ToList())
+        {
+            if(fighter.Id == id)
+            {
+                return fighter;
+            }
+        }
+
+        return null;
+    }
+
     public Fighter GetMainFighter()
     {
         return mainFighter;
+    }
+
+    public void SetTurnId(string id)
+    {
+        /* Reset previous player stats */
+        var fighter = GetFighter(turnId);
+        if(fighter != null)
+        {
+            fighter.ResetTurnStats();
+        }
+
+
+        turnId = id;
+    }
+
+    public string GetTurnId()
+    {
+        return turnId;
+    }
+
+    public bool IsMainFighterTurn()
+    {
+        return turnId == mainFighter.Id;
+    }
+
+    public List<Vector2> GetFightersPositionsButMainFighter()
+    {
+        List<Vector2> positions = new List<Vector2>();
+        foreach (var fighter in fightersBlue.Concat(fightersRed).ToList())
+        {
+            if (fighter.Id != mainFighter.Id)
+            {
+                positions.Add(fighter.Position);
+            }
+        }
+        return positions;
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class MainFighterDTG : MonoBehaviour {
 
     private Fighter fighter;
+    private bool isHoveringBlocked = false;
 
     public void SetFighter(Fighter fighter)
     {
@@ -28,13 +29,42 @@ public class MainFighterDTG : MonoBehaviour {
         fighter.Position = new Vector2(x, y);
     }
 
+    public void TakeImpact(Impact impact)
+    {
+        fighter.TakeImpact(impact);
+        //play an animation
+    }
+
+    public void UseSpell(Spell spell, Vector2 position, System.Action callback)
+    {
+        fighter.UpdateCurrentActionPoint(-spell.actionPointCost);
+        //play an animation
+        if (callback != null)
+        {
+            callback();
+        }
+    }
+
     private void OnMouseDown()
     {
-        Debug.Log("Clicked on self");
+        transform.parent.GetComponent<MainFighterHandler>().ClickOnMainFighter(fighter);
     }
 
     private void OnMouseEnter()
     {
-        transform.parent.GetComponent<FighterHandler>().MouseOverFighter(fighter);
+        if (!isHoveringBlocked)
+        {
+            transform.parent.GetComponent<MainFighterHandler>().MouseOverMainFighter(fighter);
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter(fighter);
+    }
+
+    public void BlockHovering(bool blockIt)
+    {
+        isHoveringBlocked = blockIt;
     }
 }

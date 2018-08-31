@@ -17,6 +17,7 @@ export default class PlayerController {
     const randomAccount = await Account.findOne().populate("players");
     socket.player = <IPlayer>randomAccount.players[this.pair % 2];
     socket.player.socketId = socket.id;
+    await socket.player.populate("stats").execPopulate();
     await socket.player.save();
     this.pair++;
   }
@@ -24,7 +25,7 @@ export default class PlayerController {
   async RetrievePlayers(ids: string[]): Promise<IPlayer[]> {
     const players: IPlayer[] = [];
     for (let i = 0; i < ids.length; i++) {
-      players.push(await Player.findById(mongoose.Types.ObjectId(ids[i])));
+      players.push(await Player.findById(mongoose.Types.ObjectId(ids[i])).populate("stats"));
     }
     return players;
   }

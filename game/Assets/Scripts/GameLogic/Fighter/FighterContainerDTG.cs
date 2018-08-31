@@ -7,17 +7,23 @@ public class FighterContainerDTG : MonoBehaviour {
     public GameObject FighterGameObject;
     public GameObject MainFighterGameObject;
     private FightUIManager FightUIManager;
+    private FightMapDTG FightMapDTG;
     private Dictionary<string, FighterDTG> fighters = new Dictionary<string, FighterDTG>();
     private MainFighterDTG mainFighter;
 
 
-    public void Init(FightUIManager fightUIManager, List<Fighter> fighters)
+    public void Startup(FightUIManager fightUIManager, FightMapDTG fightMapDTG)
+    {
+        FightUIManager = fightUIManager;
+        FightMapDTG = fightMapDTG;
+    }
+
+    public void Init(List<Fighter> fighters)
     {
         foreach (var fighter in fighters)
         {
             SpawnFighter(fighter);
         }
-        FightUIManager = fightUIManager;
     }
 
     public void SpawnFighter(Fighter fighter)
@@ -30,6 +36,7 @@ public class FighterContainerDTG : MonoBehaviour {
             mainFighter = playerGo.GetComponent<MainFighterDTG>();
             mainFighter.SetFighter(fighter);
             mainFighter.InitFighter();
+            GetComponent<MainFighterHandler>().Init(mainFighter);
         } else
         {
             playerGo = Instantiate(FighterGameObject);
@@ -48,7 +55,46 @@ public class FighterContainerDTG : MonoBehaviour {
 
     public void MoveFighter(string id, List<Vector2> path)
     {
+        if (fighters.ContainsKey(id))
+        {
+            FighterDTG fighter = fighters[id];
+            FightMapDTG.SetCellAvailability(fighter.GetFighter().Position, false);
 
+            fighter.GetComponent<Movable>().TakePath(new Vector2(fighter.gameObject.transform.position.x, fighter.gameObject.transform.position.z) ,path, (x, y)=>
+            {
+                fighter.GetFighter().UpdateCurrentMovementPoint(-1);
+                fighter.GetFighter().Position = new Vector2(x, y);
+                if (path.Count == 0)
+                {
+                    FightMapDTG.SetCellAvailability(fighter.GetFighter().Position, true);
+                }
+            });
+
+        }
+    }
+
+    public void MoveMainFighter(List<Vector2> path)
+    {
+        var fighter = mainFighter.GetFighter();
+        FightMapDTG.SetCellAvailability(fighter.Position, false);
+        FightMapDTG.ResetPathCells();
+        Debug.Log("Init move main fighter");
+        Debug.Log("with path : ");
+        Debug.Log(path);
+        FightMapDTG.BlockPathHighlighting(true);
+        mainFighter.BlockHovering(true);
+        mainFighter.GetComponent<Movable>().TakePath(new Vector2(mainFighter.transform.position.x, mainFighter.gameObject.transform.position.z), path, (x, y) =>
+        {
+            fighter.UpdateCurrentMovementPoint(-1);
+            fighter.Position = new Vector2(x, y);
+
+            if (path.Count == 0)
+            {
+                FightMapDTG.BlockPathHighlighting(false);
+                mainFighter.BlockHovering(false);
+                FightMapDTG.SetCellAvailability(fighter.Position, true);
+            }
+        });
     }
 
     public void TeleportFighter(string id, Vector2 position)
@@ -69,6 +115,47 @@ public class FighterContainerDTG : MonoBehaviour {
     public void FocusFighter(Fighter fighter)
     {
         FightUIManager.ShowFighterStats(fighter);
+    }
+
+    public void FighterUseSpell(Fighter fighter, Spell spell, Vector2 position, List<Impact> impacts)
+    {
+        if (fighter.IsMainPlayer)
+        {
+            mainFighter.UseSpell(spell, position, () =>
+            {
+                foreach (var impact in impacts)
+                {
+                    var target = fighters[impact.playerId];
+                    target.TakeImpact(impact);
+                    FightUIManager.ShowImpact(impact, target.GetFighter().Position);
+                }
+            });
+        }
+        else
+        {
+            fighters[fighter.Id].UseSpell(spell, position, () =>
+            {
+                foreach (var impact in impacts)
+                {
+                    if(impact.playerId == mainFighter.GetFighter().Id)
+                    {
+                        mainFighter.TakeImpact(impact);
+                        FightUIManager.ShowImpact(impact, mainFighter.GetFighter().Position);
+                    }
+                    else
+                    {
+                        var target = fighters[impact.playerId];
+                        target.TakeImpact(impact);
+                        FightUIManager.ShowImpact(impact, target.GetFighter().Position);
+                    }
+
+                }
+            });
+        }
+
+
+
+        // do everything but UI
     }
 
 }

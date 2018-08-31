@@ -18,6 +18,7 @@ export interface IMap extends Mongoose.Document {
   checkPath(positions: Position[]): boolean;
   checkPosition(position: Position, target: Position): boolean;
   getPlayers(): Mongoose.Types.ObjectId[];
+  getObstacles(): Position[];
 }
 
 export const MapSchema = new Mongoose.Schema({
@@ -97,6 +98,17 @@ MapSchema.method("getPlayers", function(): Mongoose.Types.ObjectId[] {
     }
   }
   return players;
+});
+
+MapSchema.method("getObstacles", function(): Position[] {
+  const map: IMap = this;
+  const obstacles: Position[] = [];
+  for (let i = 0; i < map.cells.length; i++) {
+    for (let j = 0; j < map.cells[0].length; j++) {
+      if (map.cells[i][j].obstacle) obstacles.push(new Position(i, j));
+    }
+  }
+  return obstacles;
 });
 
 const Map = Mongoose.model<IMap>("Map", MapSchema);

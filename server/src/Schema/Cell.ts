@@ -7,6 +7,7 @@ export interface ICell extends Mongoose.Document {
   x: number;
   y: number;
   isAccessible: boolean;
+  obstacle: boolean;
   players: Mongoose.Types.ObjectId[];
   addPlayer(id: Mongoose.Types.ObjectId): Promise<void>;
   getPlayer(id: Mongoose.Types.ObjectId): Mongoose.Types.ObjectId;
@@ -18,6 +19,7 @@ export const CellSchema = new Mongoose.Schema({
   x: Number,
   y: Number,
   isAccessible: Boolean,
+  obstacle: Boolean,
   players: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Player" }]
 });
 

@@ -41,4 +41,42 @@ public class MainFighterEmitter : MonoBehaviour {
         data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
         socket.Emit("fighterFinishTurn", new JSONObject(data));
     }
+
+    public void Move(List<Vector2> path)
+    {
+        Debug.Log("emit new path");
+
+        Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
+
+        JSONObject[] jsonPath = new JSONObject[path.Count];
+
+        for (var i = 0; i < path.Count; i++)
+        {
+
+            Dictionary<string, JSONObject> pos = new Dictionary<string, JSONObject>();
+            pos["x"] = new JSONObject((int)path[i].x);
+            pos["y"] = new JSONObject((int)path[i].y);
+            jsonPath[i] = new JSONObject(pos);
+
+        }
+
+        data["path"] = new JSONObject(jsonPath);
+
+        socket.Emit("fighterMove", new JSONObject(data));
+    }
+
+    public void UseSpell(Spell spell, Vector2 position)
+    {
+        Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
+        data["spellId"] = new JSONObject(string.Format("\"{0}\"", spell.id));
+
+        Dictionary<string, JSONObject> pos = new Dictionary<string, JSONObject>();
+        pos["x"] = new JSONObject((int)position.x);
+        pos["y"] = new JSONObject((int)position.y);
+        data["position"] = new JSONObject(pos);
+
+        socket.Emit("fighterUseSpell", new JSONObject(data));
+    }
 }

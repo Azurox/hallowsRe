@@ -9,23 +9,29 @@ public class StatsUIComponent : MonoBehaviour {
     public Text PlayerLevel;
     public Text PlayerLife;
     public Text PlayerSpeed;
-    public Text PlayerArmor;
-    public Text PlayerMR;
+    public Text PlayerActionPoint;
+    public Text PlayerMovementPoint;
 
     public void SetFighter(Fighter fighter)
     {
+        if (this.fighter != null)
+        {
+            this.fighter.StatsChange -= RefreshStatsHUD; 
+        }
+
         this.fighter = fighter;
+        this.fighter.StatsChange += RefreshStatsHUD;
         RefreshStatsHUD();
     }
 
     public void RefreshStatsHUD()
     {
         PlayerName.text = fighter.Name;
-        PlayerLevel.text = "Level 0";
-        PlayerLife.text = fighter.Life + "/" + fighter.MaxLife;
-        PlayerSpeed.text = "0 Speed";
-        PlayerArmor.text = "0 Armor";
-        PlayerMR.text = "0 MR";
+        PlayerLevel.text = "Level: 0";
+        PlayerLife.text = fighter.GetCurrentLife() + "/" + fighter.GetLife();
+        PlayerSpeed.text = fighter.GetCurrentSpeed() + " Speed";
+        PlayerActionPoint.text = fighter.GetCurrentActionPoint() + " AP";
+        PlayerMovementPoint.text = fighter.GetCurrentMovementPoint() + " MP";
     }
 
 }

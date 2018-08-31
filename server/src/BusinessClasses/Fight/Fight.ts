@@ -3,6 +3,9 @@ import Fighter from "./Fighter";
 import { IMap } from "../../Schema/Map";
 import Position from "../RelationalObject/Position";
 import { IPlayer } from "../../Schema/Player";
+import { ISpell } from "../../Schema/Spell";
+import SpellProcessor from "./SpellProcessor";
+import SpellImpact from "./SpellImpact";
 
 export default class Fight {
   /* CONST */
@@ -20,6 +23,7 @@ export default class Fight {
   clock: number = 0;
   blueCells: { position: Position; taken: boolean }[];
   redCells: { position: Position; taken: boolean }[];
+  obstacles: Position[];
   acceptedId: string;
 
   constructor(io: SocketIO.Server, map: IMap) {
@@ -31,6 +35,8 @@ export default class Fight {
     this.redCells = map.redCells.map(cell => {
       return { position: cell, taken: false };
     });
+
+    this.obstacles = map.getObstacles();
   }
 
   addFighter(fighter: Fighter) {
@@ -42,11 +48,8 @@ export default class Fight {
   }
 
   orderFighter() {
-    // TODO: Order by speed
     this.fightOrder = this.blueTeam.concat(this.redTeam);
-    for (let i = 0; i < this.fightOrder.length; i++) {
-      this.fightOrder[i].order = i;
-    }
+    this.fightOrder.sort((a, b) => b.speed - a.speed);
   }
 
   placeFighter() {
@@ -89,9 +92,15 @@ export default class Fight {
             name: fighter.player.name,
             position: fighter.position,
             side: fighter.side,
-            order: fighter.order,
             life: fighter.life,
-            maxLife: fighter.maxLife
+            currentLife: fighter.currentLife,
+            speed: fighter.speed,
+            armor: fighter.armor,
+            magicResistance: fighter.magicResistance,
+            attackDamage: fighter.attackDamage,
+            movementPoint: fighter.movementPoint,
+            actionPoint: fighter.actionPoint,
+            spells: fighter.socketId == this.fightOrder[i].socketId ? this.fightOrder[i].player.spells : undefined
           };
         }),
         id: this.id,
@@ -219,6 +228,7 @@ export default class Fight {
 
   nextTurn() {
     this.clock = 0;
+    this.softResetCurrentPlayerStats();
     for (let i = 0; i < this.fightOrder.length; i++) {
       if (this.fightOrder[i].player.id == this.acceptedId) {
         if (i + 1 < this.fightOrder.length) {
@@ -230,5 +240,99 @@ export default class Fight {
       }
     }
     this.io.to(this.id).emit("nextTurn", { playerId: this.acceptedId });
+  }
+
+  softResetCurrentPlayerStats() {
+    const fighter = this.retrieveFighterFromPlayerId(this.acceptedId);
+    fighter.currentActionPoint = fighter.actionPoint;
+    fighter.currentMovementPoint = fighter.movementPoint;
+  }
+
+  moveFighter(id: string, path: Position[]) {
+    if (!this.checkPlayerTurn(id)) return;
+    const fighter = this.retrieveFighterFromPlayerId(id);
+    let canMove = true;
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      for (let j = 0; j < path.length; j++) {
+        if (
+          this.fightOrder[i].player.id != id &&
+          this.fightOrder[i].position.x == path[j].x &&
+          this.fightOrder[i].position.y == path[j].y
+        ) {
+          canMove = false;
+        }
+      }
+    }
+
+    if (path.length > fighter.currentMovementPoint) {
+      canMove = false;
+    }
+
+    for (let i = 0; i < path.length; i++) {
+      const appliedMove = this.applyCell(fighter, path[i]);
+      if (appliedMove) {
+        fighter.currentMovementPoint--;
+        fighter.position = path[i];
+      }
+    }
+
+    if (canMove) {
+      this.io.to(this.id).emit("fighterMove", { playerId: id, path: path });
+    }
+  }
+
+  /** Apply cell effect, return false if player cannot continue his path
+   * will be usefull later if trap remove Movement point or if invisible item block the pah
+   */
+  applyCell(fighter: Fighter, position: Position): boolean {
+    return true;
+  }
+
+  getFightersPosition(): Position[] {
+    const positions = [];
+    for (let i = 0; i < this.fightOrder.length; i++) {
+      positions.push(this.fightOrder[i].position);
+    }
+    return positions;
+  }
+
+  useSpell(id: string, spell: ISpell, position: Position) {
+    if (!this.checkPlayerTurn(id)) return;
+    const fighter = this.retrieveFighterFromPlayerId(id);
+    const processor = new SpellProcessor(
+      this,
+      spell,
+      fighter,
+      position,
+      this.getFightersPosition().concat(this.obstacles)
+    );
+    try {
+      const impacts = processor.process();
+      this.io.to(this.id).emit("fighterUseSpell", {
+        playerId: id,
+        position: position,
+        spellId: spell.id,
+        impacts: impacts
+      });
+      fighter.currentActionPoint -= spell.actionPointCost;
+      this.applySpellImpacts(impacts);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  applySpellImpacts(impacts: SpellImpact[]) {
+    for (let i = 0; i < impacts.length; i++) {
+      const fighter = this.retrieveFighterFromPlayerId(impacts[i].playerId);
+      fighter.currentLife += impacts[i].life;
+      /* Need to apply other effect as Buff or Debuff */
+      if (fighter.currentLife <= 0) {
+        this.killFighter(fighter);
+      }
+    }
+  }
+
+  killFighter(fighter: Fighter) {
+    console.log(`${fighter.player.name} is dead !`);
   }
 }

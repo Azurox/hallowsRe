@@ -11,6 +11,7 @@ public class FightMapReceiver {
     public PlayerContainerDTG PlayerContainerDTG;
     public FighterContainerDTG FighterContainerDTG;
     public FighterHandler FighterHandler;
+    public MainFighterHandler MainFighterHandler;
     public GlobalUIManager GlobalUIManager;
     public FightUIManager FightUIManager;
     private SocketIOComponent socket;
@@ -25,8 +26,16 @@ public class FightMapReceiver {
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         FighterContainerDTG = Object.FindObjectOfType<FighterContainerDTG>();
         FighterHandler = FighterContainerDTG.GetComponent<FighterHandler>();
+        MainFighterHandler = FighterContainerDTG.GetComponent<MainFighterHandler>();
         GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
         FightUIManager = GlobalUIManager.GetFightUIManager();
+
+
+        /* Main Startups dependencies */
+        MainFighterHandler.Startup(FightMapHandler);
+        FighterHandler.Startup(FightMapHandler);
+        FighterContainerDTG.Startup(FightUIManager, FightMapDTG);
+        FightMapHandler.Startup(FighterContainerDTG);
 
         FighterContainerDTG.gameObject.SetActive(false);
         InitSocket();
@@ -39,6 +48,8 @@ public class FightMapReceiver {
         socket.On("setReady", SetReady);
         socket.On("fightPhase1", FightPhase1);
         socket.On("nextTurn", NextTurn);
+        socket.On("fighterMove", FighterMove);
+        socket.On("fighterUseSpell", FighterUseSpell);
     }
 
     private void FightStarted(SocketIOEvent obj)
@@ -48,13 +59,13 @@ public class FightMapReceiver {
         FighterContainerDTG.gameObject.SetActive(true);
         Fight = new Fight(socket, obj);
 
-        FighterContainerDTG.Init(FightUIManager, Fight.GetFighters());
+        FighterContainerDTG.Init(Fight.GetFighters());
         FightMapDTG.Init();
         var mainFighterDTG = FighterContainerDTG.GetMainFighter();
         var mainFighterEmitter = mainFighterDTG.GetComponent<MainFighterEmitter>();
         mainFighterEmitter.Init(Fight.Id);
 
-        FightMapHandler.Init(mainFighterDTG, FightMapDTG, Fight);
+        FightMapHandler.Init(mainFighterDTG, Fight);
         FighterHandler.SetMainFighter(FighterContainerDTG.GetMainFighter());
 
         var blueCells = obj.data["blueCells"];
@@ -75,10 +86,11 @@ public class FightMapReceiver {
         }
 
         GlobalUIManager.SwitchToFightUI();
-        FightUIManager.Init(mainFighterEmitter);
+        FightUIManager.Init(mainFighterEmitter, FightMapHandler);
         FightUIManager.SetUIPhase0();
         FightUIManager.UpdateFightTimeline(Fight.GetFighters());
         FightUIManager.ShowFighterStats(Fight.GetMainFighter());
+        FightUIManager.ShowSpells(Fight.GetMainFighter().GetSpells());
     }
 
     private void TeleportPreFight(SocketIOEvent obj)
@@ -122,9 +134,10 @@ public class FightMapReceiver {
 
     private void FightPhase1(SocketIOEvent obj)
     {
+        Fight.phase = 1;
         string id = obj.data["playerId"].str;
-        Debug.Log("is " + id + " turn ");
-        FightMapDTG.ResetDirtyCells();
+        Fight.SetTurnId(id);
+        FightMapDTG.ResetSpawnCells();
         FightUIManager.SetUIPhase1();
         FightUIManager.HighlightFighter(id);
     }
@@ -132,8 +145,47 @@ public class FightMapReceiver {
     private void NextTurn(SocketIOEvent obj)
     {
         string id = obj.data["playerId"].str;
-        Debug.Log("is " + id + " turn ");
+        Fight.SetTurnId(id);
         FightUIManager.HighlightFighter(id);
+    }
+
+    private void FighterMove(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+
+        List<Vector2> path = new List<Vector2>();
+        List<JSONObject> positions = obj.data["path"].list;
+        foreach (var position in positions)
+        {
+            path.Add(new Vector2(position["x"].n, position["y"].n));
+        }
+
+        if (FighterContainerDTG.GetMainFighter().GetFighter().Id == id)
+        {
+            FighterContainerDTG.MoveMainFighter(path);
+        }
+        else
+        {
+            FighterContainerDTG.MoveFighter(id, path);
+        }
+    }
+
+    private void FighterUseSpell(SocketIOEvent obj)
+    {
+        string id = obj.data["playerId"].str;
+        Fighter user = Fight.GetFighter(id);
+        Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
+        string spellId = obj.data["spellId"].str;
+        Spell spell = ResourcesLoader.Instance.GetSpell(spellId);
+        var rawImpacts = obj.data["impacts"];
+        List<Impact> impacts =  new List<Impact>();
+        for (var i = 0; i < rawImpacts.Count; i++)
+        {
+            Impact impact = new Impact(rawImpacts[i]);
+            impacts.Add(impact);
+        }
+
+        FighterContainerDTG.FighterUseSpell(user, spell, position, impacts);
     }
 
     private void FightFinished()
