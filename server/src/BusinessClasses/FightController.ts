@@ -37,4 +37,8 @@ export default class FightController {
   retrieveFight(id: string): Fight {
     return this.fights[id];
   }
+
+  removefight(id: string) {
+    delete this.fights[id];
+  }
 }

@@ -27,6 +27,7 @@ export default class Fight {
   obstacles: Position[];
   acceptedId: string;
   winners: Side;
+  isFinished: Boolean = false;
 
   constructor(io: SocketIO.Server, map: IMap) {
     this.io = io;
@@ -313,7 +314,7 @@ export default class Fight {
       fighter.currentActionPoint -= spell.actionPointCost;
       const fightIsFinished = this.applySpellImpacts(impacts);
 
-      if (fightIsFinished) {
+      if (!fightIsFinished) {
         this.io.to(this.id).emit("fighterUseSpell", {
           playerId: id,
           position: position,
@@ -323,9 +324,8 @@ export default class Fight {
       } else {
         const fighters =  this.blueTeam.concat(this.redTeam);
         for (let i = 0 ; i < fighters.length; i++) {
-
           const fightEndProcessor =  new FightEndProcessor();
-          this.io.to(fighters[i].socketId).emit("fighterUseSpell", {
+            this.io.to(fighters[i].socketId).emit("fighterUseSpell", {
             playerId: id,
             position: position,
             spellId: spell.id,
@@ -333,6 +333,7 @@ export default class Fight {
             fightEnd: fightEndProcessor.process()
           });
         }
+        this.isFinished = true;
       }
     } catch (error) {
       console.log(error);

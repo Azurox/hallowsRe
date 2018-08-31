@@ -30,8 +30,12 @@ export default class FightHandler {
   }
 
   async startFight(target: { id: string }) {
+    await this.socket.player.enterInFight();
     const firstTeam = [this.socket.player];
     const secondTeam = await this.P.RetrievePlayers([target.id]);
+    for (let i = 0; i < secondTeam.length; i++) {
+      await secondTeam[i].enterInFight();
+    }
     const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
     this.F.startFight(firstTeam, secondTeam, map);
   }
@@ -87,6 +91,9 @@ export default class FightHandler {
         const spell = await Spell.findById(data.spellId);
         console.log("spell found  " + spell.id);
         fight.useSpell(this.socket.player.id, spell, data.position);
+        if (fight.isFinished) {
+          this.F.removefight(data.fightId);
+        }
       }
     } catch (error) {
       console.log(error);
