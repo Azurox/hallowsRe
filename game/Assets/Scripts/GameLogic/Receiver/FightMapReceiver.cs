@@ -185,12 +185,26 @@ public class FightMapReceiver {
             impacts.Add(impact);
         }
 
-        FighterContainerDTG.FighterUseSpell(user, spell, position, impacts);
+        var fightEnd = obj.data["fightEnd"];
+
+        if(fightEnd != null)
+        {
+            FighterContainerDTG.FighterUseSpell(user, spell, position, impacts, ()=> { FightFinished(fightEnd); });
+        }
+        else
+        {
+            FighterContainerDTG.FighterUseSpell(user, spell, position, impacts, null);
+        }
     }
 
-    private void FightFinished()
+    private void FightFinished(SocketIOEvent obj)
     {
-        PlayerContainerDTG.gameObject.SetActive(false);
-        FighterContainerDTG.gameObject.SetActive(true);
+        FightFinished(obj.data);
+    }
+
+    private void FightFinished(JSONObject data)
+    {
+        PlayerContainerDTG.gameObject.SetActive(true);
+        FighterContainerDTG.gameObject.SetActive(false);
     }
 }

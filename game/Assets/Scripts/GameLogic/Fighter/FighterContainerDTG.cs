@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -117,7 +118,7 @@ public class FighterContainerDTG : MonoBehaviour {
         FightUIManager.ShowFighterStats(fighter);
     }
 
-    public void FighterUseSpell(Fighter fighter, Spell spell, Vector2 position, List<Impact> impacts)
+    public void FighterUseSpell(Fighter fighter, Spell spell, Vector2 position, List<Impact> impacts, Action endCallback)
     {
         if (fighter.IsMainPlayer)
         {
@@ -125,8 +126,20 @@ public class FighterContainerDTG : MonoBehaviour {
             {
                 foreach (var impact in impacts)
                 {
+                    var death = impact.death;
                     var target = fighters[impact.playerId];
-                    target.TakeImpact(impact);
+                    target.TakeImpact(impact, ()=>
+                    {
+                        if(death)
+                        {
+                            DeleteFighterGameObject(target.GetFighter().Id);
+                        }
+
+                        if(endCallback != null)
+                        {
+                            endCallback();
+                        }
+                    });
                     FightUIManager.ShowImpact(impact, target.GetFighter().Position);
                 }
             });
@@ -139,23 +152,56 @@ public class FighterContainerDTG : MonoBehaviour {
                 {
                     if(impact.playerId == mainFighter.GetFighter().Id)
                     {
-                        mainFighter.TakeImpact(impact);
+                        var death = impact.death;
+                        mainFighter.TakeImpact(impact, ()=>
+                        {
+                            if (death)
+                            {
+                                DeleteMainFighterGameObject();
+                            }
+
+                            if (endCallback != null)
+                            {
+                                endCallback();
+                            }
+                        });
                         FightUIManager.ShowImpact(impact, mainFighter.GetFighter().Position);
                     }
                     else
                     {
+                        var death = impact.death;
                         var target = fighters[impact.playerId];
-                        target.TakeImpact(impact);
+                        target.TakeImpact(impact, ()=>
+                        {
+                            if (death)
+                            {
+                                DeleteFighterGameObject(target.GetFighter().Id);
+                            }
+
+                            if (endCallback != null)
+                            {
+                                endCallback();
+                            }
+                        });
                         FightUIManager.ShowImpact(impact, target.GetFighter().Position);
                     }
 
                 }
             });
         }
+    }
 
+    private void DeleteMainFighterGameObject()
+    {
+        mainFighter.gameObject.SetActive(false);
+    }
 
-
-        // do everything but UI
+    private void DeleteFighterGameObject(string id)
+    {
+        if (fighters.ContainsKey(id))
+        {
+            fighters[id].gameObject.SetActive(false);
+        }
     }
 
 }

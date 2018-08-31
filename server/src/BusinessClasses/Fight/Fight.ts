@@ -322,10 +322,13 @@ export default class Fight {
           impacts: impacts
         });
       } else {
-        const fighters =  this.blueTeam.concat(this.redTeam);
-        for (let i = 0 ; i < fighters.length; i++) {
-          const fightEndProcessor =  new FightEndProcessor();
-            this.io.to(fighters[i].socketId).emit("fighterUseSpell", {
+        const fighters = this.blueTeam.concat(this.redTeam);
+        for (let i = 0; i < fighters.length; i++) {
+          const fightEndProcessor = new FightEndProcessor();
+          const fightResult = fightEndProcessor.process();
+          fightResult.mapName = fighters[i].player.mapName;
+
+          this.io.to(fighters[i].socketId).emit("fighterUseSpell", {
             playerId: id,
             position: position,
             spellId: spell.id,
@@ -356,7 +359,7 @@ export default class Fight {
 
   killFighter(fighter: Fighter): boolean {
     fighter.dead = true;
-    for (let i =  this.fightOrder.length - 1; i >= 0; --i) {
+    for (let i = this.fightOrder.length - 1; i >= 0; --i) {
       if (this.fightOrder[i].player.id == fighter.player.id) {
         this.fightOrder.splice(i, 1);
         break;
@@ -379,7 +382,6 @@ export default class Fight {
         this.winners = "red";
         fightIsFinished = true;
       }
-
     } else {
       for (let i = 0; i < this.redTeam.length; i++) {
         if (!this.redTeam[i].dead) {
@@ -401,5 +403,4 @@ export default class Fight {
     console.log(`${fighter.player.name} is dead !`);
     return fightIsFinished;
   }
-
 }

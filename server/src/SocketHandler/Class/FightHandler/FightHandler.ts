@@ -42,6 +42,7 @@ export default class FightHandler {
 
   async teleportPreFight(data: { x: number; y: number; fightId: string }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     try {
       const fighter = fight.retrieveFighterFromPlayerId(this.socket.player.id);
       if (!fighter.ready) fight.teleportPlayerPhase0(fighter, new Position(data.x, data.y));
@@ -52,6 +53,7 @@ export default class FightHandler {
 
   async fighterReady(data: { fightId: string }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     try {
       fight.setFighterReady(this.socket.player.id);
     } catch (error) {
@@ -60,6 +62,7 @@ export default class FightHandler {
   }
   async fighterFinishTurn(data: { fightId: string }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     try {
       if (fight.checkPlayerTurn(this.socket.player.id)) {
         fight.nextTurn();
@@ -70,8 +73,8 @@ export default class FightHandler {
   }
 
   async fighterMove(data: { fightId: string; path: Position[] }) {
-    console.log(data);
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     if (data.path.length == 0) return;
     const possible = await this.M.checkMovementsPossibility(this.socket, data.path);
     if (possible) {
@@ -85,6 +88,7 @@ export default class FightHandler {
 
   async fighterUseSpell(data: { fightId: string; spellId: string; position: Position }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     const possible = await this.M.checkMovementPossibility(this.socket, data.position);
     try {
       if (possible && this.socket.player.hasSpell(data.spellId)) {

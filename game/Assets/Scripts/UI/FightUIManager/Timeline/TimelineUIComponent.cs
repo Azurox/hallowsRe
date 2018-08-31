@@ -31,6 +31,7 @@ public class TimelineUIComponent : MonoBehaviour {
             min.Init(FightUIManager);
             min.SetFighter(fighter);
             Timeline.Add(min);
+            fighter.Death += RemoveFighter;
         }
     }
 
@@ -50,5 +51,17 @@ public class TimelineUIComponent : MonoBehaviour {
             }
         }
         return isMainPlayer;
+    }
+
+    public void RemoveFighter(string id)
+    {
+        foreach (var fighterMiniatureUIComponent in Timeline.ToList())
+        {
+            if (fighterMiniatureUIComponent.GetFighter().Id == id)
+            {
+                Destroy(fighterMiniatureUIComponent.gameObject);
+                Timeline.Remove(fighterMiniatureUIComponent);
+            }
+        }
     }
 }

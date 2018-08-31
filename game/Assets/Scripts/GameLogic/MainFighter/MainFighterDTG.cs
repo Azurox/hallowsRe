@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,10 +30,14 @@ public class MainFighterDTG : MonoBehaviour {
         fighter.Position = new Vector2(x, y);
     }
 
-    public void TakeImpact(Impact impact)
+    public void TakeImpact(Impact impact, Action callback)
     {
         fighter.TakeImpact(impact);
         //play an animation
+        if (callback != null)
+        {
+            callback();
+        }
     }
 
     public void UseSpell(Spell spell, Vector2 position, System.Action callback)

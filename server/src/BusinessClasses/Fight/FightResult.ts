@@ -1,13 +1,16 @@
-export default class FightResult {
-    xp: number;
-    gold: number;
-    loot: string[];
-    levelUp: number;
+import Position from "../RelationalObject/Position";
 
-    constructor(xp: number, gold: number, loot: string[], levelUp: number) {
-        this.xp = xp;
-        this.gold = gold;
-        this.loot = loot;
-        this.levelUp = levelUp;
-    }
+export default class FightResult {
+  xp: number;
+  gold: number;
+  loot: string[];
+  levelUp: number;
+  mapName: string;
+
+  constructor(xp: number, gold: number, loot: string[], levelUp: number) {
+    this.xp = xp;
+    this.gold = gold;
+    this.loot = loot;
+    this.levelUp = levelUp;
+  }
 }
