@@ -4,15 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FightCellDTG : MonoBehaviour {
+public class FightCellDTG : MonoBehaviour
+{
     public Cell currentCell;
     private List<CellColor> cellColors = new List<CellColor>();
     public bool taken = false;
-    public bool active = false;
+    [SerializeField]
+    private bool active = false;
+    private new bool enabled; 
 
     public void SetCell(Cell cell)
     {
+        active = false;
         currentCell = cell;
+        cellColors.Clear();
         AddColor(new Color(1, 1, 1), 1);
         if (!cell.IsAccessible)
         {
@@ -81,8 +86,13 @@ public class FightCellDTG : MonoBehaviour {
         GetComponent<Renderer>().material.color = cellColors.OrderByDescending(i => i.priority).FirstOrDefault().color;
     }
 
-    private void Update()
+    public void SetState(bool active)
     {
-        
+        this.active = active;
+    }
+
+    public bool GetState()
+    {
+        return active;
     }
 }

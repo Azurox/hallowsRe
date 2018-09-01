@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class FightMapReceiver {
 
+    public GlobalMapDTG WorldMapDTG;
     public MapDTG MapDTG;
     public FightMapHandler FightMapHandler;
     public FightMapDTG FightMapDTG; 
@@ -20,7 +21,8 @@ public class FightMapReceiver {
     public FightMapReceiver(SocketIOComponent socket)
     {
         this.socket = socket;
-        MapDTG = Object.FindObjectOfType<MapDTG>();
+        WorldMapDTG = Object.FindObjectOfType<GlobalMapDTG>();
+        MapDTG = WorldMapDTG.GetComponent<MapDTG>();
         FightMapDTG = MapDTG.GetComponent<FightMapDTG>();
         FightMapHandler = MapDTG.GetComponent<FightMapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
@@ -207,6 +209,7 @@ public class FightMapReceiver {
         FighterContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.Clear();
         FightMapDTG.Clear();
+       // WorldMapDTG.ActivateCell();
         socket.Emit("loadMap");
     }
 }

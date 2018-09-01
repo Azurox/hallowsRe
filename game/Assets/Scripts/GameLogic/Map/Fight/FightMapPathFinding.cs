@@ -372,4 +372,10 @@ public class FightMapPathFinding : MonoBehaviour
     }
 
     #endregion
+
+    public void Clear()
+    {
+        currentMap = null;
+        grid = null;
+    }
 }

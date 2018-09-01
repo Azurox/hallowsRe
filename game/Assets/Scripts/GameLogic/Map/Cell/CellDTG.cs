@@ -10,8 +10,10 @@ public class CellDTG : MonoBehaviour {
 
     public void SetCell(Cell cell)
     {
+        active = false;
         currentCell = cell;
         UpdatePosition();
+        cellColors.Clear();
         AddColor(new Color(1, 1, 1), 1);
         if (!cell.IsAccessible)
         {

@@ -212,6 +212,7 @@ public class FightMapDTG : MonoBehaviour {
 
     public void Clear()
     {
+        GetComponent<FightMapPathFinding>().Clear();
         blueCells.Clear();
         redCells.Clear();
         obstacleCells.Clear();
@@ -220,5 +221,6 @@ public class FightMapDTG : MonoBehaviour {
         dirtyPathCells.Clear();
         dirtySpellRangeCells.Clear();
         dirtySpellImpactCells.Clear();
+        cells = null;
     }
 }
