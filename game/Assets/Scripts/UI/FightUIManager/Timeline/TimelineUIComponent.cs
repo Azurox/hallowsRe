@@ -20,7 +20,7 @@ public class TimelineUIComponent : MonoBehaviour {
         List<Fighter> sortedFighters = fighters.OrderByDescending(f => f.GetSpeed()).ToList();
         foreach(var go in Timeline)
         {
-            Destroy(go);
+            Destroy(go.gameObject);
         }
         Timeline.Clear();
         foreach(var fighter in sortedFighters)
@@ -64,4 +64,5 @@ public class TimelineUIComponent : MonoBehaviour {
             }
         }
     }
+
 }

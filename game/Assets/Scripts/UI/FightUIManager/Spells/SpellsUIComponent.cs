@@ -16,7 +16,7 @@ public class SpellsUIComponent : MonoBehaviour {
     {
         foreach (var go in Spells)
         {
-            Destroy(go);
+            Destroy(go.gameObject);
         }
         Spells.Clear();
 
