@@ -26,11 +26,18 @@ public class PlayerContainerDTG : MonoBehaviour
 
     public void SpawnPlayer(int x, int y, string id)
     {
-        var playerGo = Instantiate(PlayerGameObject);
-        playerGo.transform.parent = gameObject.transform;
-        playerGo.name = id;
-        playerGo.GetComponent<PlayerDTG>().SetPosition(x, y);
-        players.Add(id, playerGo.GetComponent<PlayerDTG>());
+        if (players.ContainsKey(id))
+        {
+            players[id].SetPosition(x, y);
+        }
+        else
+        {
+            var playerGo = Instantiate(PlayerGameObject);
+            playerGo.transform.parent = gameObject.transform;
+            playerGo.name = id;
+            playerGo.GetComponent<PlayerDTG>().SetPosition(x, y);
+            players.Add(id, playerGo.GetComponent<PlayerDTG>());
+        }
     }
 
     public void DestroyPlayer(string id)

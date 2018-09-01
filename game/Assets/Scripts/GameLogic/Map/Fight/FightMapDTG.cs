@@ -143,7 +143,6 @@ public class FightMapDTG : MonoBehaviour {
 
     public void BlockPathHighlighting(bool blockIt)
     {
-        Debug.Log("someone set the blocking to : " + blockIt);
         isPathHighlightingBlocked = blockIt;
     }
 
