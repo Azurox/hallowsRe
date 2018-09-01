@@ -299,7 +299,7 @@ export default class Fight {
     return positions;
   }
 
-  useSpell(id: string, spell: ISpell, position: Position) {
+  async useSpell(id: string, spell: ISpell, position: Position) {
     if (!this.checkPlayerTurn(id)) return;
     const fighter = this.retrieveFighterFromPlayerId(id);
     const processor = new SpellProcessor(
@@ -326,14 +326,15 @@ export default class Fight {
         for (let i = 0; i < fighters.length; i++) {
           const fightEndProcessor = new FightEndProcessor();
           const fightResult = fightEndProcessor.process();
-          fightResult.mapName = fighters[i].player.mapName;
+          this.io.sockets.connected[fighters[i].socketId].leave(this.id);
+          await fighters[i].player.leaveFight();
 
           this.io.to(fighters[i].socketId).emit("fighterUseSpell", {
             playerId: id,
             position: position,
             spellId: spell.id,
             impacts: impacts,
-            fightEnd: fightEndProcessor.process()
+            fightEnd: fightResult
           });
         }
         this.isFinished = true;

@@ -209,4 +209,16 @@ public class FightMapDTG : MonoBehaviour {
     {
         return obstacleCells;
     }
+
+    public void Clear()
+    {
+        blueCells.Clear();
+        redCells.Clear();
+        obstacleCells.Clear();
+        dirtySpawnCells.Clear();
+        dirtyMovementRangeCells.Clear();
+        dirtyPathCells.Clear();
+        dirtySpellRangeCells.Clear();
+        dirtySpellImpactCells.Clear();
+    }
 }

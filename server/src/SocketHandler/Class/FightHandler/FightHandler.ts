@@ -93,8 +93,7 @@ export default class FightHandler {
     try {
       if (possible && this.socket.player.hasSpell(data.spellId)) {
         const spell = await Spell.findById(data.spellId);
-        console.log("spell found  " + spell.id);
-        fight.useSpell(this.socket.player.id, spell, data.position);
+        await fight.useSpell(this.socket.player.id, spell, data.position);
         if (fight.isFinished) {
           this.F.removefight(data.fightId);
         }

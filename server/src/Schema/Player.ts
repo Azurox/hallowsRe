@@ -29,7 +29,7 @@ export const PlayerSchema = new Mongoose.Schema({
   path: [{ x: Number, y: Number }],
   stats: { type: Mongoose.Schema.Types.ObjectId, ref: "Stats" },
   spells: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Spell" }],
-  inFight: {type: Boolean, default: false}
+  inFight: { type: Boolean, default: false }
 });
 
 PlayerSchema.method("hasSpell", function(id: string): boolean {
@@ -58,7 +58,7 @@ PlayerSchema.method("leaveFight", async function(): Promise<void> {
   if (!player.inFight) {
     throw new Error("Player not in a fight !!");
   }
-  player.inFight = true;
+  player.inFight = false;
   await player.save();
 });
 

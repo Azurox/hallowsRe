@@ -50,12 +50,11 @@ public class GlobalMapDTG : MonoBehaviour
         {
             for (var j = 0; j < cells.GetLength(1); j++)
             {
-                cells[i, j].GetComponent<FightCellDTG>().enabled = true;
-                cells[i, j].GetComponent<CellDTG>().enabled = false;
+                cells[i, j].GetComponent<FightCellDTG>().active = true;
+                cells[i, j].GetComponent<CellDTG>().active = false;
 
             }
         }
-
     }
 
     public void ActivateCell()
@@ -65,9 +64,8 @@ public class GlobalMapDTG : MonoBehaviour
         {
             for (var j = 0; j < cells.GetLength(1); j++)
             {
-                cells[i, j].GetComponent<FightCellDTG>().enabled = false;
-                cells[i, j].GetComponent<CellDTG>().enabled = true;
-
+                cells[i, j].GetComponent<FightCellDTG>().active = false;
+                cells[i, j].GetComponent<CellDTG>().active = true;
             }
         }
 

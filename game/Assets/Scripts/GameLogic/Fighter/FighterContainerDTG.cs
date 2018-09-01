@@ -32,6 +32,12 @@ public class FighterContainerDTG : MonoBehaviour {
         GameObject playerGo;
         if (fighter.IsMainPlayer)
         {
+
+            if (mainFighter != null)
+            {
+                Destroy(mainFighter.gameObject);
+            }
+
             playerGo = Instantiate(MainFighterGameObject);
             playerGo.transform.parent = gameObject.transform; // Need to attribute parent as fast as possible otherwhise the Collider is not working ?
             mainFighter = playerGo.GetComponent<MainFighterDTG>();
@@ -202,6 +208,16 @@ public class FighterContainerDTG : MonoBehaviour {
         {
             fighters[id].gameObject.SetActive(false);
         }
+    }
+
+    public void Clear()
+    {
+        foreach (var fighter in fighters)
+        {
+            Destroy(fighter.Value.gameObject);
+        }
+
+        fighters.Clear();
     }
 
 }

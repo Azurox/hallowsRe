@@ -204,7 +204,9 @@ public class FightMapReceiver {
 
     private void FightFinished(JSONObject data)
     {
-        PlayerContainerDTG.gameObject.SetActive(true);
         FighterContainerDTG.gameObject.SetActive(false);
+        FighterContainerDTG.Clear();
+        FightMapDTG.Clear();
+        socket.Emit("loadMap");
     }
 }

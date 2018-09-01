@@ -6,6 +6,7 @@ using UnityEngine;
 public class CellDTG : MonoBehaviour {
     public Cell currentCell;
     private List<CellColor> cellColors = new List<CellColor>();
+    public bool active = false;
 
     public void SetCell(Cell cell)
     {
@@ -32,7 +33,7 @@ public class CellDTG : MonoBehaviour {
 	
     public void OnMouseDown()
     {
-        if (!enabled) return;
+        if (!active) return;
         if (currentCell.IsAccessible)
         {
             transform.parent.GetComponent<MapHandler>().TargetCell(currentCell.X, currentCell.Y);
