@@ -13,7 +13,10 @@ export interface IPlayer extends Mongoose.Document {
   path: Position[];
   stats: IStats;
   spells: Mongoose.Types.ObjectId[];
+  inFight: boolean;
   hasSpell(id: string): boolean;
+  enterInFight(): Promise<void>;
+  leaveFight(): Promise<void>;
 }
 
 export const PlayerSchema = new Mongoose.Schema({
@@ -25,7 +28,8 @@ export const PlayerSchema = new Mongoose.Schema({
   isMoving: Boolean,
   path: [{ x: Number, y: Number }],
   stats: { type: Mongoose.Schema.Types.ObjectId, ref: "Stats" },
-  spells: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Spell" }]
+  spells: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Spell" }],
+  inFight: { type: Boolean, default: false }
 });
 
 PlayerSchema.method("hasSpell", function(id: string): boolean {
@@ -38,6 +42,24 @@ PlayerSchema.method("hasSpell", function(id: string): boolean {
   }
 
   return hasSpell;
+});
+
+PlayerSchema.method("enterInFight", async function(): Promise<void> {
+  const player: IPlayer = this;
+  if (player.inFight) {
+    throw new Error("Player already in fight !!");
+  }
+  player.inFight = true;
+  await player.save();
+});
+
+PlayerSchema.method("leaveFight", async function(): Promise<void> {
+  const player: IPlayer = this;
+  if (!player.inFight) {
+    throw new Error("Player not in a fight !!");
+  }
+  player.inFight = false;
+  await player.save();
 });
 
 const Player = Mongoose.model<IPlayer>("Player", PlayerSchema);

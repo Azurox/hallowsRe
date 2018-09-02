@@ -38,6 +38,8 @@ public class MapReceiver {
     {
         Debug.Log("Load new map");
         string mapName = obj.data["mapName"].str;
+        PlayerContainerDTG.gameObject.SetActive(true);
+        PlayerContainerDTG.Clear();
         GameMap map = ResourcesLoader.Instance.GetGameMap(mapName);
         WorldMapDTG.SetMap(map);
         WorldMapDTG.ActivateCell();

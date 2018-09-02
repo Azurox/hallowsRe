@@ -30,14 +30,19 @@ export default class FightHandler {
   }
 
   async startFight(target: { id: string }) {
+    await this.socket.player.enterInFight();
     const firstTeam = [this.socket.player];
     const secondTeam = await this.P.RetrievePlayers([target.id]);
+    for (let i = 0; i < secondTeam.length; i++) {
+      await secondTeam[i].enterInFight();
+    }
     const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
     this.F.startFight(firstTeam, secondTeam, map);
   }
 
   async teleportPreFight(data: { x: number; y: number; fightId: string }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     try {
       const fighter = fight.retrieveFighterFromPlayerId(this.socket.player.id);
       if (!fighter.ready) fight.teleportPlayerPhase0(fighter, new Position(data.x, data.y));
@@ -48,6 +53,7 @@ export default class FightHandler {
 
   async fighterReady(data: { fightId: string }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     try {
       fight.setFighterReady(this.socket.player.id);
     } catch (error) {
@@ -56,6 +62,7 @@ export default class FightHandler {
   }
   async fighterFinishTurn(data: { fightId: string }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     try {
       if (fight.checkPlayerTurn(this.socket.player.id)) {
         fight.nextTurn();
@@ -66,8 +73,8 @@ export default class FightHandler {
   }
 
   async fighterMove(data: { fightId: string; path: Position[] }) {
-    console.log(data);
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     if (data.path.length == 0) return;
     const possible = await this.M.checkMovementsPossibility(this.socket, data.path);
     if (possible) {
@@ -81,12 +88,15 @@ export default class FightHandler {
 
   async fighterUseSpell(data: { fightId: string; spellId: string; position: Position }) {
     const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
     const possible = await this.M.checkMovementPossibility(this.socket, data.position);
     try {
       if (possible && this.socket.player.hasSpell(data.spellId)) {
         const spell = await Spell.findById(data.spellId);
-        console.log("spell found  " + spell.id);
-        fight.useSpell(this.socket.player.id, spell, data.position);
+        await fight.useSpell(this.socket.player.id, spell, data.position);
+        if (fight.isFinished) {
+          this.F.removefight(data.fightId);
+        }
       }
     } catch (error) {
       console.log(error);

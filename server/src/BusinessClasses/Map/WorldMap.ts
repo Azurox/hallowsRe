@@ -9,7 +9,7 @@ import Spell from "../../Schema/Spell";
 export default class WorldMap {
   constructor() {
     this.saveMap();
-    // this.saveAccount();
+    this.saveAccount();
   }
 
   async saveMap() {
@@ -48,13 +48,13 @@ export default class WorldMap {
     await Account.remove({});
     await Player.remove({});
     await Stats.remove({});
-    await Spell.remove({});
+    // await Spell.remove({});
 
-    const spell = new Spell();
+    const spell = await Spell.findOne();
     spell.hitArea = [new Position(0, 0)];
     spell.name = "Punch";
     spell.actionPointCost = 4;
-    spell.physicalDamage = 7;
+    spell.physicalDamage = 30;
     spell.magicDamage = 0;
     spell.range = 4;
     spell.selfUse = false;

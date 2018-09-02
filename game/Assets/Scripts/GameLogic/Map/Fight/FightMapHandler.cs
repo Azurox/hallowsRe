@@ -61,7 +61,7 @@ public class FightMapHandler : MonoBehaviour {
 
     public void MouseOverCell(int x, int y)
     {
-        if(fight.phase == 1)
+        if(fight != null && fight.phase == 1)
         {
             if (selectedSpell != null && fightMapDTG.SpellImpactIsInRange(new Vector2(x, y)))
             {

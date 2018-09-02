@@ -13,7 +13,6 @@ public class MainPlayerEmitter : MonoBehaviour {
 
     public void NewPath(Vector2[] path)
     {
-        Debug.Log("emit new path");
 
         JSONObject[] jsonPath = new JSONObject[path.Length];
 

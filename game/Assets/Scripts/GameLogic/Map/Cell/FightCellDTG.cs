@@ -4,14 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FightCellDTG : MonoBehaviour {
+public class FightCellDTG : MonoBehaviour
+{
     public Cell currentCell;
     private List<CellColor> cellColors = new List<CellColor>();
     public bool taken = false;
+    [SerializeField]
+    private bool active = false;
+    private new bool enabled; 
 
     public void SetCell(Cell cell)
     {
+        active = false;
         currentCell = cell;
+        cellColors.Clear();
         AddColor(new Color(1, 1, 1), 1);
         if (!cell.IsAccessible)
         {
@@ -28,7 +34,7 @@ public class FightCellDTG : MonoBehaviour {
 
     public void OnMouseDown()
     {
-        if (!enabled) return;
+        if (!active) return;
         if (currentCell.IsAccessible && taken == false)
         {
             transform.parent.GetComponent<FightMapHandler>().TargetCell(currentCell.X, currentCell.Y);
@@ -41,7 +47,7 @@ public class FightCellDTG : MonoBehaviour {
 
     public void OnMouseEnter()
     {
-        if (!enabled) return;
+        if (!active) return;
         if (currentCell.IsAccessible && taken == false)
         {
             transform.parent.GetComponent<FightMapHandler>().MouseOverCell(currentCell.X, currentCell.Y);
@@ -50,7 +56,7 @@ public class FightCellDTG : MonoBehaviour {
 
     public void OnMouseExit()
     {
-        if (!enabled) return;
+        if (!active) return;
         if (currentCell.IsAccessible && taken == false)
         {
             transform.parent.GetComponent<FightMapHandler>().MouseLeftCell(currentCell.X, currentCell.Y);
@@ -80,4 +86,13 @@ public class FightCellDTG : MonoBehaviour {
         GetComponent<Renderer>().material.color = cellColors.OrderByDescending(i => i.priority).FirstOrDefault().color;
     }
 
+    public void SetState(bool active)
+    {
+        this.active = active;
+    }
+
+    public bool GetState()
+    {
+        return active;
+    }
 }

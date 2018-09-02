@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class FightMapReceiver {
 
+    public GlobalMapDTG WorldMapDTG;
     public MapDTG MapDTG;
     public FightMapHandler FightMapHandler;
     public FightMapDTG FightMapDTG; 
@@ -20,7 +21,8 @@ public class FightMapReceiver {
     public FightMapReceiver(SocketIOComponent socket)
     {
         this.socket = socket;
-        MapDTG = Object.FindObjectOfType<MapDTG>();
+        WorldMapDTG = Object.FindObjectOfType<GlobalMapDTG>();
+        MapDTG = WorldMapDTG.GetComponent<MapDTG>();
         FightMapDTG = MapDTG.GetComponent<FightMapDTG>();
         FightMapHandler = MapDTG.GetComponent<FightMapHandler>();
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
@@ -185,12 +187,30 @@ public class FightMapReceiver {
             impacts.Add(impact);
         }
 
-        FighterContainerDTG.FighterUseSpell(user, spell, position, impacts);
+        var fightEnd = obj.data["fightEnd"];
+
+        if(fightEnd != null)
+        {
+            FighterContainerDTG.FighterUseSpell(user, spell, position, impacts, ()=> { FightFinished(fightEnd); });
+        }
+        else
+        {
+            FighterContainerDTG.FighterUseSpell(user, spell, position, impacts, null);
+        }
     }
 
-    private void FightFinished()
+    private void FightFinished(SocketIOEvent obj)
     {
-        PlayerContainerDTG.gameObject.SetActive(false);
-        FighterContainerDTG.gameObject.SetActive(true);
+        FightFinished(obj.data);
+    }
+
+    private void FightFinished(JSONObject data)
+    {
+        FighterContainerDTG.gameObject.SetActive(false);
+        FighterContainerDTG.Clear();
+        FightMapDTG.Clear();
+        var afterFightStats = new AfterFightStats(data);
+        GlobalUIManager.GetWorldUIManager().ShowAfterFightStats(afterFightStats);
+        socket.Emit("loadMap");
     }
 }

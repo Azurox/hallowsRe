@@ -6,11 +6,14 @@ using UnityEngine;
 public class CellDTG : MonoBehaviour {
     public Cell currentCell;
     private List<CellColor> cellColors = new List<CellColor>();
+    public bool active = false;
 
     public void SetCell(Cell cell)
     {
+        active = false;
         currentCell = cell;
         UpdatePosition();
+        cellColors.Clear();
         AddColor(new Color(1, 1, 1), 1);
         if (!cell.IsAccessible)
         {
@@ -32,7 +35,7 @@ public class CellDTG : MonoBehaviour {
 	
     public void OnMouseDown()
     {
-        if (!enabled) return;
+        if (!active) return;
         if (currentCell.IsAccessible)
         {
             transform.parent.GetComponent<MapHandler>().TargetCell(currentCell.X, currentCell.Y);

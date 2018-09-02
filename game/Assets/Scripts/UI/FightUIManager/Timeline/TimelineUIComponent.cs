@@ -20,7 +20,7 @@ public class TimelineUIComponent : MonoBehaviour {
         List<Fighter> sortedFighters = fighters.OrderByDescending(f => f.GetSpeed()).ToList();
         foreach(var go in Timeline)
         {
-            Destroy(go);
+            Destroy(go.gameObject);
         }
         Timeline.Clear();
         foreach(var fighter in sortedFighters)
@@ -31,6 +31,7 @@ public class TimelineUIComponent : MonoBehaviour {
             min.Init(FightUIManager);
             min.SetFighter(fighter);
             Timeline.Add(min);
+            fighter.Death += RemoveFighter;
         }
     }
 
@@ -51,4 +52,17 @@ public class TimelineUIComponent : MonoBehaviour {
         }
         return isMainPlayer;
     }
+
+    public void RemoveFighter(string id)
+    {
+        foreach (var fighterMiniatureUIComponent in Timeline.ToList())
+        {
+            if (fighterMiniatureUIComponent.GetFighter().Id == id)
+            {
+                Destroy(fighterMiniatureUIComponent.gameObject);
+                Timeline.Remove(fighterMiniatureUIComponent);
+            }
+        }
+    }
+
 }

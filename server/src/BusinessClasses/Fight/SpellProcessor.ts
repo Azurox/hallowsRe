@@ -55,6 +55,10 @@ export default class SpellProcessor {
         impact.life = this.calculateMagicalDamage(impactedFighter[i], this.spell.magicDamage);
       }
 
+      if (impactedFighter[i].currentLife + impact.life <= 0) {
+        impact.death = true;
+      }
+
       impactedStats.push(impact);
     }
 

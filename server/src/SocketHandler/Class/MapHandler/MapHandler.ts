@@ -19,7 +19,7 @@ export default class MapHandler {
   initSocket() {
     console.log("init socket");
     this.socket.on("initWorld", this.spawnPlayer.bind(this));
-    this.socket.on("loadMap", () => console.log("loadMap"));
+    this.socket.on("loadMap", this.loadMap.bind(this));
     this.socket.on("initializeMovement", this.initializeMovement.bind(this));
     this.socket.on("newPosition", this.newPosition.bind(this));
     this.socket.on("disconnect", this.disconnect.bind(this));
@@ -27,6 +27,10 @@ export default class MapHandler {
 
   async spawnPlayer() {
     await this.P.RetrievePlayer(this.socket);
+    await this.M.spawnPlayer(this.socket);
+  }
+
+  async loadMap(mapName: string) {
     await this.M.spawnPlayer(this.socket);
   }
 

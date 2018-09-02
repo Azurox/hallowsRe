@@ -14,6 +14,9 @@ public class Fighter {
     public delegate void OnStatsChange();
     public OnStatsChange StatsChange;
 
+    public delegate void OnDeath(string id);
+    public OnDeath Death;
+
     #region stats
     private int Life;
     private int CurrentLife;
@@ -29,6 +32,7 @@ public class Fighter {
     private int CurrentMovementPoint;
     private int ActionPoint;
     private int CurrentActionPoint;
+    private bool dead = false;
     #endregion
 
     public Fighter(JSONObject data)
@@ -87,6 +91,7 @@ public class Fighter {
     public void TakeImpact(Impact impact)
     {
         UpdateCurrentLife(impact.life);
+        UpdateDeathStatus(impact.death);
     }
 
     public int GetCurrentLife()
@@ -154,5 +159,17 @@ public class Fighter {
     public int GetSpeed()
     {
         return Speed;
+    }
+
+    private void UpdateDeathStatus(bool isDead)
+    {
+        if (isDead)
+        {
+            dead = true;
+            if(Death != null)
+            {
+                Death(Id);
+            }
+        }
     }
 }

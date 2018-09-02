@@ -143,7 +143,6 @@ public class FightMapDTG : MonoBehaviour {
 
     public void BlockPathHighlighting(bool blockIt)
     {
-        Debug.Log("someone set the blocking to : " + blockIt);
         isPathHighlightingBlocked = blockIt;
     }
 
@@ -208,5 +207,19 @@ public class FightMapDTG : MonoBehaviour {
     public HashSet<Vector2> GetObstacles()
     {
         return obstacleCells;
+    }
+
+    public void Clear()
+    {
+        GetComponent<FightMapPathFinding>().Clear();
+        blueCells.Clear();
+        redCells.Clear();
+        obstacleCells.Clear();
+        dirtySpawnCells.Clear();
+        dirtyMovementRangeCells.Clear();
+        dirtyPathCells.Clear();
+        dirtySpellRangeCells.Clear();
+        dirtySpellImpactCells.Clear();
+        cells = null;
     }
 }

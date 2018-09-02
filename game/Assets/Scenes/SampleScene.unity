@@ -961,6 +961,7 @@ GameObject:
   - component: {fileID: 456673562}
   - component: {fileID: 456673564}
   - component: {fileID: 456673563}
+  - component: {fileID: 456673565}
   m_Layer: 0
   m_Name: WorldUIManager
   m_TagString: Untagged
@@ -997,6 +998,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 932661d24417c10448cd4a5a3e00bb3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AfterFightUIComponent: {fileID: 114751261393623602, guid: 1edf552b27eda094395d2503729f4750,
+    type: 2}
 --- !u!114 &456673563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1033,6 +1036,13 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!222 &456673565
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 456673560}
+  m_CullTransparentMesh: 0
 --- !u!1 &485078864
 GameObject:
   m_ObjectHideFlags: 0
