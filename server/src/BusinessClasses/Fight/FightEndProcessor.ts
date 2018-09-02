@@ -1,10 +1,13 @@
 import FightResult from "./FightResult";
 
 export default class FightEndProcessor {
-    constructor() {
-    }
+  constructor() {}
 
-    process(): FightResult {
-        return new FightResult(50, 15, undefined, 0);
+  process(win: boolean): FightResult {
+    if (win) {
+      return new FightResult(win, 50, 15, undefined);
+    } else {
+      return new FightResult(win, 0, 0, undefined);
     }
+  }
 }

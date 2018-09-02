@@ -325,7 +325,8 @@ export default class Fight {
         const fighters = this.blueTeam.concat(this.redTeam);
         for (let i = 0; i < fighters.length; i++) {
           const fightEndProcessor = new FightEndProcessor();
-          const fightResult = fightEndProcessor.process();
+          console.log(fighters[i].side == this.winners);
+          const fightResult = fightEndProcessor.process(fighters[i].side == this.winners);
           this.io.sockets.connected[fighters[i].socketId].leave(this.id);
           await fighters[i].player.leaveFight();
 

@@ -209,7 +209,8 @@ public class FightMapReceiver {
         FighterContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.Clear();
         FightMapDTG.Clear();
-       // WorldMapDTG.ActivateCell();
+        var afterFightStats = new AfterFightStats(data);
+        GlobalUIManager.GetWorldUIManager().ShowAfterFightStats(afterFightStats);
         socket.Emit("loadMap");
     }
 }
