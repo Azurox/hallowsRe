@@ -19,6 +19,7 @@ public class MapDTG : MonoBehaviour {
         {
             for (var j = 0; j < oldCells.GetLength(1); j++)
             {
+                if (oldCells[i, j] == null) continue;
                 cells[i, j] = oldCells[i, j].GetComponent<CellDTG>();
             }
         }

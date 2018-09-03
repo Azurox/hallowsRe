@@ -28,6 +28,8 @@ public class GlobalMapDTG : MonoBehaviour
         {
             for (int j = 0, lengthJ = currentMap.cells.GetLength(1); j < lengthJ; j++)
             {
+                if (currentMap.cells[i, j].OffScreen) continue;
+
                 GameObject cell;
                 if(cells[j, i] == null)
                 {
@@ -59,9 +61,9 @@ public class GlobalMapDTG : MonoBehaviour
         {
             for (var j = 0; j < cells.GetLength(1); j++)
             {
+                if (cells[i, j] == null) continue;
                 cells[i, j].GetComponent<FightCellDTG>().SetState(true);
                 cells[i, j].GetComponent<CellDTG>().active = false;
-
             }
         }
     }
@@ -73,6 +75,7 @@ public class GlobalMapDTG : MonoBehaviour
         {
             for (var j = 0; j < cells.GetLength(1); j++)
             {
+                if (cells[i, j] == null) continue;
                 cells[i, j].GetComponent<FightCellDTG>().SetState(false);
                 cells[i, j].GetComponent<FightCellDTG>().taken = false;
                 cells[i, j].GetComponent<CellDTG>().active = true;
