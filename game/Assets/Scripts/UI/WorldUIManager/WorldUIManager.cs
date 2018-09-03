@@ -10,8 +10,11 @@ public class WorldUIManager : MonoBehaviour {
     public void ShowAfterFightStats(AfterFightStats afterFightStats)
     {
         var go = Instantiate(AfterFightUIComponent, transform, false);
-        //go.transform.position = new Vector3();
-        //go.transform.sc
         go.GetComponent<AfterFightUIComponent>().ShowAfterfightStats(afterFightStats);
+    }
+
+    public void ShowScenario(Scenario scenario)
+    {
+
     }
 }

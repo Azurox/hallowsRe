@@ -5,7 +5,13 @@ using UnityEngine;
 public class NpcContainerDTG : MonoBehaviour {
 
     public NpcDTG NpcDTG;
+    private WorldUIManager WorldUIManager;
     private List<NpcDTG> npcs = new List<NpcDTG>();
+
+    public void Init(WorldUIManager worldUIManager)
+    {
+        this.WorldUIManager = worldUIManager;
+    }
 
     public void LoadNPC(string id)
     {
@@ -14,6 +20,11 @@ public class NpcContainerDTG : MonoBehaviour {
         NpcDTG npcDtg = go.GetComponent<NpcDTG>();
         npcDtg.SetNpc(npc);
         npcs.Add(npcDtg);
+    }
+
+    public void ShowScenario(Scenario scenario)
+    {
+        WorldUIManager.ShowScenario(scenario);
     }
 
     public void Clear()

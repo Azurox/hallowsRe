@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NpcDTG : MonoBehaviour {
@@ -9,25 +10,24 @@ public class NpcDTG : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        Debug.Log("click on NPC");
+        transform.parent.GetComponent<NpcContainerDTG>().ShowScenario(GetMostSuitedScenario()) ;
     }
 
-    public Scenario GetScenario()
+    private Scenario GetMostSuitedScenario()
     {
-        return scenario;
-    }
-
-    public void SetScenario(Scenario scenario)
-    {
-        this.scenario = scenario;
+        return npc.scenarios.ElementAt(0).Value;   
     }
 
     public void SetNpc(Npc npc)
     {
         this.npc = npc;
-        foreach (var id in this.npc.scenariosId)
+    }
+
+    public void InitNpc()
+    {
+        foreach (var id in npc.scenariosId)
         {
-            this.npc.scenarios[id] = ResourcesLoader.Instance.GetScenario(id);
+            npc.scenarios[id] = ResourcesLoader.Instance.GetScenario(id);
         }
         sprite = ResourcesLoader.Instance.GetImage(npc.imageId);
     }
