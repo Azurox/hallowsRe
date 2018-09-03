@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Npc {
+    public string name;
     public string[] scenariosId;
     public Vector2 position;
     public int orientation;

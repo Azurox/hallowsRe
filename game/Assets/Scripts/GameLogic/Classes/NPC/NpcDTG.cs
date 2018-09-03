@@ -10,7 +10,7 @@ public class NpcDTG : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        transform.parent.GetComponent<NpcContainerDTG>().ShowScenario(GetMostSuitedScenario()) ;
+        transform.parent.GetComponent<NpcHandler>().ShowScenario(GetMostSuitedScenario()) ;
     }
 
     private Scenario GetMostSuitedScenario()
@@ -30,6 +30,8 @@ public class NpcDTG : MonoBehaviour {
             npc.scenarios[id] = ResourcesLoader.Instance.GetScenario(id);
         }
         sprite = ResourcesLoader.Instance.GetImage(npc.imageId);
+        transform.position = npc.position;
+        name = npc.name;
     }
 
     public Npc GetNpc()
