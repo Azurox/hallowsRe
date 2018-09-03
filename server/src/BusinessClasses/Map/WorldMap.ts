@@ -20,17 +20,26 @@ export default class WorldMap {
     map.y = 0;
     map.name = "0-0";
     map.cells = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) {
       map.cells[i] = [];
-      for (let j = 0; j < 10; j++) {
+      for (let j = 0; j < 30; j++) {
         const cell = new Cell();
         cell.x = i;
         cell.y = j;
         cell.isAccessible = true;
         cell.obstacle = false;
-        if ((i == 2 && j == 4) || (i == 6 && j == 5)) {
-          cell.isAccessible = false;
-          cell.obstacle = true;
+        cell.offScreen = false;
+
+        if (i + j <= 14) {
+          cell.offScreen = true;
+        }
+
+        if (i + j > 44) {
+          cell.offScreen = true;
+        }
+
+        if (i - j > 15 || j - i > 16) {
+          cell.offScreen = true;
         }
 
         await cell.save();
@@ -38,8 +47,8 @@ export default class WorldMap {
       }
     }
 
-    map.redCells = [new Position(0, 5), new Position(0, 7), new Position(0, 9)];
-    map.blueCells = [new Position(5, 0), new Position(7, 0), new Position(9, 0)];
+    map.blueCells = [new Position(20, 11), new Position(20, 14), new Position(20, 17), new Position(17, 15)];
+    map.redCells = [new Position(14, 17), new Position(14, 14), new Position(14, 11), new Position(17, 16)];
 
     await map.save();
   }
@@ -70,13 +79,13 @@ export default class WorldMap {
     stats1.armor = 3;
     stats1.magicResistance = 3;
     stats1.attackDamage = 6;
-    stats1.movementPoint = 3;
+    stats1.movementPoint = 15;
     stats1.actionPoint = 6;
     await stats1.save();
 
     const player1 = new Player();
     player1.name = "test1";
-    player1.position = { x: 0, y: 0 };
+    player1.position = { x: 16, y: 10 };
     player1.mapPosition = { x: 0, y: 0 };
     player1.stats = stats1;
     player1.spells = [spell];
@@ -94,7 +103,7 @@ export default class WorldMap {
 
     const player2 = new Player();
     player2.name = "test2";
-    player2.position = { x: 2, y: 2 };
+    player2.position = { x: 7, y: 16 };
     player2.mapPosition = { x: 0, y: 0 };
     player2.stats = stats2;
     player2.spells = [spell];

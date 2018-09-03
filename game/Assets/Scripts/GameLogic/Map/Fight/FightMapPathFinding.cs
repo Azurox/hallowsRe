@@ -80,7 +80,14 @@ public class FightMapPathFinding : MonoBehaviour
         {
             for (var j = 0; j < currentMap.GetLength(1); j++)
             {
-                grid[i, j] = new Node(!currentMap[i, j].taken && currentMap[i, j].currentCell.IsAccessible, new Vector2(i, j), i, j);
+                if(currentMap[i,j] == null)
+                {
+                    grid[i, j] = new Node(false, new Vector2(i, j), i, j);
+                }
+                else
+                {
+                    grid[i, j] = new Node(!currentMap[i, j].taken && currentMap[i, j].currentCell.IsAccessible, new Vector2(i, j), i, j);
+                }
             }
         }
     }
@@ -202,19 +209,19 @@ public class FightMapPathFinding : MonoBehaviour
         {
             int x = cell.currentCell.X;
             int y = cell.currentCell.Y;
-            if (x + 1 < currentMap.GetLength(0) && currentMap[x + 1, y].currentCell.IsAccessible && !currentMap[x + 1, y].taken)
+            if (x + 1 < currentMap.GetLength(0) && currentMap[x + 1, y] != null && currentMap[x + 1, y].currentCell.IsAccessible && !currentMap[x + 1, y].taken)
             {
                 newCellDTGs.Add(currentMap[x + 1, y]);
             }
-            if (x - 1 >= 0 && currentMap[x - 1, y].currentCell.IsAccessible && !currentMap[x - 1, y].taken)
+            if (x - 1 >= 0 && currentMap[x - 1, y] != null && currentMap[x - 1, y].currentCell.IsAccessible && !currentMap[x - 1, y].taken)
             {
                 newCellDTGs.Add(currentMap[x - 1, y]);
             }
-            if (y + 1 < currentMap.GetLength(1) && currentMap[x, y + 1].currentCell.IsAccessible && !currentMap[x, y + 1].taken)
+            if (y + 1 < currentMap.GetLength(1) && currentMap[x, y + 1] != null && currentMap[x, y + 1].currentCell.IsAccessible && !currentMap[x, y + 1].taken)
             {
                 newCellDTGs.Add(currentMap[x, y + 1]);
             }
-            if (y - 1 >= 0 && currentMap[x, y - 1].currentCell.IsAccessible && !currentMap[x, y - 1].taken)
+            if (y - 1 >= 0 && currentMap[x, y - 1] != null && currentMap[x, y - 1].currentCell.IsAccessible && !currentMap[x, y - 1].taken)
             {
                 newCellDTGs.Add(currentMap[x, y - 1]);
             }
@@ -242,7 +249,7 @@ public class FightMapPathFinding : MonoBehaviour
                 var totalVector = position - startPosition;
                 var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);
                 bool include = false;
-                if (distance <= range && currentMap[i, j].currentCell.IsAccessible)
+                if (currentMap[i, j] != null && distance <= range && currentMap[i, j].currentCell.IsAccessible)
                 {
                     if (includeStartPosition == false)
                     {

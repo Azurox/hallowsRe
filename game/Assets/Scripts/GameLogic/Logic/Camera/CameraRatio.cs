@@ -8,11 +8,16 @@ public class CameraRatio : MonoBehaviour
     private Camera currentCamera;
     private float initialSize; 
 
-    private void Start()
+    private void Awake()
     {
         resolution = new Vector2(Screen.width, Screen.height);
         currentCamera = GetComponent<Camera>();
         initialSize = currentCamera.orthographicSize;
+        SetCameraShape();
+    }
+
+    void Start()
+    {
         SetCameraShape();
     }
 
@@ -58,7 +63,7 @@ public class CameraRatio : MonoBehaviour
 
     private void Update()
     {
-        if (resolution.x != Screen.width || resolution.y != Screen.height)
+      if (resolution.x != Screen.width || resolution.y != Screen.height)
         {
             SetCameraShape();
             resolution.x = Screen.width;

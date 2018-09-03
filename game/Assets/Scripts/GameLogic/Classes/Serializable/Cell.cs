@@ -8,12 +8,14 @@ public class Cell {
     public int Y { get; set; }
     public bool IsAccessible { get; set; }
     public bool Obstacle { get; set; }
+    public bool OffScreen { get; set; }
 
-    public Cell(int x, int y, bool isAccessible, bool obstacle)
+    public Cell(int x, int y, bool isAccessible, bool obstacle, bool offScreen)
     {
         this.X = x;
         this.Y = y;
         this.IsAccessible = isAccessible;
         this.Obstacle = obstacle;
+        this.OffScreen = offScreen;
     }
 }

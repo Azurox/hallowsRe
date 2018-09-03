@@ -42,6 +42,7 @@ public class FightMapDTG : MonoBehaviour {
         {
             for (var j = 0; j < oldCells.GetLength(1); j++)
             {
+                if (oldCells[i, j] == null) continue;
                 cells[i, j] = oldCells[i, j].GetComponent<FightCellDTG>();
                 if(cells[i, j].currentCell.Obstacle) {
                     obstacleCells.Add(new Vector2(i, j));
