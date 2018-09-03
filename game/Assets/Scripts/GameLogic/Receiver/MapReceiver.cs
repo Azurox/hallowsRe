@@ -10,6 +10,8 @@ public class MapReceiver {
     public PlayerContainerDTG PlayerContainerDTG;
     public PlayerHandler PlayerHandler;
     public GlobalUIManager GlobalUIManager;
+    public NpcContainerDTG NpcContainerDTG;
+    public NpcHandler NpcHandler;
     private SocketIOComponent socket;
 
     public MapReceiver(SocketIOComponent socket)
@@ -21,6 +23,10 @@ public class MapReceiver {
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         PlayerHandler = PlayerContainerDTG.GetComponent<PlayerHandler>();
         GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
+        NpcContainerDTG = Object.FindObjectOfType<NpcContainerDTG>();
+        NpcHandler = NpcContainerDTG.GetComponent<NpcHandler>();
+
+        NpcHandler.Init(worldUIManager);
 
         InitSocket();
     }
