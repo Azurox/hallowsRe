@@ -104,7 +104,7 @@ public class ResourcesLoader : Singleton<ResourcesLoader>
 
     public Sprite GetImage(string id)
     {
-        if (npcs.ContainsKey(id))
+        if (images.ContainsKey(id))
         {
             return images[id];
         }
@@ -117,7 +117,7 @@ public class ResourcesLoader : Singleton<ResourcesLoader>
                 return image;
             }
 
-            Debug.Log("Cannot find NPC named : " + id);
+            Debug.Log("Cannot find Image named : " + id);
             return null;
         }
     }

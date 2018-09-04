@@ -1,0 +1,21 @@
+{
+    "id": "0",
+    "requirements": {
+       "minLevel":0,
+       "maxLevel": 120,
+       "activeQuests" : [],
+       "completedQuests": []
+    },
+    "discussions": ["Bonjour", "Ca va ?"],
+    "responses": [{
+        "response": "Oui",
+        "scenarioId": "1",
+        "end": true
+    },
+    {
+        "response": "Non",
+        "scenarioId": "2",
+        "end": true
+    }],
+    "isQuest": false
+}

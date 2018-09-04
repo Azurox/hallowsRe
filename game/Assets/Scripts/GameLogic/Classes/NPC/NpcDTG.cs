@@ -30,7 +30,7 @@ public class NpcDTG : MonoBehaviour {
             npc.scenarios[id] = ResourcesLoader.Instance.GetScenario(id);
         }
         sprite = ResourcesLoader.Instance.GetImage(npc.imageId);
-        transform.position = npc.position;
+        transform.position = new Vector3(npc.position.x, transform.position.y, npc.position.y);
         name = npc.name;
     }
 

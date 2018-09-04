@@ -39,3 +39,4 @@ sysinfo.txt
 # Server
 server/node_modules
 server/db
+game/ProjectSettings/ProjectVersion.txt

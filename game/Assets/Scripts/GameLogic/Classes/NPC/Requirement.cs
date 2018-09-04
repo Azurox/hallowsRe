@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿
 public class Requirement {
-    public int level;
-    public string[] questId;
+    public int minLevel;
+    public int maxLevel;
+    public string[] activeQuests;
+    public string[] completedQuests;
+
 }

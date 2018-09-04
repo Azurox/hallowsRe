@@ -6,7 +6,7 @@ public class NpcHandler : MonoBehaviour {
 
     private WorldUIManager WorldUIManager;
 
-    public void Init(WorldUIManager worldUIManager)
+    public void Startup(WorldUIManager worldUIManager)
     {
         WorldUIManager = worldUIManager;
     }

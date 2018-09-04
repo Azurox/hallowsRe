@@ -8,6 +8,14 @@ public class NpcContainerDTG : MonoBehaviour {
     private List<NpcDTG> npcs = new List<NpcDTG>();
 
 
+    public void LoadNpcs(string[] ids)
+    {
+        foreach (var id in ids)
+        {
+            LoadNPC(id);
+        }
+    }
+
     public void LoadNPC(string id)
     {
         var npc = ResourcesLoader.Instance.GetNpc(id);
