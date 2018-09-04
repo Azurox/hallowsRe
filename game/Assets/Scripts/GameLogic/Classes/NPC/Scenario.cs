@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Scenario {
     public string id;
-    public Requirement[] requirements;
+    public Requirement requirement;
     public string[] discussions;
     public ScenarioResponse[] responses;
     public bool isQuest;

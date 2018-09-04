@@ -1,6 +1,6 @@
 {
     "id": "0",
-    "requirements": {
+    "requirement": {
        "minLevel":0,
        "maxLevel": 120,
        "activeQuests" : [],

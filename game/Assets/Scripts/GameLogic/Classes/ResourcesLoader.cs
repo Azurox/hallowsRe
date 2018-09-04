@@ -83,13 +83,13 @@ public class ResourcesLoader : Singleton<ResourcesLoader>
 
     public Scenario GetScenario(string id)
     {
-        if (npcs.ContainsKey(id))
+        if (scenarios.ContainsKey(id))
         {
             return scenarios[id];
         }
         else
         {
-            var jsonTextFile = Resources.Load<TextAsset>("Npc/" + id);
+            var jsonTextFile = Resources.Load<TextAsset>("Scenario/" + id);
             if (jsonTextFile != null)
             {
                 Scenario scenario = JsonConvert.DeserializeObject<Scenario>(jsonTextFile.text);
@@ -97,7 +97,7 @@ public class ResourcesLoader : Singleton<ResourcesLoader>
                 return scenario;
             }
 
-            Debug.Log("Cannot find NPC named : " + id);
+            Debug.Log("Cannot find Scenario named : " + id);
             return null;
         }
     }

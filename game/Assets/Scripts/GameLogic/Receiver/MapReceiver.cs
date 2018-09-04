@@ -24,6 +24,7 @@ public class MapReceiver {
         PlayerContainerDTG = Object.FindObjectOfType<PlayerContainerDTG>();
         PlayerHandler = PlayerContainerDTG.GetComponent<PlayerHandler>();
         GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
+        WorldUIManager = GlobalUIManager.GetWorldUIManager();
         NpcContainerDTG = Object.FindObjectOfType<NpcContainerDTG>();
         NpcHandler = NpcContainerDTG.GetComponent<NpcHandler>();
 

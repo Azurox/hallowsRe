@@ -4,5 +4,4 @@ public class Requirement {
     public int maxLevel;
     public string[] activeQuests;
     public string[] completedQuests;
-
 }
