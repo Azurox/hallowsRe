@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class WorldUIManager : MonoBehaviour {
     public AfterFightUIComponent AfterFightUIComponent;
+    public ScenarioHolderUIComponent ScenarioHolderUIComponent;
 
 
     public void ShowAfterFightStats(AfterFightStats afterFightStats)
@@ -15,6 +16,12 @@ public class WorldUIManager : MonoBehaviour {
 
     public void ShowScenario(Scenario scenario)
     {
+        ScenarioHolderUIComponent.gameObject.SetActive(true);
+        ScenarioHolderUIComponent.InitScenario(scenario);
+    }
 
+    public void HideScenario()
+    {
+        ScenarioHolderUIComponent.gameObject.SetActive(false);
     }
 }
