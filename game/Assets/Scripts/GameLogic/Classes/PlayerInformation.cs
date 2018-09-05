@@ -17,4 +17,14 @@ public class PlayerInformation : Singleton<PlayerInformation>
         return Utils.Instance.GetPhotoTaker().TakePicture(playerGameObject);
     }
 
+    public void SetPlayerGameObject(GameObject gameObject)
+    {
+        playerGameObject = gameObject;
+    }
+
+    public void SetFighterGameObject(GameObject gameObject)
+    {
+        fighterGameObject = gameObject;
+    }
+
 }

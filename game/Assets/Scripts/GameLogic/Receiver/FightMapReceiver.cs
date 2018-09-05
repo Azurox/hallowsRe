@@ -64,6 +64,7 @@ public class FightMapReceiver {
         FighterContainerDTG.Init(Fight.GetFighters());
         FightMapDTG.Init();
         var mainFighterDTG = FighterContainerDTG.GetMainFighter();
+
         var mainFighterEmitter = mainFighterDTG.GetComponent<MainFighterEmitter>();
         mainFighterEmitter.Init(Fight.Id);
 
@@ -93,6 +94,7 @@ public class FightMapReceiver {
         FightUIManager.UpdateFightTimeline(Fight.GetFighters());
         FightUIManager.ShowFighterStats(Fight.GetMainFighter());
         FightUIManager.ShowSpells(Fight.GetMainFighter().GetSpells());
+        PlayerInformation.Instance.SetPlayerGameObject(mainFighterDTG.gameObject);
     }
 
     private void TeleportPreFight(SocketIOEvent obj)

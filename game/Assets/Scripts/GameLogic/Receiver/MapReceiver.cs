@@ -62,6 +62,7 @@ public class MapReceiver {
         var player = PlayerContainerDTG.SpawnMainPlayer((int) position[0].n, (int) position[1].n);
         MapHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
         PlayerHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
+        PlayerInformation.Instance.SetPlayerGameObject(player);
     }
 
     private void SpawnPlayer(SocketIOEvent obj)
