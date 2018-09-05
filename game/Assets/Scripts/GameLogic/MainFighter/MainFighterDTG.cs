@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class MainFighterDTG : MonoBehaviour {
+public class MainFighterDTG : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+{
 
     private Fighter fighter;
     private bool isHoveringBlocked = false;
@@ -50,12 +52,12 @@ public class MainFighterDTG : MonoBehaviour {
         }
     }
 
-    private void OnMouseDown()
+    public void OnPointerExit(PointerEventData eventData)
     {
         transform.parent.GetComponent<MainFighterHandler>().ClickOnMainFighter(fighter);
     }
 
-    private void OnMouseEnter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
         if (!isHoveringBlocked)
         {
@@ -63,7 +65,7 @@ public class MainFighterDTG : MonoBehaviour {
         }
     }
 
-    private void OnMouseExit()
+    public void OnPointerClick(PointerEventData eventData)
     {
         transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter(fighter);
     }
@@ -72,4 +74,5 @@ public class MainFighterDTG : MonoBehaviour {
     {
         isHoveringBlocked = blockIt;
     }
+
 }
