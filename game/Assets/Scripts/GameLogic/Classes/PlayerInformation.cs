@@ -7,14 +7,20 @@ public class PlayerInformation : Singleton<PlayerInformation>
 {
     protected PlayerInformation() { }
 
-    private Image playerImage;
+    private Texture2D playerImage;
+    private bool playerImageIsDirty = true;
 
     private GameObject playerGameObject;
     private GameObject fighterGameObject;
 
-    public Image GetPlayerImage()
+    public Texture2D GetPlayerImage()
     {
-        return Utils.Instance.GetPhotoTaker().TakePicture(playerGameObject);
+        if(playerImage == null || playerImageIsDirty)
+        {
+            playerImage = Utils.Instance.GetPhotoTaker().TakePicture(playerGameObject);
+            playerImageIsDirty = false;
+        }
+        return playerImage;
     }
 
     public void SetPlayerGameObject(GameObject gameObject)

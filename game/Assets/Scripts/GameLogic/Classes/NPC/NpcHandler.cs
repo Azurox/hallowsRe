@@ -11,8 +11,8 @@ public class NpcHandler : MonoBehaviour {
         WorldUIManager = worldUIManager;
     }
 
-    public void ShowScenario(Scenario scenario)
+    public void ShowScenario(Scenario scenario, NpcDTG npc)
     {
-        WorldUIManager.ShowScenario(scenario);
+        WorldUIManager.ShowScenario(scenario, npc);
     }
 }

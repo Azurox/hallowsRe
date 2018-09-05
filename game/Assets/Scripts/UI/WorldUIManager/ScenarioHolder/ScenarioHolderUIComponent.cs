@@ -4,7 +4,8 @@ using UnityEngine.UI;
 
 public class ScenarioHolderUIComponent : MonoBehaviour {
     public Image NpcImage;
-    public Image PlayerImage;
+    public RawImage NpcRawImage;
+    public RawImage PlayerImage;
     public Text Discussion;
     public GameObject NpcDiscussions;
     public GameObject PlayersResponses;
@@ -13,7 +14,7 @@ public class ScenarioHolderUIComponent : MonoBehaviour {
     private Scenario scenario;
     private int indexDiscussion = 0;
 
-    public void InitScenario(Scenario scenario)
+    public void InitScenario(Scenario scenario, NpcDTG npc)
     {
         this.scenario = scenario;
         ClearResponse();
@@ -21,8 +22,28 @@ public class ScenarioHolderUIComponent : MonoBehaviour {
         PlayersResponses.SetActive(false);
         indexDiscussion = 0;
         Discussion.text = scenario.discussions[0];
-        PlayerImage.color = new Color(0, 0, 0, 0.3f);
-        NpcImage.color = new Color(1, 0, 0);
+
+        PlayerImage.texture = PlayerInformation.Instance.GetPlayerImage();
+        PlayerImage.color = new Color(1, 1, 1, 0.3f);
+
+        var npcSprite = npc.GetSprite();
+        if(npcSprite == null)
+        {
+            var npcTexture = npc.GetBackupImage();
+            NpcRawImage.texture = npcTexture;
+            NpcRawImage.gameObject.SetActive(true);
+            NpcImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            NpcImage.sprite = npcSprite;
+            NpcImage.gameObject.SetActive(true);
+            NpcRawImage.gameObject.SetActive(false);
+        }
+
+        NpcImage.color = new Color(1, 1, 1);
+        NpcRawImage.color = new Color(1, 1, 1);
+
     }
 
     public void NextDiscussion()
@@ -48,8 +69,9 @@ public class ScenarioHolderUIComponent : MonoBehaviour {
 
     public void ShowResponse()
     {
-        NpcImage.color = new Color(0, 0, 0, 0.3f);
-        PlayerImage.color = new Color(0,0,1);
+        NpcImage.color = new Color(1, 1, 1, 0.3f);
+        NpcRawImage.color = new Color(1, 1, 1, 0.3f);
+        PlayerImage.color = new Color(1,1,1);
         for (int i = 0; i < scenario.responses.Length; i++)
         {
             var go = Instantiate(ScenarioResponseUIComponent, PlayersResponses.transform);
