@@ -6,14 +6,16 @@ using UnityEngine.UI;
 public class FighterMiniatureUIComponent : MonoBehaviour {
 
     private FightUIManager FightUIManager;
+    private FighterContainerDTG FighterContainerDTG;
     public Image Border;
-    public Image Image;
+    public RawImage Image;
     public Image Side;
     private Fighter fighter;
 
-    public void Init(FightUIManager fightUIManager)
+    public void Init(FightUIManager fightUIManager, FighterContainerDTG fighterContainerDTG)
     {
         FightUIManager = fightUIManager;
+        FighterContainerDTG = fighterContainerDTG;
     }
 
     public void MouseOverMiniature()
@@ -27,7 +29,15 @@ public class FighterMiniatureUIComponent : MonoBehaviour {
         this.fighter = fighter;
         if (fighter.IsMainPlayer)
         {
-            Image.color = new Color(1, 215 / 255f, 0 / 255f);
+            Image.texture = PlayerInformation.Instance.GetFighterImage(true);
+        }
+        else
+        {
+            var fighterDtg = FighterContainerDTG.GetFighterDTGFromFighter(fighter);
+            if(fighterDtg != null)
+            {
+                Image.texture = fighterDtg.GetImage();
+            }
         }
         
         if(fighter.Side == global::Side.blue)

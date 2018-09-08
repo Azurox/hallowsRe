@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,9 +9,7 @@ public class FightCellDTG : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     public Cell currentCell;
     private List<CellColor> cellColors = new List<CellColor>();
     public bool taken = false;
-    [SerializeField]
     private bool active = false;
-    private new bool enabled;
 
     public void SetCell(Cell cell)
     {

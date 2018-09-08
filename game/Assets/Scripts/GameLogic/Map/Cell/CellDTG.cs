@@ -34,6 +34,7 @@ public class CellDTG : MonoBehaviour, IPointerClickHandler {
         gameObject.transform.position = new Vector3(currentCell.X, 0, currentCell.Y);
     }
 
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (!active) return;
@@ -45,6 +46,8 @@ public class CellDTG : MonoBehaviour, IPointerClickHandler {
             Debug.Log("impossible to go here");
         }
     }
+
+
 
     public void AddColor(Color color, int priority)
     {
@@ -68,4 +71,5 @@ public class CellDTG : MonoBehaviour, IPointerClickHandler {
     {
        GetComponent<Renderer>().material.color = cellColors.OrderByDescending(i => i.priority).FirstOrDefault().color;
     }
+
 }

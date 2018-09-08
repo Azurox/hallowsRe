@@ -15,6 +15,7 @@ public class FightMapReceiver {
     public MainFighterHandler MainFighterHandler;
     public GlobalUIManager GlobalUIManager;
     public FightUIManager FightUIManager;
+    public NpcContainerDTG NpcContainerDTG;
     private SocketIOComponent socket;
     private Fight Fight;
 
@@ -30,6 +31,7 @@ public class FightMapReceiver {
         FighterHandler = FighterContainerDTG.GetComponent<FighterHandler>();
         MainFighterHandler = FighterContainerDTG.GetComponent<MainFighterHandler>();
         GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
+        NpcContainerDTG = Object.FindObjectOfType<NpcContainerDTG>();
         FightUIManager = GlobalUIManager.GetFightUIManager();
 
 
@@ -58,6 +60,7 @@ public class FightMapReceiver {
     {
         Debug.Log("FightStarted !");
         PlayerContainerDTG.gameObject.SetActive(false);
+        NpcContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
         Fight = new Fight(socket, obj);
 
@@ -88,13 +91,13 @@ public class FightMapReceiver {
 
         }
 
+        PlayerInformation.Instance.SetFighterGameObject(mainFighterDTG.gameObject);
         GlobalUIManager.SwitchToFightUI();
         FightUIManager.Init(mainFighterEmitter, FightMapHandler);
         FightUIManager.SetUIPhase0();
         FightUIManager.UpdateFightTimeline(Fight.GetFighters());
         FightUIManager.ShowFighterStats(Fight.GetMainFighter());
         FightUIManager.ShowSpells(Fight.GetMainFighter().GetSpells());
-        PlayerInformation.Instance.SetPlayerGameObject(mainFighterDTG.gameObject);
     }
 
     private void TeleportPreFight(SocketIOEvent obj)

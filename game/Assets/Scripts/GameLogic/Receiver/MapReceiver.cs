@@ -52,6 +52,7 @@ public class MapReceiver {
         WorldMapDTG.SetMap(map);
         WorldMapDTG.ActivateCell();
         MapDTG.Init();
+        NpcContainerDTG.gameObject.SetActive(true);
         NpcContainerDTG.LoadNpcs(map.npcs);
         GlobalUIManager.SwitchToWorldUI();
     }

@@ -54,7 +54,7 @@ public class MainFighterDTG : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        transform.parent.GetComponent<MainFighterHandler>().ClickOnMainFighter(fighter);
+        transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter(fighter);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -67,7 +67,7 @@ public class MainFighterDTG : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        transform.parent.GetComponent<MainFighterHandler>().MouseExitMainFighter(fighter);
+        transform.parent.GetComponent<MainFighterHandler>().ClickOnMainFighter(fighter);
     }
 
     public void BlockHovering(bool blockIt)

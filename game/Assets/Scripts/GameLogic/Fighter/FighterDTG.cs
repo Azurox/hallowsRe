@@ -8,6 +8,9 @@ public class FighterDTG : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
 {
 
     private Fighter fighter;
+    private Texture2D image;
+    private bool imageIsDirty = true;
+
 
     public void SetFighter(Fighter fighter)
     {
@@ -69,5 +72,16 @@ public class FighterDTG : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     public void OnPointerExit(PointerEventData eventData)
     {
         transform.parent.GetComponent<FighterHandler>().MouseExitFighter(fighter);
+    }
+
+    public Texture2D GetImage(bool forceRetake = false)
+    {
+        if(imageIsDirty || image == null || forceRetake)
+        {
+            image = Utils.Instance.PhotoTaker.TakePicture(gameObject);
+            imageIsDirty = false;
+        }
+
+        return image;
     }
 }
