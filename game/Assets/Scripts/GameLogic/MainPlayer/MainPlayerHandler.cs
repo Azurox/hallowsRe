@@ -16,11 +16,16 @@ public class MainPlayerHandler : MonoBehaviour {
 
     public void OnMove(int x, int y)
     {
-        gameObject.GetComponent<MainPlayerEmitter>().NewPosition(x, y);
+        GetComponent<MainPlayerEmitter>().NewPosition(x, y);
     }
 
     public void StartFight(string id)
     {
-        gameObject.GetComponent<MainPlayerEmitter>().StartFight(id);
+        GetComponent<MainPlayerEmitter>().StartFight(id);
+    }
+
+    public void SelectScenarioResponse(Scenario scenario, int responseIndex, Npc npc)
+    {
+        GetComponent<MainPlayerEmitter>().SelectScenarioResponse(scenario, responseIndex, npc);
     }
 }

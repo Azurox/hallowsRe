@@ -12,11 +12,13 @@ public class ScenarioHolderUIComponent : MonoBehaviour {
     public ScenarioResponseUIComponent ScenarioResponseUIComponent;
     private List<ScenarioResponseUIComponent> responses = new List<ScenarioResponseUIComponent>();
     private Scenario scenario;
+    private Npc npc;
     private int indexDiscussion = 0;
 
     public void InitScenario(Scenario scenario, NpcDTG npc)
     {
         this.scenario = scenario;
+        this.npc = npc.GetNpc();
         ClearResponse();
         NpcDiscussions.SetActive(true);
         PlayersResponses.SetActive(false);
@@ -91,6 +93,8 @@ public class ScenarioHolderUIComponent : MonoBehaviour {
             {
                 CloseDiscussion();
             }
+
+            transform.parent.GetComponent<WorldUIManager>().SelectScenarioResponse(scenario, index, npc);
         }
     }
 
