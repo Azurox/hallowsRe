@@ -1,11 +1,9 @@
+import FightController from "../../../BusinessClasses/FightController";
 import GSocket from "../../../BusinessClasses/GSocket";
 import MapController from "../../../BusinessClasses/MapController";
 import PlayerController from "../../../BusinessClasses/PlayerController";
-import State from "../../../BusinessClasses/State";
-import FightController from "../../../BusinessClasses/FightController";
-import Position from "../../../BusinessClasses/RelationalObject/Position";
-import Spell from "../../../Schema/Spell";
 import QuestController from "../../../BusinessClasses/QuestController";
+import State from "../../../BusinessClasses/State";
 
 export default class QuestHandler {
   socket: GSocket;
@@ -24,18 +22,18 @@ export default class QuestHandler {
   }
 
   initSocket() {
-      this.socket.on("finishScenario", this.finishScenario.bind(this));
+    this.socket.on("finishScenario", this.finishScenario.bind(this));
   }
 
-  async finishScenario(data: {scenarioId: string, responseIndex: number, questId: string}) {
-
-    if (data.questId) {
-        const quest = await this.Q.retrieveQuest(data.scenarioId);
-        const canFinishQuest = await this.Q.checkQuestRequirement(quest, this.socket.player);
-        if (canFinishQuest) {
-            this.Q.applyQuest(quest, this.socket.player);
-        }
+  async finishScenario(data: { scenarioId: string; responseIndex: number; npcId: string }) {
+    try {
+      const leanScenario = await this.Q.getLeanScenario(this.socket, data.npcId, data.scenarioId);
+      const canFinishScenario = await this.Q.checkScenarioRequirement(leanScenario, this.socket.player);
+      if (canFinishScenario) {
+        this.Q.applyScenario(this.socket, leanScenario, data.responseIndex);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
-
 }

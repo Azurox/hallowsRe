@@ -1,10 +1,11 @@
 import Mongoose from "mongoose";
+import Position from "../BusinessClasses/RelationalObject/Position";
 
 export interface INpc extends Mongoose.Document {
   _id: Mongoose.Types.ObjectId;
   name: string;
   scenarios: Mongoose.Types.ObjectId[];
-  position: Position;
+  mapPosition: Position;
   orientation: number;
   imageId: string;
 }
@@ -12,7 +13,7 @@ export interface INpc extends Mongoose.Document {
 export const NpcSchema = new Mongoose.Schema({
   name: String,
   scenarios: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Scenario" }],
-  position: { x: Number, y: Number },
+  mapPosition: { x: Number, y: Number },
   orientation: Number,
   imageId: String
 });

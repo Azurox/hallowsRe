@@ -4,5 +4,5 @@ export interface IQuest extends Mongoose.Document {}
 
 export const QuestSchema = new Mongoose.Schema({});
 
-const Quest = Mongoose.model<IQuest>("Stats", QuestSchema);
+const Quest = Mongoose.model<IQuest>("Quest", QuestSchema);
 export default Quest;

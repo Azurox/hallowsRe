@@ -10,6 +10,10 @@ export interface IScenario extends Mongoose.Document {
   };
   discussions: string[];
   isQuest: boolean;
+  responses: {
+    completeQuest: Mongoose.Types.ObjectId;
+    startQuest: Mongoose.Types.ObjectId;
+  }[];
 }
 
 export const ScenarioSchema = new Mongoose.Schema({
@@ -20,8 +24,14 @@ export const ScenarioSchema = new Mongoose.Schema({
     completedQuests: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Quest" }]
   },
   discussions: [String],
-  isQuest: Boolean
+  isQuest: Boolean,
+  responses: [
+    {
+      completeQuest: { type: Mongoose.Schema.Types.ObjectId, ref: "Quest" },
+      startQuest: { type: Mongoose.Schema.Types.ObjectId, ref: "Quest" }
+    }
+  ]
 });
 
-const Scenario = Mongoose.model<IScenario>("Stats", ScenarioSchema);
+const Scenario = Mongoose.model<IScenario>("Quest", ScenarioSchema);
 export default Scenario;
