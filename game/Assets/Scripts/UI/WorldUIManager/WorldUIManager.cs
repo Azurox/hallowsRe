@@ -29,7 +29,7 @@ public class WorldUIManager : MonoBehaviour {
 
     public void SelectScenarioResponse(Scenario scenario, int responseIndex, Npc npc)
     {
-
+        MainPlayerHandler.SelectScenarioResponse(scenario, responseIndex, npc);
     }
 
     public void HideScenario()
