@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class FightCellDTG : MonoBehaviour
+public class FightCellDTG : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Cell currentCell;
     private List<CellColor> cellColors = new List<CellColor>();
     public bool taken = false;
-    [SerializeField]
     private bool active = false;
-    private new bool enabled; 
 
     public void SetCell(Cell cell)
     {
@@ -32,7 +30,7 @@ public class FightCellDTG : MonoBehaviour
         }
     }
 
-    public void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (!active) return;
         if (currentCell.IsAccessible && taken == false)
@@ -45,7 +43,7 @@ public class FightCellDTG : MonoBehaviour
         }
     }
 
-    public void OnMouseEnter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
         if (!active) return;
         if (currentCell.IsAccessible && taken == false)
@@ -54,7 +52,7 @@ public class FightCellDTG : MonoBehaviour
         }
     }
 
-    public void OnMouseExit()
+    public void OnPointerExit(PointerEventData eventData)
     {
         if (!active) return;
         if (currentCell.IsAccessible && taken == false)
@@ -95,4 +93,5 @@ public class FightCellDTG : MonoBehaviour
     {
         return active;
     }
+
 }

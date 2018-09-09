@@ -8,11 +8,13 @@ public class TimelineUIComponent : MonoBehaviour {
     public GameObject FighterMiniature;
 
     private FightUIManager FightUIManager;
+    private FighterContainerDTG FighterContainerDTG;
     private List<FighterMiniatureUIComponent> Timeline = new List<FighterMiniatureUIComponent>();
 
     private void Start()
     {
         FightUIManager = GetComponentInParent<FightUIManager>();
+        FighterContainerDTG = FindObjectOfType<FighterContainerDTG>();
     }
 
     public void UpdateFightTimeline(List<Fighter> fighters)
@@ -28,7 +30,7 @@ public class TimelineUIComponent : MonoBehaviour {
             var go = Instantiate(FighterMiniature);
             go.transform.SetParent(transform, false);
             var min = go.GetComponent<FighterMiniatureUIComponent>();
-            min.Init(FightUIManager);
+            min.Init(FightUIManager, FighterContainerDTG);
             min.SetFighter(fighter);
             Timeline.Add(min);
             fighter.Death += RemoveFighter;

@@ -2,10 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class FighterDTG : MonoBehaviour {
+public class FighterDTG : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+{
 
     private Fighter fighter;
+    private Texture2D image;
+    private bool imageIsDirty = true;
+
 
     public void SetFighter(Fighter fighter)
     {
@@ -54,18 +59,29 @@ public class FighterDTG : MonoBehaviour {
         }
     }
 
-    private void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
         transform.parent.GetComponent<FighterHandler>().ClickOnFighter(fighter);
     }
 
-    private void OnMouseEnter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
         transform.parent.GetComponent<FighterHandler>().MouseOverFighter(fighter);
     }
 
-    private void OnMouseExit()
+    public void OnPointerExit(PointerEventData eventData)
     {
         transform.parent.GetComponent<FighterHandler>().MouseExitFighter(fighter);
+    }
+
+    public Texture2D GetImage(bool forceRetake = false)
+    {
+        if(imageIsDirty || image == null || forceRetake)
+        {
+            image = Utils.Instance.PhotoTaker.TakePicture(gameObject);
+            imageIsDirty = false;
+        }
+
+        return image;
     }
 }

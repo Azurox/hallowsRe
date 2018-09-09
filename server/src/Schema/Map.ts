@@ -11,6 +11,8 @@ export interface IMap extends Mongoose.Document {
   cells: ICell[][];
   redCells: Position[];
   blueCells: Position[];
+  npcs: Mongoose.Types.ObjectId[];
+
 
   spawnPlayer(x: number, y: number, player: IPlayer): Promise<boolean>;
   movePlayer(player: IPlayer, position: Position): Promise<void>;
@@ -29,7 +31,8 @@ export const MapSchema = new Mongoose.Schema({
   position: { x: Number, y: Number },
   cells: [[{ type: Mongoose.Schema.Types.ObjectId, ref: "Player" }]],
   redCells: [{ x: Number, y: Number }],
-  blueCells: [{ x: Number, y: Number }]
+  blueCells: [{ x: Number, y: Number }],
+  npcs: [[{ type: Mongoose.Schema.Types.ObjectId, ref: "Npc", default: [] }]]
 });
 
 MapSchema.method("spawnPlayer", async function(x: number, y: number, player: IPlayer): Promise<boolean> {

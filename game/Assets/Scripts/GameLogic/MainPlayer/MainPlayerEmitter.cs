@@ -42,5 +42,14 @@ public class MainPlayerEmitter : MonoBehaviour {
         data["id"] = id;
         socket.Emit("startFight", new JSONObject(data));
     }
-	
+
+    public void SelectScenarioResponse(Scenario scenario, int responseIndex, Npc npc)
+    {
+        Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+        data["scenarioId"] = new JSONObject(string.Format("\"{0}\"", scenario.id));
+        data["responseIndex"] = new JSONObject(responseIndex);
+        data["npcId"] = new JSONObject(string.Format("\"{0}\"", npc.id));
+        socket.Emit("finishScenario", new JSONObject(data));
+    }
+
 }

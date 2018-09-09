@@ -95,7 +95,7 @@ export default class FightHandler {
         const spell = await Spell.findById(data.spellId);
         await fight.useSpell(this.socket.player.id, spell, data.position);
         if (fight.isFinished) {
-          this.F.removefight(data.fightId);
+          this.F.removeFight(data.fightId);
         }
       }
     } catch (error) {

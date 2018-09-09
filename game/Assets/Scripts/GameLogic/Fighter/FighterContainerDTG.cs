@@ -210,6 +210,19 @@ public class FighterContainerDTG : MonoBehaviour {
         }
     }
 
+    public FighterDTG GetFighterDTGFromFighter(Fighter fighter)
+    {
+        foreach (var fighterDtg in fighters)
+        {
+            if(fighterDtg.Value.GetFighter().Id == fighter.Id)
+            {
+                return fighterDtg.Value;
+            }
+        }
+
+        return null;
+    }
+
     public void Clear()
     {
         foreach (var fighter in fighters)

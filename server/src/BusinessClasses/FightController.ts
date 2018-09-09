@@ -38,7 +38,7 @@ export default class FightController {
     return this.fights[id];
   }
 
-  removefight(id: string) {
+  removeFight(id: string) {
     delete this.fights[id];
   }
 }

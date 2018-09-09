@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class CellDTG : MonoBehaviour {
+public class CellDTG : MonoBehaviour, IPointerClickHandler {
     public Cell currentCell;
     private List<CellColor> cellColors = new List<CellColor>();
     public bool active = false;
@@ -32,8 +33,9 @@ public class CellDTG : MonoBehaviour {
     {
         gameObject.transform.position = new Vector3(currentCell.X, 0, currentCell.Y);
     }
-	
-    public void OnMouseDown()
+
+
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (!active) return;
         if (currentCell.IsAccessible)
@@ -44,6 +46,8 @@ public class CellDTG : MonoBehaviour {
             Debug.Log("impossible to go here");
         }
     }
+
+
 
     public void AddColor(Color color, int priority)
     {
