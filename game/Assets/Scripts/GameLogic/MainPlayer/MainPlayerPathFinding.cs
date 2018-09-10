@@ -64,23 +64,23 @@ public class MainPlayerPathFinding : MonoBehaviour {
                 return ReversePath(currentNode);
             }
 
-            foreach (Node neighbour in GetNeighbours(currentNode))
+            foreach (Node neighbor in GetNeighbors(currentNode))
             {
-                if (!neighbour.walkable || closeSet.Contains(neighbour))
+                if (!neighbor.walkable || closeSet.Contains(neighbor))
                 {
                     continue;
                 }
 
-                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
-                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                int newMovementCostToNeighbor = currentNode.gCost + GetDistance(currentNode, neighbor);
+                if (newMovementCostToNeighbor < neighbor.gCost || !openSet.Contains(neighbor))
                 {
-                    neighbour.gCost = newMovementCostToNeighbour;
-                    neighbour.hCost = GetDistance(neighbour, targetNode);
-                    neighbour.parent = currentNode;
+                    neighbor.gCost = newMovementCostToNeighbor;
+                    neighbor.hCost = GetDistance(neighbor, targetNode);
+                    neighbor.parent = currentNode;
 
-                    if (!openSet.Contains(neighbour))
+                    if (!openSet.Contains(neighbor))
                     {
-                        openSet.Add(neighbour);
+                        openSet.Add(neighbor);
                     }
                 }
             }
@@ -106,9 +106,9 @@ public class MainPlayerPathFinding : MonoBehaviour {
         }
     }
 
-    public List<Node> GetNeighbours(Node node)
+    public List<Node> GetNeighbors(Node node)
     {
-        List<Node> neighbours = new List<Node>();
+        List<Node> neighbors = new List<Node>();
 
         int checkX;
         int checkY;
@@ -118,7 +118,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
         checkY = node.gridY;
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
 
@@ -128,7 +128,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
         //gauche
@@ -137,7 +137,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
 
@@ -147,7 +147,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
 
@@ -157,7 +157,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
 
@@ -167,7 +167,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
         //droite
@@ -176,7 +176,7 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
 
@@ -186,10 +186,10 @@ public class MainPlayerPathFinding : MonoBehaviour {
 
         if (checkX >= 0 && checkX < grid.GetLength(0) && checkY >= 0 && checkY < grid.GetLength(1))
         {
-            neighbours.Add(grid[checkX, checkY]);
+            neighbors.Add(grid[checkX, checkY]);
         }
 
-        return neighbours;
+        return neighbors;
     }
 
     public List<Vector2> ReversePath(Node currentNode)

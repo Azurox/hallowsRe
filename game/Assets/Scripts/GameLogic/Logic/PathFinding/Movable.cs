@@ -10,7 +10,7 @@ public class Movable : MonoBehaviour {
     private List<Vector2> newPath;
 
 
-    public void TakePath(Vector2 currentPosition, List<Vector2> path, Action<int, int> callback)
+    public void TakePath(Vector2 currentPosition, List<Vector2> path, Action<int, int> callback, Action endCallBack =  null)
     {
         if (currentPosition.Equals(path[0]))
         {
@@ -20,7 +20,7 @@ public class Movable : MonoBehaviour {
         if (!isMoving)
         {
             this.path = path;
-            StartCoroutine(Move(callback));
+            StartCoroutine(Move(callback, endCallBack));
         } else
         {
             newPath = path;
@@ -28,7 +28,7 @@ public class Movable : MonoBehaviour {
 
     }
 
-    private IEnumerator Move(Action<int, int> callback)
+    private IEnumerator Move(Action<int, int> callback, Action endCallBack)
     {
         isMoving = true;
 
@@ -63,11 +63,15 @@ public class Movable : MonoBehaviour {
 
         if (path.Count > 0)
         {
-            StartCoroutine(Move(callback));
+            StartCoroutine(Move(callback, endCallBack));
         } else
         {
             isMoving = false;
             newPath = null;
+            if (endCallBack != null)
+            {
+                endCallBack();
+            }
         }
 
     }
