@@ -1,6 +1,6 @@
-﻿using SocketIO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using WebSocketSharp;
 
 public class MapReceiver {
 
@@ -13,9 +13,9 @@ public class MapReceiver {
     public WorldUIManager WorldUIManager;
     public NpcContainerDTG NpcContainerDTG;
     public NpcHandler NpcHandler;
-    private SocketIOComponent socket;
+    private WebSocket socket;
 
-    public MapReceiver(SocketIOComponent socket)
+    public MapReceiver(WebSocket socket)
     {
         this.socket = socket;
         WorldMapDTG = Object.FindObjectOfType<GlobalMapDTG>();
@@ -35,13 +35,13 @@ public class MapReceiver {
 
     private void InitSocket()
     {
-        socket.On("loadMap", LoadMap);
+       /* socket.On("loadMap", LoadMap);
         socket.On("spawnMainPlayer", SpawnMainPlayer);
         socket.On("spawnPlayer", SpawnPlayer);
         socket.On("disconnectPlayer", DisconnectPlayer);
-        socket.On("playerMove", PlayerMove);
+        socket.On("playerMove", PlayerMove);*/
     }
-
+    /*
     private void LoadMap(SocketIOEvent obj)
     {
         Debug.Log("Load new map");
@@ -103,5 +103,5 @@ public class MapReceiver {
         }
 
         PlayerContainerDTG.MovePlayer(obj.data["id"].str, path);
-    }
+    }*/
 }

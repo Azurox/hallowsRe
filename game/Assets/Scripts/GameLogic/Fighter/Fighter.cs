@@ -35,9 +35,9 @@ public class Fighter {
     private bool dead = false;
     #endregion
 
-    public Fighter(JSONObject data)
+    public Fighter()
     {
-        Name = data["name"] != null ? data["name"].str : null;
+      /*  Name = data["name"] != null ? data["name"].str : null;
         Id = data["id"] != null ? data["id"].str : null;
         IsMainPlayer = data["isMainPlayer"] != null ? data["isMainPlayer"].b : false;
         Side = data["side"] != null ? (Side)System.Enum.Parse(typeof(Side), data["side"].str) : Side.blue;
@@ -69,7 +69,7 @@ public class Fighter {
         CurrentMovementPoint = MovementPoint;
         ActionPoint = data["actionPoint"] != null ? (int)data["actionPoint"].n : 0;
         CurrentActionPoint = ActionPoint;
-        #endregion
+        #endregion*/
     }
 
     public List<Spell> GetSpells()

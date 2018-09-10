@@ -1,11 +1,9 @@
-﻿using SocketIO;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class Fight {
-    private SocketIOComponent socket;
     public FighterContainerDTG fighterContainerDTG;
 
     public string Id;
@@ -17,17 +15,16 @@ public class Fight {
 
 
 
-    public Fight(SocketIOComponent socket, SocketIOEvent data)
+    public Fight()
     {
-        this.socket = socket;
-        ExtractFightData(data);
+       // ExtractFightData(data);
     }
-
+    /*
     private void ExtractFightData(SocketIOEvent data)
     {
         var playerList = data.data["players"];
         Id = data.data["id"].str;
-        for(var  i = 0; i < playerList.Count; i++)
+        for(var  i = 0; i < playerList.Count(); i++)
         {
             Fighter fighter = new Fighter(playerList[i]);
             if(fighter.Side == Side.blue)
@@ -43,7 +40,7 @@ public class Fight {
                 mainFighter = fighter;
             }
         }
-    }
+    }*/
 
     public List<Fighter> GetFighters()
     {

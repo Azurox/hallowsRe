@@ -13,6 +13,9 @@ export default class SocketHandler {
 
   constructor(socket: GSocket, state: State) {
     this.socket = socket;
+    this.socket.emit("test", { yolo: true });
+    this.socket.emit("testpk", { eee: "je comprend pas" });
+
     this.mapHandler = new MapHandler(socket, state);
     this.fightHandler = new FightHandler(socket, state);
     this.questHandler = new QuestHandler(socket, state);

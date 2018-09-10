@@ -8,11 +8,11 @@ public class AfterFightStats {
     public int xp;
     public int gold;
 
-	public AfterFightStats(JSONObject data)
+	public AfterFightStats()
     {
-        win = data["win"] != null ? data["win"].b : false;
+        /*win = data["win"] != null ? data["win"].b : false;
         xp = data["xp"] != null ? (int) data["xp"].n : 0;
-        gold = data["gold"] != null ? (int)data["gold"].n : 0;
+        gold = data["gold"] != null ? (int)data["gold"].n : 0;*/
         // Need to add looted items.
     }
 }

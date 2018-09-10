@@ -1,7 +1,7 @@
-﻿using SocketIO;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WebSocketSharp;
 
 public class FightMapReceiver {
 
@@ -16,10 +16,10 @@ public class FightMapReceiver {
     public GlobalUIManager GlobalUIManager;
     public FightUIManager FightUIManager;
     public NpcContainerDTG NpcContainerDTG;
-    private SocketIOComponent socket;
+    private WebSocket socket;
     private Fight Fight;
 
-    public FightMapReceiver(SocketIOComponent socket)
+    public FightMapReceiver(WebSocket socket)
     {
         this.socket = socket;
         WorldMapDTG = Object.FindObjectOfType<GlobalMapDTG>();
@@ -47,15 +47,15 @@ public class FightMapReceiver {
 
     private void InitSocket()
     {
-        socket.On("fightStarted", FightStarted);
+        /*socket.On("fightStarted", FightStarted);
         socket.On("teleportPreFight", TeleportPreFight);
         socket.On("setReady", SetReady);
         socket.On("fightPhase1", FightPhase1);
         socket.On("nextTurn", NextTurn);
         socket.On("fighterMove", FighterMove);
-        socket.On("fighterUseSpell", FighterUseSpell);
+        socket.On("fighterUseSpell", FighterUseSpell);*/
     }
-
+    /*
     private void FightStarted(SocketIOEvent obj)
     {
         Debug.Log("FightStarted !");
@@ -217,5 +217,5 @@ public class FightMapReceiver {
         var afterFightStats = new AfterFightStats(data);
         GlobalUIManager.GetWorldUIManager().ShowAfterFightStats(afterFightStats);
         socket.Emit("loadMap");
-    }
+    }*/
 }
