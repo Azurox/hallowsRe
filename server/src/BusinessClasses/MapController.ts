@@ -40,9 +40,11 @@ export default class MapController {
       }
     }
 
+    this.state.MonsterController.SendMapMonsters(socket, map);
+
     socket.player.mapName = map.name;
     socket.join(map.name);
-    await socket.player.save();
+    socket.player.save();
   }
 
   async checkMovementsPossibility(socket: GSocket, positions: Position[]) {

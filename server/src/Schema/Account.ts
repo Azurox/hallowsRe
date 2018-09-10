@@ -3,7 +3,7 @@ import Player, { IPlayer } from "./Player";
 export interface IAccount extends Mongoose.Document {
   email: string;
   password: string;
-  players: [Mongoose.Types.ObjectId | IPlayer];
+  players: IPlayer[];
   newPlayer(): void;
 }
 
@@ -20,7 +20,7 @@ AccountSchema.method("newPlayer", function() {
   player.position = { x: 0, y: 0 };
   player.mapPosition = { x: 0, y: 0 };
   player.save();
-  account.players.push(player._id);
+  account.players.push(player.id);
   account.save();
 });
 

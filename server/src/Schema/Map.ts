@@ -12,8 +12,8 @@ export interface IMap extends Mongoose.Document {
   redCells: Position[];
   blueCells: Position[];
   npcs: Mongoose.Types.ObjectId[];
-
-
+  monsterGroups: Mongoose.Types.ObjectId[];
+  zone: Mongoose.Types.ObjectId;
   spawnPlayer(x: number, y: number, player: IPlayer): Promise<boolean>;
   movePlayer(player: IPlayer, position: Position): Promise<void>;
   removePlayer(id: Mongoose.Types.ObjectId): Promise<void>;
@@ -32,7 +32,9 @@ export const MapSchema = new Mongoose.Schema({
   cells: [[{ type: Mongoose.Schema.Types.ObjectId, ref: "Player" }]],
   redCells: [{ x: Number, y: Number }],
   blueCells: [{ x: Number, y: Number }],
-  npcs: [[{ type: Mongoose.Schema.Types.ObjectId, ref: "Npc", default: [] }]]
+  npcs: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Npc", default: [] }],
+  monsterGroups: [{ type: Mongoose.Schema.Types.ObjectId, ref: "MonsterGroup", default: [] }],
+  zone: { type: Mongoose.Schema.Types.ObjectId, ref: "Zone" }
 });
 
 MapSchema.method("spawnPlayer", async function(x: number, y: number, player: IPlayer): Promise<boolean> {

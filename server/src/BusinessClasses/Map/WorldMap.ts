@@ -5,6 +5,8 @@ import Player from "../../Schema/Player";
 import Position from "../RelationalObject/Position";
 import Stats from "../../Schema/Stats";
 import Spell from "../../Schema/Spell";
+import Monster from "../../Schema/Monster";
+import MonsterGroup from "../../Schema/MonsterGroup";
 
 export default class WorldMap {
   constructor() {
@@ -43,13 +45,51 @@ export default class WorldMap {
         }
 
         await cell.save();
-        map.cells[i][j] = cell._id;
+        map.cells[i][j] = cell.id;
       }
     }
 
     map.blueCells = [new Position(20, 11), new Position(20, 14), new Position(20, 17), new Position(17, 15)];
     map.redCells = [new Position(14, 17), new Position(14, 14), new Position(14, 11), new Position(17, 16)];
 
+    const mobStats = new Stats();
+    mobStats.life = 15;
+    mobStats.speed = 5;
+    mobStats.armor = 3;
+    mobStats.magicResistance = 3;
+    mobStats.attackDamage = 6;
+    mobStats.movementPoint = 4;
+    mobStats.actionPoint = 6;
+    await mobStats.save();
+
+    const mobSpell = await Spell.findOne();
+    mobSpell.hitArea = [new Position(0, 0)];
+    mobSpell.name = "Peck";
+    mobSpell.actionPointCost = 3;
+    mobSpell.physicalDamage = 4;
+    mobSpell.magicDamage = 0;
+    mobSpell.range = 1;
+    mobSpell.selfUse = false;
+    mobSpell.line = false;
+    mobSpell.heal = false;
+    mobSpell.ignoreObstacle = false;
+    await mobSpell.save();
+    console.log("mob spell saved with id : " + mobSpell.id);
+
+    const mob = new Monster();
+    mob.name = "Bims";
+    mob.level = 1;
+    mob.stats = mobStats;
+    mob.spells = [mobSpell];
+    mob.loot = [];
+    await mob.save();
+
+    const mobGroup = new MonsterGroup();
+    mobGroup.monsters = [mob.id];
+    mobGroup.volatile = false;
+    mobGroup.position = { x: 15, y: 15 };
+    await mobGroup.save();
+    map.monsterGroups = [mobGroup.id];
     await map.save();
   }
 
@@ -88,7 +128,7 @@ export default class WorldMap {
     player1.position = { x: 16, y: 10 };
     player1.mapPosition = { x: 0, y: 0 };
     player1.stats = stats1;
-    player1.spells = [spell];
+    player1.spells = [spell.id];
     await player1.save();
 
     const stats2 = new Stats();
@@ -106,11 +146,11 @@ export default class WorldMap {
     player2.position = { x: 7, y: 16 };
     player2.mapPosition = { x: 0, y: 0 };
     player2.stats = stats2;
-    player2.spells = [spell];
+    player2.spells = [spell.id];
     await player2.save();
 
     const account = new Account();
-    account.players = [player1, player2];
+    account.players = [player1.id, player2.id];
     await account.save();
   }
 

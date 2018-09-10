@@ -27,6 +27,7 @@ export default class MapHandler {
 
   async spawnPlayer() {
     await this.P.RetrievePlayer(this.socket);
+    this.socket.yolo = "xD";
     await this.M.spawnPlayer(this.socket);
   }
 
