@@ -1,12 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterGroupDTG : MonoBehaviour
 {
     public MonsterDTG MonsterDtg;
+    private MapPathFinding mapPathFinding;
     private MonsterGroup monsterGroup;
     private List<MonsterDTG> monsters;
+
+    public void Init(MapPathFinding mapPathFinding)
+    {
+        this.mapPathFinding = mapPathFinding;
+    }
 
     public void SetMonsterGroup(MonsterGroup group)
     {
@@ -25,13 +30,18 @@ public class MonsterGroupDTG : MonoBehaviour
         monsterGroup.position = position;
         if (monsters.Count == 1)
         {
-            monsters[0].AttributePosition(position);
+            var path = mapPathFinding.FindPath(monsters[0].GetMonster().position, position);
+            monsters[0].AttributePosition(position, path);
         }
         else
         {
+
+            var availableCell = mapPathFinding.FindAvailableCellInRange(position, 2);
+
             foreach (var monster in monsters)
             {
-                monster.AttributeRandomPosition(position);
+                var path = mapPathFinding.FindPath(monsters[0].GetMonster().position, availableCell[Utils.Instance.Random.Next(availableCell.Count)]);
+                monster.AttributePosition(position, path);
             }
         }
     }

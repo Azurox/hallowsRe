@@ -2,32 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainPlayerPathFinding : MonoBehaviour {
+public class MapPathFinding : MonoBehaviour {
     private MapDTG mapDTG;
     private Cell[,] currentMap;
     public Node[,] grid;
 
-    public List<Vector2> FindPath(int x, int y)
+    private void Init()
     {
-        if(x == transform.position.x && y == transform.position.z)
-        {
-            return null;
-        }
-
         if (mapDTG == null)
         {
-            mapDTG = FindObjectOfType<MapDTG>();
+            mapDTG = GetComponent<MapDTG>();
             currentMap = mapDTG.GetMap().cells;
             grid = new Node[currentMap.GetLength(0), currentMap.GetLength(1)];
 
-            for(var i = 0; i < currentMap.GetLength(0); i++)
+            for (var i = 0; i < currentMap.GetLength(0); i++)
             {
-                for(var j = 0; j < currentMap.GetLength(1); j++)
+                for (var j = 0; j < currentMap.GetLength(1); j++)
                 {
-                    grid[i, j] = new Node(currentMap[j,i].IsAccessible, new Vector2(i, j), i, j);
+                    grid[i, j] = new Node(currentMap[j, i].IsAccessible, new Vector2(i, j), i, j);
                 }
             }
-        } else
+        }
+        else
         {
             for (var i = 0; i < currentMap.GetLength(0); i++)
             {
@@ -37,9 +33,19 @@ public class MainPlayerPathFinding : MonoBehaviour {
                 }
             }
         }
+    }
 
-        Node startNode = grid[(int)transform.position.x, (int)transform.position.z];
-        Node targetNode = grid[x, y];
+    public List<Vector2> FindPath(Vector2 startPosition, Vector2 selectedPosition)
+    {
+        if (startPosition == selectedPosition)
+        {
+            return null;
+        }
+
+        Init();
+
+        Node startNode = grid[(int)startPosition.x, (int)startPosition.y];
+        Node targetNode = grid[(int)selectedPosition.x, (int)selectedPosition.y];
 
         List<Node> openSet = new List<Node>();
         HashSet<Node> closeSet = new HashSet<Node>();
@@ -196,12 +202,36 @@ public class MainPlayerPathFinding : MonoBehaviour {
     {
         List<Vector2> path = new List<Vector2>();
         var observedNode = currentNode;
-        while(observedNode.parent != null && observedNode.parent.position != observedNode.position)
+        while (observedNode.parent != null && observedNode.parent.position != observedNode.position)
         {
             path.Add(observedNode.position);
             observedNode = observedNode.parent;
         }
         path.Reverse();
         return path;
+    }
+
+    public List<Vector2> FindAvailableCellInRange(Vector2 startPosition, int range)
+    {
+        if (currentMap == null)
+        {
+            Init();
+        }
+
+        List<Vector2> rangeList = new List<Vector2>();
+        for (int i = 0; i < currentMap.GetLength(0); i++)
+        {
+            for (int j = 0; j < currentMap.GetLength(1); j++)
+            {
+                var position = new Vector2(i, j);
+                var totalVector = position - startPosition;
+                var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);
+                if (currentMap[i, j] != null && distance <= range && !currentMap[i, j].OffScreen && currentMap[i, j].IsAccessible)
+                {
+                    rangeList.Add(position);
+                }
+            }
+        }
+        return rangeList;
     }
 }

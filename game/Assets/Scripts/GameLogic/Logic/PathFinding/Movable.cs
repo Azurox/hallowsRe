@@ -10,7 +10,7 @@ public class Movable : MonoBehaviour {
     private List<Vector2> newPath;
 
 
-    public void TakePath(Vector2 currentPosition, List<Vector2> path, Action<int, int> callback, Action endCallBack =  null)
+    public void TakePath(Vector2 currentPosition, List<Vector2> path, Action<int, int> callback = null, Action endCallBack =  null)
     {
         if (currentPosition.Equals(path[0]))
         {
