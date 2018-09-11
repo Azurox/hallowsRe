@@ -88,7 +88,8 @@ export default class Fight {
 
       // return every player
       this.io.to(this.fightOrder[i].socketId).emit("fightStarted", {
-        players: this.fightOrder.map((fighter: Fighter) => {
+        id: this.id,
+        fighters: this.fightOrder.map((fighter: Fighter) => {
           return {
             isMainPlayer: fighter.socketId == this.fightOrder[i].socketId,
             id: fighter.player.id,
@@ -106,7 +107,6 @@ export default class Fight {
             spells: fighter.socketId == this.fightOrder[i].socketId ? this.fightOrder[i].player.spells : undefined
           };
         }),
-        id: this.id,
         blueCells: this.blueCells,
         redCells: this.redCells
       });

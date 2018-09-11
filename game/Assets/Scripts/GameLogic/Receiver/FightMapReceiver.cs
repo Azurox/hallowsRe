@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using WebSocketSharp;
 
@@ -47,22 +49,23 @@ public class FightMapReceiver {
 
     private void InitSocket()
     {
-        /*socket.On("fightStarted", FightStarted);
+        socket.On("fightStarted", FightStarted);
         socket.On("teleportPreFight", TeleportPreFight);
         socket.On("setReady", SetReady);
         socket.On("fightPhase1", FightPhase1);
         socket.On("nextTurn", NextTurn);
         socket.On("fighterMove", FighterMove);
-        socket.On("fighterUseSpell", FighterUseSpell);*/
+        socket.On("fighterUseSpell", FighterUseSpell);
     }
-    /*
-    private void FightStarted(SocketIOEvent obj)
+    
+    private void FightStarted(string json)
     {
+        FightStartedResponse data = JsonConvert.DeserializeObject<FightStartedResponse>(json);
         Debug.Log("FightStarted !");
         PlayerContainerDTG.gameObject.SetActive(false);
         NpcContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
-        Fight = new Fight(socket, obj);
+        Fight = new Fight(data);
 
         FighterContainerDTG.Init(Fight.GetFighters());
         FightMapDTG.Init();
@@ -74,20 +77,15 @@ public class FightMapReceiver {
         FightMapHandler.Init(mainFighterDTG, Fight);
         FighterHandler.SetMainFighter(FighterContainerDTG.GetMainFighter());
 
-        var blueCells = obj.data["blueCells"];
-        for (var i = 0; i < blueCells.Count; i++)
+        for (var i = 0; i < data.blueCells.Length; i++)
         {
-            Vector2 position = new Vector2(blueCells[i]["position"]["x"].n, blueCells[i]["position"]["y"].n);
-            bool taken = blueCells[i]["taken"].b;
-            FightMapDTG.SetSpawnCell(Side.blue, position, taken);
+            FightMapDTG.SetSpawnCell(Side.blue, data.blueCells[i].position, data.blueCells[i].taken);
         }
 
-        var redCells = obj.data["redCells"];
-        for (var i = 0; i < blueCells.Count; i++)
+
+        for (var i = 0; i < data.redCells.Length; i++)
         {
-            Vector2 position = new Vector2(redCells[i]["position"]["x"].n, redCells[i]["position"]["y"].n);
-            bool taken = redCells[i]["taken"].b;
-            FightMapDTG.SetSpawnCell(Side.red, position, taken);
+            FightMapDTG.SetSpawnCell(Side.red, data.redCells[i].position, data.redCells[i].taken);
 
         }
 
@@ -100,38 +98,40 @@ public class FightMapReceiver {
         FightUIManager.ShowSpells(Fight.GetMainFighter().GetSpells());
     }
 
-    private void TeleportPreFight(SocketIOEvent obj)
+    
+    private void TeleportPreFight(string json)
     {
-        string id = obj.data["playerId"].str;
-        Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
+
+        TeleportPreFightResponse data = JsonConvert.DeserializeObject<TeleportPreFightResponse>(json);
 
         foreach (var fighter in Fight.GetFighters())
         {
-            if (fighter.Id == id)
+            if (fighter.Id == data.playerId)
             {
                 Vector2 oldPosition = fighter.Position;
-                FightMapDTG.SetCellAvailability(position, true);
+                FightMapDTG.SetCellAvailability(data.position, true);
                 FightMapDTG.SetCellAvailability(oldPosition, false);
             }
         }
 
-        if(FighterContainerDTG.GetMainFighter().GetFighter().Id == id)
+        if(FighterContainerDTG.GetMainFighter().GetFighter().Id == data.playerId)
         {
-            FighterContainerDTG.TeleportMainFighter(position);
+            FighterContainerDTG.TeleportMainFighter(data.position);
         }
         else
         {
-            FighterContainerDTG.TeleportFighter(id, position);
+            FighterContainerDTG.TeleportFighter(data.playerId, data.position);
         }
     }
 
-    private void SetReady(SocketIOEvent obj)
+    
+    private void SetReady(string json)
     {
-        string id = obj.data["playerId"].str;
-        Debug.Log(id + " is ready");
+        PlayerIdResponse data = JsonConvert.DeserializeObject<PlayerIdResponse>(json);
+
         foreach (var fighter in Fight.GetFighters())
         {
-            if(fighter.Id == id)
+            if(fighter.Id == data.playerId)
             {
                 fighter.Ready = true;
                 if (fighter.IsMainPlayer) FightUIManager.ActivateReadyButton(false);
@@ -139,77 +139,71 @@ public class FightMapReceiver {
         }
     }
 
-    private void FightPhase1(SocketIOEvent obj)
+    private void FightPhase1(string json)
     {
+        PlayerIdResponse data = JsonConvert.DeserializeObject<PlayerIdResponse>(json);
+
         Fight.phase = 1;
-        string id = obj.data["playerId"].str;
-        Fight.SetTurnId(id);
+        Fight.SetTurnId(data.playerId);
         FightMapDTG.ResetSpawnCells();
         FightUIManager.SetUIPhase1();
-        FightUIManager.HighlightFighter(id);
+        FightUIManager.HighlightFighter(data.playerId);
     }
 
-    private void NextTurn(SocketIOEvent obj)
+    private void NextTurn(string json)
     {
-        string id = obj.data["playerId"].str;
-        Fight.SetTurnId(id);
-        FightUIManager.HighlightFighter(id);
+        PlayerIdResponse data = JsonConvert.DeserializeObject<PlayerIdResponse>(json);
+
+        Fight.SetTurnId(data.playerId);
+        FightUIManager.HighlightFighter(data.playerId);
     }
 
-    private void FighterMove(SocketIOEvent obj)
+    private void FighterMove(string json)
     {
-        string id = obj.data["playerId"].str;
+        FighterMoveResponse data = JsonConvert.DeserializeObject<FighterMoveResponse>(json);
+        
+        List<Vector2> path = data.path.ToList();
 
-        List<Vector2> path = new List<Vector2>();
-        List<JSONObject> positions = obj.data["path"].list;
-        foreach (var position in positions)
-        {
-            path.Add(new Vector2(position["x"].n, position["y"].n));
-        }
-
-        if (FighterContainerDTG.GetMainFighter().GetFighter().Id == id)
+        if (FighterContainerDTG.GetMainFighter().GetFighter().Id == data.playerId)
         {
             FighterContainerDTG.MoveMainFighter(path);
         }
         else
         {
-            FighterContainerDTG.MoveFighter(id, path);
+            FighterContainerDTG.MoveFighter(data.playerId, path);
         }
     }
 
-    private void FighterUseSpell(SocketIOEvent obj)
+    private void FighterUseSpell(string json)
     {
-        string id = obj.data["playerId"].str;
-        Fighter user = Fight.GetFighter(id);
-        Vector2 position = new Vector2(obj.data["position"]["x"].n, obj.data["position"]["y"].n);
-        string spellId = obj.data["spellId"].str;
-        Spell spell = ResourcesLoader.Instance.GetSpell(spellId);
-        var rawImpacts = obj.data["impacts"];
+        FighterUseSpellResponse data = JsonConvert.DeserializeObject<FighterUseSpellResponse>(json);
+
+        Fighter user = Fight.GetFighter(data.playerId);
+        Spell spell = ResourcesLoader.Instance.GetSpell(data.spellId);
         List<Impact> impacts =  new List<Impact>();
-        for (var i = 0; i < rawImpacts.Count; i++)
+        for (var i = 0; i < data.impacts.Length; i++)
         {
-            Impact impact = new Impact(rawImpacts[i]);
+            Impact impact = new Impact(data.impacts[i]);
             impacts.Add(impact);
         }
 
-        var fightEnd = obj.data["fightEnd"];
-
-        if(fightEnd != null)
+        if(data.fightEnd != null)
         {
-            FighterContainerDTG.FighterUseSpell(user, spell, position, impacts, ()=> { FightFinished(fightEnd); });
+            FighterContainerDTG.FighterUseSpell(user, spell, data.position, impacts, ()=> { FightFinished(data.fightEnd); });
         }
         else
         {
-            FighterContainerDTG.FighterUseSpell(user, spell, position, impacts, null);
+            FighterContainerDTG.FighterUseSpell(user, spell, data.position, impacts, null);
         }
     }
 
-    private void FightFinished(SocketIOEvent obj)
+    private void FightFinished(string json)
     {
-        FightFinished(obj.data);
+        FightEndResponse data = JsonConvert.DeserializeObject<FightEndResponse>(json);
+        FightFinished(data);
     }
 
-    private void FightFinished(JSONObject data)
+    private void FightFinished(FightEndResponse data)
     {
         FighterContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.Clear();
@@ -217,5 +211,5 @@ public class FightMapReceiver {
         var afterFightStats = new AfterFightStats(data);
         GlobalUIManager.GetWorldUIManager().ShowAfterFightStats(afterFightStats);
         socket.Emit("loadMap");
-    }*/
+    }
 }

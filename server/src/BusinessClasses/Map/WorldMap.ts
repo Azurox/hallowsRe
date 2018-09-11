@@ -62,7 +62,7 @@ export default class WorldMap {
     mobStats.actionPoint = 6;
     await mobStats.save();
 
-    const mobSpell = await Spell.findOne();
+    const mobSpell = await Spell.findOne({ name: "Peck" });
     mobSpell.hitArea = [new Position(0, 0)];
     mobSpell.name = "Peck";
     mobSpell.actionPointCost = 3;
@@ -99,7 +99,7 @@ export default class WorldMap {
     await Stats.remove({});
     // await Spell.remove({});
 
-    const spell = await Spell.findOne();
+    const spell = await Spell.findOne({ name: "Punch" });
     spell.hitArea = [new Position(0, 0)];
     spell.name = "Punch";
     spell.actionPointCost = 4;

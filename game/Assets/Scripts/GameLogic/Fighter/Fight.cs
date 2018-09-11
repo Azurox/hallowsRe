@@ -15,15 +15,15 @@ public class Fight {
 
 
 
-    public Fight()
+    public Fight(FightStartedResponse data)
     {
-       // ExtractFightData(data);
+        ExtractFightData(data);
     }
-    /*
-    private void ExtractFightData(SocketIOEvent data)
+    
+    private void ExtractFightData(FightStartedResponse data)
     {
-        var playerList = data.data["players"];
-        Id = data.data["id"].str;
+        var playerList = data.fighters;
+        Id = data.id;
         for(var  i = 0; i < playerList.Count(); i++)
         {
             Fighter fighter = new Fighter(playerList[i]);
@@ -40,7 +40,7 @@ public class Fight {
                 mainFighter = fighter;
             }
         }
-    }*/
+    }
 
     public List<Fighter> GetFighters()
     {

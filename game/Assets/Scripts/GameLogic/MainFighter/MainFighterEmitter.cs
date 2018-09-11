@@ -23,66 +23,36 @@ public class MainFighterEmitter : MonoBehaviour
 
     public void Teleport(Vector2 position)
     {
-        /*Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-        data["x"] = new JSONObject(position.x);
-        data["y"] = new JSONObject(position.y);
-        socket.Emit("teleportPreFight", new JSONObject(data));*/
         TeleportRequest request = new TeleportRequest(fightId, position.x, position.y);
         socket.Emit("teleportPreFight", JsonConvert.SerializeObject(request));
     }
 
     public void Ready()
     {
-        /*  Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-          data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-          socket.Emit("fighterReady", new JSONObject(data));*/
         socket.Emit("fighterReady", JsonConvert.SerializeObject(new FightIdRequest(fightId)));
     }
 
     public void FinishTurn()
     {
-        /* Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-         data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-         socket.Emit("fighterFinishTurn", new JSONObject(data));*/
         socket.Emit("fighterFinishTurn", JsonConvert.SerializeObject(new FightIdRequest(fightId)));
     }
 
     public void Move(List<Vector2> path)
     {
-        /*Debug.Log("emit new path");
+        var pathRequests = new List<PositionRequest>();
 
-        Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-
-        JSONObject[] jsonPath = new JSONObject[path.Count];
-
-        for (var i = 0; i < path.Count; i++)
+        foreach (var position in path)
         {
-
-            Dictionary<string, JSONObject> pos = new Dictionary<string, JSONObject>();
-            pos["x"] = new JSONObject((int)path[i].x);
-            pos["y"] = new JSONObject((int)path[i].y);
-            jsonPath[i] = new JSONObject(pos);
-
+            pathRequests.Add(new PositionRequest(position));
         }
 
-        data["path"] = new JSONObject(jsonPath);
-
-        socket.Emit("fighterMove", new JSONObject(data));*/
+        MoveRequest request = new MoveRequest(fightId, pathRequests);
+        socket.Emit("fighterMove", JsonConvert.SerializeObject(request));
     }
 
     public void UseSpell(Spell spell, Vector2 position)
     {
-        /* Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-         data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-         data["spellId"] = new JSONObject(string.Format("\"{0}\"", spell.id));
-
-         Dictionary<string, JSONObject> pos = new Dictionary<string, JSONObject>();
-         pos["x"] = new JSONObject((int)position.x);
-         pos["y"] = new JSONObject((int)position.y);
-         data["position"] = new JSONObject(pos);
-
-         socket.Emit("fighterUseSpell", new JSONObject(data));*/
+        UseSpellRequest request = new UseSpellRequest(fightId, spell.id, new PositionRequest(position));
+        socket.Emit("fighterUseSpell", JsonConvert.SerializeObject(request));
     }
 }

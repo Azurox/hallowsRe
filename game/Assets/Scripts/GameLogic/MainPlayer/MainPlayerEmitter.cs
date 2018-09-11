@@ -30,7 +30,7 @@ public class MainPlayerEmitter : MonoBehaviour {
         data["x"] = new JSONObject(x);
         data["y"] = new JSONObject(y);
         socket.Emit("newPosition", new JSONObject(data));*/
-        socket.Emit("initializeMovement", JsonConvert.SerializeObject(new PositionRequest(x, y)));
+        socket.Emit("newPosition", JsonConvert.SerializeObject(new PositionRequest(x, y)));
 
     }
 

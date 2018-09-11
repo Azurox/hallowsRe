@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class SelectScenarioRequest
 {
-    private string scenarioId;
-    private int responseIndex;
-    private string npcId;
+    public string scenarioId;
+    public int responseIndex;
+    public string npcId;
 
     public SelectScenarioRequest(string scenarioId, int responseIndex, string npcId)
     {

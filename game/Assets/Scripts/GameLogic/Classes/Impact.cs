@@ -4,11 +4,10 @@
     public int life;
     public bool death;
 
-    public Impact()
+    public Impact(ImpactResponse impactResponse)
     {
-      /*  playerId = data["playerId"] != null ? data["playerId"].str : null;
-        life = data["life"] != null ? (int) data["life"].n : 0;
-        death = data["death"] != null ? data["death"].b : false;*/
-
+        playerId = impactResponse.playerId;
+        life = impactResponse.life;
+        death = impactResponse.death;
     }
 }

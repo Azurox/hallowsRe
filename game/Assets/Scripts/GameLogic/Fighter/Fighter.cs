@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fighter {
+public class Fighter
+{
     public string Name { get; set; }
     public string Id { get; set; }
     public Vector2 Position { get; set; }
@@ -35,41 +36,40 @@ public class Fighter {
     private bool dead = false;
     #endregion
 
-    public Fighter()
+    public Fighter(FighterReponse fighterData)
     {
-      /*  Name = data["name"] != null ? data["name"].str : null;
-        Id = data["id"] != null ? data["id"].str : null;
-        IsMainPlayer = data["isMainPlayer"] != null ? data["isMainPlayer"].b : false;
-        Side = data["side"] != null ? (Side)System.Enum.Parse(typeof(Side), data["side"].str) : Side.blue;
-        Position = new Vector2(data["position"]["x"].n, data["position"]["y"].n);
+        Id = fighterData.id;
+        Name = fighterData.name;
+        IsMainPlayer = fighterData.isMainPlayer;
+        Side = (Side)System.Enum.Parse(typeof(Side), fighterData.side);
+        Position = fighterData.position;
         Ready = false;
 
         spells = new List<Spell>();
-        var spellsData = data["spells"];
-        if(spellsData != null)
+        if (fighterData.spells != null)
         {
-            foreach (var spell in spellsData.list)
+            foreach (var spell in fighterData.spells)
             {
-                spells.Add(ResourcesLoader.Instance.GetSpell(spell.str));
+                spells.Add(ResourcesLoader.Instance.GetSpell(spell));
             }
         }
 
         #region stats
-        Life = data["life"] != null ? (int)data["life"].n : 0;
-        CurrentLife = data["currentLife"] != null ? (int)data["currentLife"].n : 0;
-        Speed = data["speed"] != null ? (int)data["speed"].n : 0;
+        Life = fighterData.life;
+        CurrentLife = fighterData.currentLife;
+        Speed = fighterData.speed;
         CurrentSpeed = Speed;
-        Armor = data["armor"] != null ? (int)data["armor"].n : 0;
+        Armor = fighterData.armor;
         CurrentArmor = Armor;
-        MagicResistance = data["magicResistance"] != null ? (int)data["magicResistance"].n : 0;
+        MagicResistance = fighterData.magicResistance;
         CurrentMagicResistance = MagicResistance;
-        AttackDamage = data["attackDamage"] != null ? (int)data["attackDamage"].n : 0;
+        AttackDamage = fighterData.attackDamage;
         CurrentAttackDamage = AttackDamage;
-        MovementPoint = data["movementPoint"] != null ? (int)data["movementPoint"].n : 0;
+        MovementPoint = fighterData.movementPoint;
         CurrentMovementPoint = MovementPoint;
-        ActionPoint = data["actionPoint"] != null ? (int)data["actionPoint"].n : 0;
+        ActionPoint = fighterData.actionPoint;
         CurrentActionPoint = ActionPoint;
-        #endregion*/
+        #endregion
     }
 
     public List<Spell> GetSpells()
@@ -107,7 +107,7 @@ public class Fighter {
     public void UpdateCurrentLife(int num)
     {
         CurrentLife += num;
-        if(StatsChange != null)
+        if (StatsChange != null)
         {
             StatsChange();
         }
@@ -166,7 +166,7 @@ public class Fighter {
         if (isDead)
         {
             dead = true;
-            if(Death != null)
+            if (Death != null)
             {
                 Death(Id);
             }
