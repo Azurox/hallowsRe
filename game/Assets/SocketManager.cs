@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 using WebSocketSharp;
@@ -36,7 +37,7 @@ public class SocketManager : MonoBehaviour
 
                 if (_registeredQueries.Count != 0)
                 {
-                    foreach (var query in _registeredQueries)
+                    foreach (var query in _registeredQueries.ToList())
                     {
                         _socket.Send(query);
                     }
@@ -55,7 +56,7 @@ public class SocketManager : MonoBehaviour
     {
         _pingTimer += Time.deltaTime;
         if (_callBackQueue.Count == 0) return;
-        foreach (var callBackData in _callBackQueue)
+        foreach (var callBackData in _callBackQueue.ToList())
         {
             callBackData.Key.Invoke(callBackData.Value);
         }
@@ -104,7 +105,7 @@ public class SocketManager : MonoBehaviour
     public void Emit(string eventName, string data = "")
     {
         var query = data.IsNullOrEmpty() ? string.Format("42[\"{0}\"]", eventName) : string.Format("42[\"{0}\", {1}]", eventName, data);
-        Debug.Log(query);
+        //Debug.Log(query);
         _registeredQueries.Enqueue(query);
     }
 

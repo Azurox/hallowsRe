@@ -1,14 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class MainPlayerEmitter : MonoBehaviour {
 
-    private WebSocketSharp.WebSocket socket;
+    private SocketManager socket;
 
+    private void Start()
+    {
+        socket = FindObjectOfType<SocketManager>();
+    }
 
     public void NewPath(Vector2[] path)
     {
+        var pathRequests = new List<PositionRequest>();
+
+        foreach (var position in path)
+        {
+            pathRequests.Add(new PositionRequest(position));
+        }
 
         /*JSONObject[] jsonPath = new JSONObject[path.Length];
 
@@ -20,8 +31,8 @@ public class MainPlayerEmitter : MonoBehaviour {
             data["y"] = new JSONObject((int)path[i].y);
             jsonPath[i] = new JSONObject(data);
 
-        }
-        socket.Emit("initializeMovement", new JSONObject(jsonPath));*/
+        }*/
+        socket.Emit("initializeMovement", JsonConvert.SerializeObject(pathRequests));
     }
 
     public void NewPosition(int x, int y)

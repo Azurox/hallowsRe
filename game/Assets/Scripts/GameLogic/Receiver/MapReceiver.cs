@@ -15,7 +15,7 @@ public class MapReceiver {
     public WorldUIManager WorldUIManager;
     public NpcContainerDTG NpcContainerDTG;
     public NpcHandler NpcHandler;
-    private SocketManager socket;
+    private readonly SocketManager socket;
 
     public MapReceiver(SocketManager socket)
     {
@@ -38,10 +38,10 @@ public class MapReceiver {
     private void InitSocket()
     {
         socket.On("loadMap", LoadMap);
-        //socket.On("spawnMainPlayer", SpawnMainPlayer);
-        //socket.On("spawnPlayer", SpawnPlayer);
-        //socket.On("disconnectPlayer", DisconnectPlayer);
-        //socket.On("playerMove", PlayerMove);*/
+        socket.On("spawnMainPlayer", SpawnMainPlayer);
+        socket.On("spawnPlayer", SpawnPlayer);
+        socket.On("disconnectPlayer", DisconnectPlayer);
+        socket.On("playerMove", PlayerMove);
     }
     
     private void LoadMap(string json)
@@ -59,52 +59,41 @@ public class MapReceiver {
         NpcContainerDTG.LoadNpcs(map.npcs);
         GlobalUIManager.SwitchToWorldUI();
     }
-    /*
-    private void SpawnMainPlayer(SocketIOEvent obj)
+    
+    private void SpawnMainPlayer(string json)
     {
-        List<JSONObject> position = obj.data["position"].list;
-        var player = PlayerContainerDTG.SpawnMainPlayer((int) position[0].n, (int) position[1].n);
+        SpawnMainPlayerResponse data = JsonConvert.DeserializeObject<SpawnMainPlayerResponse>(json);
+        var player = PlayerContainerDTG.SpawnMainPlayer((int) data.position.x, (int) data.position.y);
         MapHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
         PlayerHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
         WorldUIManager.Init(player.GetComponent<MainPlayerHandler>());
         PlayerInformation.Instance.SetPlayerGameObject(player);
     }
 
-    private void SpawnPlayer(SocketIOEvent obj)
+ 
+    private void SpawnPlayer(string json)
     {
-        List<JSONObject> position = obj.data["position"].list;
-        PlayerContainerDTG.SpawnPlayer((int)position[0].n, (int)position[1].n, obj.data["id"].str);
-        if (!obj.data["path"].IsNull)
+
+        SpawnPlayerResponse data = JsonConvert.DeserializeObject<SpawnPlayerResponse>(json);
+        PlayerContainerDTG.SpawnPlayer((int)data.position.x, (int)data.position.y, data.id);
+        if (data.path != null)
         {
             Debug.Log("player is currently moving");
-            List<JSONObject> positions = obj.data["path"].list;
-            List<Vector2> path = new List<Vector2>();
-
-            foreach (var pos in positions)
-            {
-                Debug.Log(pos);
-                path.Add(new Vector2(pos["x"].n, pos["y"].n));
-                PlayerContainerDTG.MovePlayer(obj.data["id"].str, path);
-            }
-
-            PlayerContainerDTG.MovePlayer(obj.data["id"].str, path);
+            PlayerContainerDTG.MovePlayer(data.id, data.path);
 
         }
     }
-
-    private void DisconnectPlayer(SocketIOEvent obj)
+    
+    private void DisconnectPlayer(string json)
     {
-        PlayerContainerDTG.DestroyPlayer(obj.data["id"].str);
+        DisconnectPlayerResponse data = JsonConvert.DeserializeObject<DisconnectPlayerResponse>(json);
+        PlayerContainerDTG.DestroyPlayer(data.id);
     }
 
-    private void PlayerMove(SocketIOEvent obj)
+    
+    private void PlayerMove(string json)
     {
-        List<Vector2> path = new List<Vector2>();
-        List<JSONObject> positions = obj.data["path"].list;
-        foreach(var position in positions) {
-            path.Add(new Vector2(position["x"].n, position["y"].n));
-        }
-
-        PlayerContainerDTG.MovePlayer(obj.data["id"].str, path);
-    }*/
+        PlayerMoveResponse data = JsonConvert.DeserializeObject<PlayerMoveResponse>(json);
+        PlayerContainerDTG.MovePlayer(data.id, data.path);
+    }
 }
