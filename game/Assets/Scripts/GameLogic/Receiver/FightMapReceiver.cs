@@ -16,10 +16,10 @@ public class FightMapReceiver {
     public GlobalUIManager GlobalUIManager;
     public FightUIManager FightUIManager;
     public NpcContainerDTG NpcContainerDTG;
-    private WebSocket socket;
+    private SocketManager socket;
     private Fight Fight;
 
-    public FightMapReceiver(WebSocket socket)
+    public FightMapReceiver(SocketManager socket)
     {
         this.socket = socket;
         WorldMapDTG = Object.FindObjectOfType<GlobalMapDTG>();

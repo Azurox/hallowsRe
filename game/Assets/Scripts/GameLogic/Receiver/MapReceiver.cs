@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using WebSocketSharp;
 
@@ -13,9 +15,9 @@ public class MapReceiver {
     public WorldUIManager WorldUIManager;
     public NpcContainerDTG NpcContainerDTG;
     public NpcHandler NpcHandler;
-    private WebSocket socket;
+    private SocketManager socket;
 
-    public MapReceiver(WebSocket socket)
+    public MapReceiver(SocketManager socket)
     {
         this.socket = socket;
         WorldMapDTG = Object.FindObjectOfType<GlobalMapDTG>();
@@ -35,17 +37,18 @@ public class MapReceiver {
 
     private void InitSocket()
     {
-       /* socket.On("loadMap", LoadMap);
-        socket.On("spawnMainPlayer", SpawnMainPlayer);
-        socket.On("spawnPlayer", SpawnPlayer);
-        socket.On("disconnectPlayer", DisconnectPlayer);
-        socket.On("playerMove", PlayerMove);*/
+        socket.On("loadMap", LoadMap);
+        //socket.On("spawnMainPlayer", SpawnMainPlayer);
+        //socket.On("spawnPlayer", SpawnPlayer);
+        //socket.On("disconnectPlayer", DisconnectPlayer);
+        //socket.On("playerMove", PlayerMove);*/
     }
-    /*
-    private void LoadMap(SocketIOEvent obj)
+    
+    private void LoadMap(string json)
     {
+        LoadMapResponse data = JsonConvert.DeserializeObject<LoadMapResponse>(json);
         Debug.Log("Load new map");
-        string mapName = obj.data["mapName"].str;
+        string mapName = data.mapName;
         PlayerContainerDTG.gameObject.SetActive(true);
         PlayerContainerDTG.Clear();
         GameMap map = ResourcesLoader.Instance.GetGameMap(mapName);
@@ -56,7 +59,7 @@ public class MapReceiver {
         NpcContainerDTG.LoadNpcs(map.npcs);
         GlobalUIManager.SwitchToWorldUI();
     }
-
+    /*
     private void SpawnMainPlayer(SocketIOEvent obj)
     {
         List<JSONObject> position = obj.data["position"].list;
