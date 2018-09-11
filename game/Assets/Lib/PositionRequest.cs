@@ -12,4 +12,10 @@ public class PositionRequest
         x = (int) position.x;
         y = (int) position.y;
     }
+
+    public PositionRequest(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
 }

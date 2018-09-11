@@ -1,17 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
-public class MainFighterEmitter : MonoBehaviour {
+public class MainFighterEmitter : MonoBehaviour
+{
 
-   // private SocketIOComponent socket;
+    private SocketManager socket;
     private string fightId;
 
 
-    void Start()
+    private void Start()
     {
-      //  socket = FindObjectOfType<SocketIOComponent>();
+        socket = FindObjectOfType<SocketManager>();
     }
+
 
     public void Init(string fightId)
     {
@@ -25,20 +28,24 @@ public class MainFighterEmitter : MonoBehaviour {
         data["x"] = new JSONObject(position.x);
         data["y"] = new JSONObject(position.y);
         socket.Emit("teleportPreFight", new JSONObject(data));*/
+        TeleportRequest request = new TeleportRequest(fightId, position.x, position.y);
+        socket.Emit("teleportPreFight", JsonConvert.SerializeObject(request));
     }
 
     public void Ready()
     {
-      /*  Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-        socket.Emit("fighterReady", new JSONObject(data));*/
+        /*  Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+          data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
+          socket.Emit("fighterReady", new JSONObject(data));*/
+        socket.Emit("fighterReady", JsonConvert.SerializeObject(new FightIdRequest(fightId)));
     }
 
     public void FinishTurn()
     {
-       /* Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-        socket.Emit("fighterFinishTurn", new JSONObject(data));*/
+        /* Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+         data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
+         socket.Emit("fighterFinishTurn", new JSONObject(data));*/
+        socket.Emit("fighterFinishTurn", JsonConvert.SerializeObject(new FightIdRequest(fightId)));
     }
 
     public void Move(List<Vector2> path)
@@ -67,15 +74,15 @@ public class MainFighterEmitter : MonoBehaviour {
 
     public void UseSpell(Spell spell, Vector2 position)
     {
-       /* Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-        data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
-        data["spellId"] = new JSONObject(string.Format("\"{0}\"", spell.id));
+        /* Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
+         data["fightId"] = new JSONObject(string.Format("\"{0}\"", fightId));
+         data["spellId"] = new JSONObject(string.Format("\"{0}\"", spell.id));
 
-        Dictionary<string, JSONObject> pos = new Dictionary<string, JSONObject>();
-        pos["x"] = new JSONObject((int)position.x);
-        pos["y"] = new JSONObject((int)position.y);
-        data["position"] = new JSONObject(pos);
+         Dictionary<string, JSONObject> pos = new Dictionary<string, JSONObject>();
+         pos["x"] = new JSONObject((int)position.x);
+         pos["y"] = new JSONObject((int)position.y);
+         data["position"] = new JSONObject(pos);
 
-        socket.Emit("fighterUseSpell", new JSONObject(data));*/
+         socket.Emit("fighterUseSpell", new JSONObject(data));*/
     }
 }

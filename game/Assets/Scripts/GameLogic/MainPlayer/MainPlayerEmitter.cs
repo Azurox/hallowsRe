@@ -21,17 +21,6 @@ public class MainPlayerEmitter : MonoBehaviour {
             pathRequests.Add(new PositionRequest(position));
         }
 
-        /*JSONObject[] jsonPath = new JSONObject[path.Length];
-
-        for(var i = 0; i < path.Length; i++)
-        {
-
-            Dictionary<string, JSONObject> data = new Dictionary<string, JSONObject>();
-            data["x"] = new JSONObject((int)path[i].x);
-            data["y"] = new JSONObject((int)path[i].y);
-            jsonPath[i] = new JSONObject(data);
-
-        }*/
         socket.Emit("initializeMovement", JsonConvert.SerializeObject(pathRequests));
     }
 
@@ -41,6 +30,8 @@ public class MainPlayerEmitter : MonoBehaviour {
         data["x"] = new JSONObject(x);
         data["y"] = new JSONObject(y);
         socket.Emit("newPosition", new JSONObject(data));*/
+        socket.Emit("initializeMovement", JsonConvert.SerializeObject(new PositionRequest(x, y)));
+
     }
 
     public void StartFight(string id)
@@ -48,6 +39,7 @@ public class MainPlayerEmitter : MonoBehaviour {
         /*Dictionary<string, string> data = new Dictionary<string, string>();
         data["id"] = id;
         socket.Emit("startFight", new JSONObject(data));*/
+        socket.Emit("startFight", JsonConvert.SerializeObject(new StartFightRequest(id)));
     }
 
     public void SelectScenarioResponse(Scenario scenario, int responseIndex, Npc npc)
@@ -57,6 +49,8 @@ public class MainPlayerEmitter : MonoBehaviour {
         data["responseIndex"] = new JSONObject(responseIndex);
         data["npcId"] = new JSONObject(string.Format("\"{0}\"", npc.id));
         socket.Emit("finishScenario", new JSONObject(data));*/
+        var request =  new SelectScenarioRequest(scenario.id, responseIndex, npc.id);
+        socket.Emit("finishScenario", JsonConvert.SerializeObject(request));
     }
 
 }
