@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ public class SocketManager : MonoBehaviour
     private WebSocket _socket;
     private readonly Dictionary<string, Action<string>> _registeredActions = new Dictionary<string, Action<string>>();
     private readonly  Queue<string> _registeredQueries = new Queue<string>();
-    private readonly  Queue<KeyValuePair<Action<string>, string>> _callBackQueue = new Queue<KeyValuePair<Action<string>, string>>();
+    private readonly  ConcurrentStack<KeyValuePair<Action<string>, string>> _callBackStack = new ConcurrentStack<KeyValuePair<Action<string>, string>>();
     private const float MAX_PING_TIMEOUT = 25f;
     private float _pingTimer = 0;
     
@@ -55,13 +56,11 @@ public class SocketManager : MonoBehaviour
     private void Update()
     {
         _pingTimer += Time.deltaTime;
-        if (_callBackQueue.Count == 0) return;
-        foreach (var callBackData in _callBackQueue.ToList())
+        KeyValuePair<Action<string>, string> item;
+        if (_callBackStack.TryPop(out item))
         {
-            callBackData.Key.Invoke(callBackData.Value);
+            item.Key.Invoke(item.Value);
         }
-
-        _callBackQueue.Clear();
     }
 
     [UsedImplicitly]
@@ -82,14 +81,14 @@ public class SocketManager : MonoBehaviour
             // Debug.Log(data);
             if (_registeredActions.ContainsKey(eventName))
             {
-                _callBackQueue.Enqueue(new KeyValuePair<Action<string>, string>(_registeredActions[eventName], data));
+                _callBackStack.Push(new KeyValuePair<Action<string>, string>(_registeredActions[eventName], data));
             }
             else
             {
                 Debug.Log("Event named " + eventName + " isn't registered !");
             }
         }
-        else
+        else if(message != "3" && message != "40")
         {
             Debug.Log("Unknown message received : " + message);
         }
