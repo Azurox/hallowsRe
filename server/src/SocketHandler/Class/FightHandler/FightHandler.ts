@@ -5,23 +5,28 @@ import State from "../../../BusinessClasses/State";
 import FightController from "../../../BusinessClasses/FightController";
 import Position from "../../../BusinessClasses/RelationalObject/Position";
 import Spell from "../../../Schema/Spell";
+import MonsterGroup, { IMonsterGroup } from "../../../Schema/MonsterGroup";
+import MonsterController from "../../../BusinessClasses/MonsterController";
 
 export default class FightHandler {
   socket: GSocket;
   M: MapController;
   P: PlayerController;
   F: FightController;
+  E: MonsterController;
 
   constructor(socket: GSocket, state: State) {
     this.socket = socket;
     this.M = state.MapController;
     this.P = state.PlayerController;
     this.F = state.FightController;
+    this.E = state.MonsterController;
     this.initSocket();
   }
 
   initSocket() {
     this.socket.on("startFight", this.startFight.bind(this));
+    this.socket.on("startMonsterFight", this.startMonsterFight.bind(this));
     this.socket.on("teleportPreFight", this.teleportPreFight.bind(this));
     this.socket.on("fighterReady", this.fighterReady.bind(this));
     this.socket.on("fighterFinishTurn", this.fighterFinishTurn.bind(this));
@@ -38,6 +43,28 @@ export default class FightHandler {
     }
     const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
     this.F.startFight(firstTeam, secondTeam, map);
+  }
+
+  async startMonsterFight(target: { id: string }) {
+    const secondTeam: IMonsterGroup = await MonsterGroup.findById(target.id);
+    if (!secondTeam) return;
+    const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
+    let monsterGroupFound = false;
+    let groupIndex = -1;
+    for (let i = 0; i < map.monsterGroups.length; i++) {
+      if (map.monsterGroups[i].equals(target.id)) {
+        monsterGroupFound = true;
+        groupIndex = i;
+      }
+    }
+    if (!monsterGroupFound) return;
+    map.monsterGroups.splice(groupIndex, 1);
+    await map.save();
+    await this.socket.player.enterInFight();
+    const firstTeam = [this.socket.player];
+
+
+    // this.F.startFight(firstTeam, secondTeam, map);
   }
 
   async teleportPreFight(data: { x: number; y: number; fightId: string }) {
