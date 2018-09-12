@@ -3,31 +3,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterGroupContainer : MonoBehaviour {
+public class MonsterGroupContainer : MonoBehaviour
+{
     public MonsterGroupDTG MonsterGroupDtg;
-    public MainPlayerHandler MainPlayerHandler;
-    public MapPathFinding MapPathFinding;
+    private MainPlayerHandler MainPlayerHandler;
+    private MapPathFinding MapPathFinding;
     private Dictionary<string, MonsterGroupDTG> monsterGroups = new Dictionary<string, MonsterGroupDTG>();
 
-    public void Startup(MainPlayerHandler mainPlayerHandler, MapPathFinding mapPathFinding)
+    public void Startup(MapPathFinding mapPathFinding)
     {
-        MainPlayerHandler = mainPlayerHandler;
         MapPathFinding = mapPathFinding;
     }
 
-    public void LoadMonsterGroup(MonsterGroup group)
+    public void Init(MainPlayerHandler mainPlayerHandler)
     {
-        var go = Instantiate(MonsterGroupDtg, transform).GetComponent<MonsterGroupDTG>();
-        monsterGroups[group.id] = go;
-        go.Init(MapPathFinding);
-        go.SetMonsterGroup(group);
+        MainPlayerHandler = mainPlayerHandler;
     }
 
-    internal void ClickOnMonster(Vector2 position)
+    public void LoadMonsterGroup(MonsterGroupResponse group)
+    {
+        Debug.Log("LoadMonsterGroup");
+        var monsterGroup = new MonsterGroup(group.id, group.position);
+        foreach (var monsterResponse in group.monsters)
+        {
+            monsterGroup.monsters.Add(new Monster(monsterResponse.name, monsterResponse.level ,monsterResponse.id, group.position));
+        }
+        
+        var go = Instantiate(MonsterGroupDtg, transform).GetComponent<MonsterGroupDTG>();
+        monsterGroups[monsterGroup.id] = go;
+        go.Init(MapPathFinding);
+        go.SetMonsterGroup(monsterGroup);
+        go.UpdateMonsterGroupPosition(monsterGroup.position, true);
+    }
+
+    public void ClickOnMonster(Vector2 position, string id)
     {
         MainPlayerHandler.TryMovement((int)position.x, (int)position.y, () =>
         {
-            // MainPlayerHandler.StartFight();
+            MainPlayerHandler.StartMonsterFight(id);
         });
     }
+
 }

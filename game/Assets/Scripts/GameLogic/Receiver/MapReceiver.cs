@@ -14,6 +14,7 @@ public class MapReceiver {
     public GlobalUIManager GlobalUIManager;
     public WorldUIManager WorldUIManager;
     public NpcContainerDTG NpcContainerDTG;
+    public MonsterGroupContainer MonsterGroupContainer;
     public NpcHandler NpcHandler;
     private readonly SocketManager socket;
 
@@ -29,8 +30,10 @@ public class MapReceiver {
         WorldUIManager = GlobalUIManager.GetWorldUIManager();
         NpcContainerDTG = Object.FindObjectOfType<NpcContainerDTG>();
         NpcHandler = NpcContainerDTG.GetComponent<NpcHandler>();
+        MonsterGroupContainer = Object.FindObjectOfType<MonsterGroupContainer>();
 
         NpcHandler.Startup(WorldUIManager);
+        MonsterGroupContainer.Startup(MapDTG.GetComponent<MapPathFinding>());
 
         InitSocket();
     }
@@ -42,6 +45,9 @@ public class MapReceiver {
         socket.On("spawnPlayer", SpawnPlayer);
         socket.On("disconnectPlayer", DisconnectPlayer);
         socket.On("playerMove", PlayerMove);
+        socket.On("spawnMonsterGroup", SpawnMonsterGroup);
+
+        // socket.On("spawnMonsterGroup", SpawnMonsterGroup);
     }
     
     private void LoadMap(string json)
@@ -67,6 +73,7 @@ public class MapReceiver {
         MapHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
         PlayerHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
         WorldUIManager.Init(player.GetComponent<MainPlayerHandler>());
+        MonsterGroupContainer.Init(player.GetComponent<MainPlayerHandler>());
         PlayerInformation.Instance.SetPlayerGameObject(player);
     }
 
@@ -95,5 +102,15 @@ public class MapReceiver {
     {
         PlayerMoveResponse data = JsonConvert.DeserializeObject<PlayerMoveResponse>(json);
         PlayerContainerDTG.MovePlayer(data.id, data.path);
+    }
+
+    private void SpawnMonsterGroup(string json)
+    {
+        Debug.Log("receive monster");
+        SpawnMonsterGroupResponse data = JsonConvert.DeserializeObject<SpawnMonsterGroupResponse>(json);
+        foreach (MonsterGroupResponse monsterGroupResponse in data.monsterGroups)
+        {
+            MonsterGroupContainer.LoadMonsterGroup(monsterGroupResponse);
+        }
     }
 }

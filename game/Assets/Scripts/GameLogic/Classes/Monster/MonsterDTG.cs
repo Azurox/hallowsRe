@@ -24,9 +24,21 @@ public class MonsterDTG : MonoBehaviour, IPointerClickHandler {
         transform.parent.GetComponent<MonsterGroupDTG>().ClickOnMonsterGroup();
     }
 
-    internal void AttributePosition(Vector2 position, List<Vector2> path)
+    public void AttributePosition(Vector2 position, List<Vector2> path, bool withoutMovement)
     {
         monster.position = position;
-        GetComponent<Movable>().TakePath(new Vector2(transform.position.x, transform.position.z), path);
+        if (path != null || !withoutMovement)
+        {
+            GetComponent<Movable>().TakePath(new Vector2(transform.position.x, transform.position.z), path);
+        }
+        else
+        {
+            transform.position = new Vector3(position.x, transform.position.y, position.y);
+        }
+    }
+
+    public void SetBasePosition(Vector2 position)
+    {
+        transform.position = new Vector3(position.x, transform.position.y, position.y);
     }
 }

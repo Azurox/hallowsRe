@@ -26,14 +26,16 @@ export default class MonsterController {
     const filteredGroups = [];
     for (let i = 0; i < groups.length; i++) {
       const group = groups[i];
+      console.log(group);
       const filteredGroup: any = {
-        monster: [],
+        id: group._id,
+        monsters: [],
         position: group.position
       };
 
       for (let j = 0; j < group.monsters.length; j++) {
         const monster = await Monster.findById(group.monsters[j]);
-        filteredGroup.monster.push({
+        filteredGroup.monsters.push({
           id: monster.id,
           name: monster.name,
           level: monster.level
@@ -41,7 +43,7 @@ export default class MonsterController {
       }
       filteredGroups.push(filteredGroup);
     }
-    socket.emit("spawnMonsterGroup", filteredGroups);
+    socket.emit("spawnMonsterGroup", { monsterGroups: filteredGroups });
   }
 
   async SpawnMonsters(mapPosition: Position) {

@@ -38,4 +38,9 @@ public class MainPlayerHandler : MonoBehaviour
     {
         GetComponent<MainPlayerEmitter>().SelectScenarioResponse(scenario, responseIndex, npc);
     }
+
+    public void StartMonsterFight(string id)
+    {
+        GetComponent<MainPlayerEmitter>().StartMonsterFight(id);
+    }
 }
