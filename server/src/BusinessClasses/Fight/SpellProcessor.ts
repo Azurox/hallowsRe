@@ -1,8 +1,8 @@
 import Fight from "./Fight";
 import { ISpell } from "../../Schema/Spell";
-import Fighter from "./Fighter";
 import SpellImpact from "./SpellImpact";
 import Position from "../RelationalObject/Position";
+import Fighter from "./Fighter";
 
 export default class SpellProcessor {
   fight: Fight;
@@ -46,7 +46,7 @@ export default class SpellProcessor {
     /* Later i will need to calculate new position if the spell move fighter */
 
     for (let i = 0; i < impactedFighter.length; i++) {
-      const impact = new SpellImpact(impactedFighter[i].player.id);
+      const impact = new SpellImpact(impactedFighter[i].getId());
       if (this.spell.physicalDamage) {
         impact.life = this.calculatePhysicalDamage(impactedFighter[i], this.spell.physicalDamage);
       }

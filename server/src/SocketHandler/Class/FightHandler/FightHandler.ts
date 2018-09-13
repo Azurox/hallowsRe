@@ -7,6 +7,8 @@ import Position from "../../../BusinessClasses/RelationalObject/Position";
 import Spell from "../../../Schema/Spell";
 import MonsterGroup, { IMonsterGroup } from "../../../Schema/MonsterGroup";
 import MonsterController from "../../../BusinessClasses/MonsterController";
+import { IPlayer } from "../../../Schema/Player";
+import Monster, { IMonster } from "../../../Schema/Monster";
 
 export default class FightHandler {
   socket: GSocket;
@@ -46,25 +48,21 @@ export default class FightHandler {
   }
 
   async startMonsterFight(target: { id: string }) {
-    const secondTeam: IMonsterGroup = await MonsterGroup.findById(target.id);
-    if (!secondTeam) return;
+    const firstTeam: IPlayer[] = [this.socket.player];
     const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
-    let monsterGroupFound = false;
-    let groupIndex = -1;
-    for (let i = 0; i < map.monsterGroups.length; i++) {
-      if (map.monsterGroups[i].equals(target.id)) {
-        monsterGroupFound = true;
-        groupIndex = i;
-      }
+    try {
+      const monsterGroup = await MonsterGroup.findById(target.id);
+      const mapHasGroup = await this.M.checkIfMapHasMonsterGroup(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
+      if (!mapHasGroup) throw new Error("Map doesn't have group !");
+      const secondTeam: IMonster[] = await this.E.RetrieveMonsters(monsterGroup);
+      if (!secondTeam) throw new Error("Cannot retrieve monster from map !");
+
+      this.M.removeMonsterGroupFromMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
+      this.F.startMonsterFight(firstTeam, secondTeam, map);
+
+    } catch (error) {
+      console.log(error);
     }
-    if (!monsterGroupFound) return;
-    map.monsterGroups.splice(groupIndex, 1);
-    await map.save();
-    await this.socket.player.enterInFight();
-    const firstTeam = [this.socket.player];
-
-
-    // this.F.startFight(firstTeam, secondTeam, map);
   }
 
   async teleportPreFight(data: { x: number; y: number; fightId: string }) {

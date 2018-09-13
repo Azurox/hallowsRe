@@ -1,8 +1,10 @@
 import State from "./State";
 import Fight from "./Fight/Fight";
 import { IPlayer } from "../Schema/Player";
-import Fighter from "./Fight/Fighter";
+import HumanFighter from "./Fight/HumanFighter";
 import { IMap } from "../Schema/Map";
+import { IMonster } from "../Schema/Monster";
+import MonsterFighter from "./Fight/MonsterFighter";
 
 export default class FightController {
   state: State;
@@ -18,11 +20,26 @@ export default class FightController {
     this.fights[fight.id] = fight;
 
     for (let i = 0; i < firstTeam.length; i++) {
-      fight.addFighter(new Fighter(firstTeam[i], "blue"));
+      fight.addFighter(new HumanFighter(firstTeam[i], "blue"));
     }
 
     for (let i = 0; i < secondTeam.length; i++) {
-      fight.addFighter(new Fighter(secondTeam[i], "red"));
+      fight.addFighter(new HumanFighter(secondTeam[i], "red"));
+    }
+
+    fight.startFight();
+  }
+
+  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], map: IMap) {
+    const fight = new Fight(this.state.io, map);
+    this.fights[fight.id] = fight;
+
+    for (let i = 0; i < firstTeam.length; i++) {
+      fight.addFighter(new HumanFighter(firstTeam[i], "blue"));
+    }
+
+    for (let i = 0; i < secondTeam.length; i++) {
+      fight.addFighter(new MonsterFighter(secondTeam[i], "red"));
     }
 
     fight.startFight();

@@ -7,7 +7,7 @@ export interface IMonster extends Mongoose.Document {
   name: string;
   level: number;
   stats: IStats;
-  spells: ISpell[];
+  spells: Mongoose.Types.ObjectId[];
   loot: { objectId: Mongoose.Types.ObjectId; probability: number }[];
 }
 

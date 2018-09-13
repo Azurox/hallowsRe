@@ -64,4 +64,14 @@ export default class MonsterController {
       this.state.io.to(map.id).emit("spawnMonsterGroup", monsters);
     }
   }
+
+  async RetrieveMonsters(monsterGroup: IMonsterGroup): Promise<IMonster[]> {
+    const monsters: IMonster[] = [];
+    for (let i = 0; i < monsterGroup.monsters.length; i++) {
+      const monsterId = monsterGroup.monsters[i];
+      monsters.push(await Monster.findById(monsterId).populate("stats"));
+    }
+
+    return monsters;
+  }
 }

@@ -1,5 +1,5 @@
 import uuid from "uuid/v4";
-import Fighter from "./Fighter";
+import HumanFighter from "./HumanFighter";
 import { IMap } from "../../Schema/Map";
 import Position from "../RelationalObject/Position";
 import { IPlayer } from "../../Schema/Player";
@@ -7,6 +7,7 @@ import { ISpell } from "../../Schema/Spell";
 import SpellProcessor from "./SpellProcessor";
 import SpellImpact from "./SpellImpact";
 import FightEndProcessor from "./FightEndProcessor";
+import Fighter from "./Fighter";
 
 export default class Fight {
   /* CONST */
@@ -82,18 +83,22 @@ export default class Fight {
     this.placeFighter();
 
     for (let i = 0; i < this.fightOrder.length; i++) {
+
+      if (!this.fightOrder[i].isRealPlayer()) continue;
+
+      const currentFighter = <HumanFighter>this.fightOrder[i];
       // Leave the current map and join the fight
-      this.io.sockets.connected[this.fightOrder[i].socketId].leave(this.fightOrder[i].player.mapName);
-      this.io.sockets.connected[this.fightOrder[i].socketId].join(this.id);
+      this.io.sockets.connected[currentFighter.socketId].leave(currentFighter.player.mapName);
+      this.io.sockets.connected[currentFighter.socketId].join(this.id);
 
       // return every player
-      this.io.to(this.fightOrder[i].socketId).emit("fightStarted", {
+      this.io.to(currentFighter.socketId).emit("fightStarted", {
         id: this.id,
         fighters: this.fightOrder.map((fighter: Fighter) => {
           return {
-            isMainPlayer: fighter.socketId == this.fightOrder[i].socketId,
-            id: fighter.player.id,
-            name: fighter.player.name,
+            isMainPlayer: fighter.getSocketId() == this.fightOrder[i].getSocketId(),
+            id: fighter.getId(),
+            name: fighter.getName(),
             position: fighter.position,
             side: fighter.side,
             life: fighter.life,
@@ -104,7 +109,7 @@ export default class Fight {
             attackDamage: fighter.attackDamage,
             movementPoint: fighter.movementPoint,
             actionPoint: fighter.actionPoint,
-            spells: fighter.socketId == this.fightOrder[i].socketId ? this.fightOrder[i].player.spells : undefined
+            spells: fighter.getSocketId() == this.fightOrder[i].getSocketId() ? this.fightOrder[i].getSpells() : undefined
           };
         }),
         blueCells: this.blueCells,
@@ -136,7 +141,7 @@ export default class Fight {
 
   retrieveFighterFromPlayerId(id: string): Fighter {
     for (let i = 0; i < this.fightOrder.length; i++) {
-      if (this.fightOrder[i].player.id === id) {
+      if (this.fightOrder[i].getId() === id) {
         return this.fightOrder[i];
       }
     }
@@ -163,7 +168,7 @@ export default class Fight {
           }
           fighter.position = position;
           this.blueCells[i].taken = true;
-          this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.player.id });
+          this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.getId() });
         }
       }
     } else {
@@ -183,7 +188,7 @@ export default class Fight {
           }
           fighter.position = position;
           this.redCells[i].taken = true;
-          this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.player.id });
+          this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.getId() });
         }
       }
     }
@@ -195,7 +200,7 @@ export default class Fight {
     if (this.checkEveryFighterReady()) {
       this.startFightPhase1();
     } else {
-      this.io.to(this.id).emit("setReady", { playerId: fighter.player.id });
+      this.io.to(this.id).emit("setReady", { playerId: fighter.getId() });
     }
   }
 
@@ -217,7 +222,7 @@ export default class Fight {
       this.fightOrder[i].ready = true;
     }
 
-    this.acceptedId = this.fightOrder[0].player.id;
+    this.acceptedId = this.fightOrder[0].getId();
     this.io.to(this.id).emit("fightPhase1", { playerId: this.acceptedId });
   }
 
@@ -233,11 +238,11 @@ export default class Fight {
     this.clock = 0;
     this.softResetCurrentPlayerStats();
     for (let i = 0; i < this.fightOrder.length; i++) {
-      if (this.fightOrder[i].player.id == this.acceptedId) {
+      if (this.fightOrder[i].getId() == this.acceptedId) {
         if (i + 1 < this.fightOrder.length) {
-          this.acceptedId = this.fightOrder[i + 1].player.id;
+          this.acceptedId = this.fightOrder[i + 1].getId();
         } else {
-          this.acceptedId = this.fightOrder[0].player.id;
+          this.acceptedId = this.fightOrder[0].getId();
         }
         break;
       }
@@ -258,7 +263,7 @@ export default class Fight {
     for (let i = 0; i < this.fightOrder.length; i++) {
       for (let j = 0; j < path.length; j++) {
         if (
-          this.fightOrder[i].player.id != id &&
+          this.fightOrder[i].getId() != id &&
           this.fightOrder[i].position.x == path[j].x &&
           this.fightOrder[i].position.y == path[j].y
         ) {
@@ -324,13 +329,17 @@ export default class Fight {
       } else {
         const fighters = this.blueTeam.concat(this.redTeam);
         for (let i = 0; i < fighters.length; i++) {
-          const fightEndProcessor = new FightEndProcessor();
-          console.log(fighters[i].side == this.winners);
-          const fightResult = fightEndProcessor.process(fighters[i].side == this.winners);
-          this.io.sockets.connected[fighters[i].socketId].leave(this.id);
-          await fighters[i].player.leaveFight();
 
-          this.io.to(fighters[i].socketId).emit("fighterUseSpell", {
+          if (!fighters[i].isRealPlayer()) continue;
+
+          const currentFighter = <HumanFighter>fighters[i];
+
+          const fightEndProcessor = new FightEndProcessor();
+          const fightResult = fightEndProcessor.process(fighters[i].side == this.winners);
+          this.io.sockets.connected[currentFighter.socketId].leave(this.id);
+          await currentFighter.player.leaveFight();
+
+          this.io.to(currentFighter.socketId).emit("fighterUseSpell", {
             playerId: id,
             position: position,
             spellId: spell.id,
@@ -362,7 +371,7 @@ export default class Fight {
   killFighter(fighter: Fighter): boolean {
     fighter.dead = true;
     for (let i = this.fightOrder.length - 1; i >= 0; --i) {
-      if (this.fightOrder[i].player.id == fighter.player.id) {
+      if (this.fightOrder[i].getId() == fighter.getId()) {
         this.fightOrder.splice(i, 1);
         break;
       }
@@ -399,10 +408,10 @@ export default class Fight {
       }
     }
 
-    if (this.acceptedId == fighter.player.id) {
+    if (this.acceptedId == fighter.getId()) {
       this.nextTurn();
     }
-    console.log(`${fighter.player.name} is dead !`);
+    console.log(`${fighter.getName()} is dead !`);
     return fightIsFinished;
   }
 }

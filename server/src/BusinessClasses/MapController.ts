@@ -87,4 +87,27 @@ export default class MapController {
     const map = await this.worldMap.getMap(x, y);
     return map;
   }
+
+  async checkIfMapHasMonsterGroup(x: number, y: number, groupId: string): Promise<boolean> {
+    const map = await this.worldMap.getLeanMap(x, y);
+    let found = false;
+    for (let i = 0; i < map.monsterGroups.length; i++) {
+      const element = map.monsterGroups[i];
+      if (element.equals(groupId)) { found = true; }
+    }
+
+    return found;
+  }
+
+  async removeMonsterGroupFromMap(x: number, y: number, groupId: string) {
+    const map = await this.worldMap.getMap(x, y);
+    for (let i = 0; i < map.monsterGroups.length; i++) {
+      const element = map.monsterGroups[i];
+      if (element.equals(groupId)) {
+        map.monsterGroups.splice(i, 1);
+        await map.save();
+        return;
+       }
+    }
+  }
 }
