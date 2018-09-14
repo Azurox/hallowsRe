@@ -7,6 +7,7 @@ import Stats from "../../Schema/Stats";
 import Spell from "../../Schema/Spell";
 import Monster from "../../Schema/Monster";
 import MonsterGroup from "../../Schema/MonsterGroup";
+import Zone from "../../Schema/Zone";
 
 export default class WorldMap {
   constructor() {
@@ -90,6 +91,16 @@ export default class WorldMap {
     mobGroup.position = { x: 15, y: 15 };
     await mobGroup.save();
     map.monsterGroups = [mobGroup.id];
+
+
+    const zone = new Zone();
+    zone.name = "Freljord";
+    zone.forceSpecificMonster = true;
+    zone.specificMonsterGroup = mobGroup.id;
+    zone.maximumMonsterGroups = 4;
+    await zone.save();
+
+    map.zone = zone.id;
     await map.save();
   }
 

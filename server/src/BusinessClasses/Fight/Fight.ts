@@ -27,9 +27,13 @@ export default class Fight {
   blueCells: { position: Position; taken: boolean }[];
   redCells: { position: Position; taken: boolean }[];
   obstacles: Position[];
+  mapPosition: Position;
   acceptedId: string;
   winners: Side;
   isFinished: Boolean = false;
+  monsterGroupId?: string;
+  onFinish?: (id: string, mapPosition: Position) => void;
+
 
   constructor(io: SocketIO.Server, map: IMap) {
     this.io = io;
@@ -45,6 +49,7 @@ export default class Fight {
     shuffle(this.redCells);
 
     this.obstacles = map.getObstacles();
+    this.mapPosition = new Position(map.x, map.y);
   }
 
   addFighter(fighter: Fighter) {
@@ -82,7 +87,8 @@ export default class Fight {
     }
   }
 
-  startFight() {
+  startFight(callback?: (id: string, mapPosition: Position) => void) {
+    this.onFinish = callback;
     this.orderFighter();
     this.placeFighter();
 
@@ -349,6 +355,11 @@ export default class Fight {
             impacts: impacts,
             fightEnd: fightResult
           });
+
+          if (this.onFinish) {
+            this.onFinish(this.monsterGroupId, this.mapPosition);
+          }
+
         }
         this.isFinished = true;
       }

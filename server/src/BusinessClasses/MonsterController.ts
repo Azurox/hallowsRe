@@ -47,6 +47,7 @@ export default class MonsterController {
   }
 
   async SpawnMonsters(mapPosition: Position) {
+    console.log("spawn a monster group");
     const map = await this.state.MapController.getMap(mapPosition.x, mapPosition.y);
     if (map.monsterGroups.length < this.MAX_MONSTERS_GROUP_BY_MAP) {
       const zone = await Zone.findById(map.zone);
@@ -61,7 +62,7 @@ export default class MonsterController {
       } else {
         // select random monster from the pool
       }
-      this.state.io.to(map.id).emit("spawnMonsterGroup", monsters);
+      this.state.io.to(map.name).emit("spawnMonsterGroup", monsters);
     }
   }
 

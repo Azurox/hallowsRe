@@ -53,8 +53,12 @@ MapSchema.method("spawnPlayer", async function(x: number, y: number, player: IPl
 
 MapSchema.method("movePlayer", async function(player: IPlayer, position: Position): Promise<void> {
   const map: IMap = this;
-  await map.cells[player.position.x][player.position.y].removePlayer(player._id);
-  await map.cells[position.x][position.y].addPlayer(player._id);
+  try {
+    await map.cells[player.position.x][player.position.y].removePlayer(player._id);
+    await map.cells[position.x][position.y].addPlayer(player._id);
+  } catch (error) {
+    console.log("ERROR when moving player !" + error);
+  }
 });
 
 MapSchema.method("removePlayer", async function(id: Mongoose.Types.ObjectId) {

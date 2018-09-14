@@ -5,6 +5,7 @@ import HumanFighter from "./Fight/HumanFighter";
 import { IMap } from "../Schema/Map";
 import { IMonster } from "../Schema/Monster";
 import MonsterFighter from "./Fight/MonsterFighter";
+import Position from "./RelationalObject/Position";
 
 export default class FightController {
   state: State;
@@ -30,8 +31,9 @@ export default class FightController {
     fight.startFight();
   }
 
-  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], map: IMap) {
+  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], monsterGroupId: string , map: IMap, callback: (id: string, mapPosition: Position) => void) {
     const fight = new Fight(this.state.io, map);
+    fight.monsterGroupId = monsterGroupId;
     this.fights[fight.id] = fight;
 
     for (let i = 0; i < firstTeam.length; i++) {
@@ -42,7 +44,7 @@ export default class FightController {
       fight.addFighter(new MonsterFighter(secondTeam[i], "red"));
     }
 
-    fight.startFight();
+    fight.startFight(callback);
   }
 
   tick() {

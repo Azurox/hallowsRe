@@ -4,7 +4,7 @@ export interface IAccount extends Mongoose.Document {
   email: string;
   password: string;
   players: IPlayer[];
-  newPlayer(): void;
+  newPlayer(): Promise<void>;
 }
 
 export const AccountSchema = new Mongoose.Schema({
@@ -13,15 +13,15 @@ export const AccountSchema = new Mongoose.Schema({
   players: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Player" }]
 });
 
-AccountSchema.method("newPlayer", function() {
+AccountSchema.method("newPlayer", async function() {
   const account: IAccount = this;
   const player = new Player();
   player.name = "test2";
   player.position = { x: 0, y: 0 };
   player.mapPosition = { x: 0, y: 0 };
-  player.save();
+  await player.save();
   account.players.push(player.id);
-  account.save();
+  await account.save();
 });
 
 const Account = Mongoose.model<IAccount>("Account", AccountSchema);

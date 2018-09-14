@@ -44,7 +44,7 @@ export default class MapController {
 
     socket.player.mapName = map.name;
     socket.join(map.name);
-    socket.player.save();
+    await socket.player.save();
   }
 
   async checkMovementsPossibility(socket: GSocket, positions: Position[]) {
@@ -68,7 +68,7 @@ export default class MapController {
 
   async movePlayer(socket: GSocket, position: Position) {
     const map = await this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y);
-    map.movePlayer(socket.player, position);
+    await map.movePlayer(socket.player, position);
   }
 
   async disconnectPlayer(socket: GSocket) {
