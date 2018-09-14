@@ -5,12 +5,13 @@ using System.Linq;
 using UnityEngine;
 using WebSocketSharp;
 
-public class FightMapReceiver {
+public class FightMapReceiver
+{
 
     public GlobalMapDTG WorldMapDTG;
     public MapDTG MapDTG;
     public FightMapHandler FightMapHandler;
-    public FightMapDTG FightMapDTG; 
+    public FightMapDTG FightMapDTG;
     public PlayerContainerDTG PlayerContainerDTG;
     public FighterContainerDTG FighterContainerDTG;
     public FighterHandler FighterHandler;
@@ -18,6 +19,7 @@ public class FightMapReceiver {
     public GlobalUIManager GlobalUIManager;
     public FightUIManager FightUIManager;
     public NpcContainerDTG NpcContainerDTG;
+    public MonsterGroupContainer MonsterGroupContainer;
     private SocketManager socket;
     private Fight Fight;
 
@@ -34,6 +36,7 @@ public class FightMapReceiver {
         MainFighterHandler = FighterContainerDTG.GetComponent<MainFighterHandler>();
         GlobalUIManager = Object.FindObjectOfType<GlobalUIManager>();
         NpcContainerDTG = Object.FindObjectOfType<NpcContainerDTG>();
+        MonsterGroupContainer = Object.FindObjectOfType<MonsterGroupContainer>();
         FightUIManager = GlobalUIManager.GetFightUIManager();
 
 
@@ -57,13 +60,16 @@ public class FightMapReceiver {
         socket.On("fighterMove", FighterMove);
         socket.On("fighterUseSpell", FighterUseSpell);
     }
-    
+
     private void FightStarted(string json)
     {
         FightStartedResponse data = JsonConvert.DeserializeObject<FightStartedResponse>(json);
         Debug.Log("FightStarted !");
+        PlayerContainerDTG.Clear();
         PlayerContainerDTG.gameObject.SetActive(false);
         NpcContainerDTG.gameObject.SetActive(false);
+        MonsterGroupContainer.Clear();
+        MonsterGroupContainer.gameObject.SetActive(false);
         FighterContainerDTG.gameObject.SetActive(true);
         Fight = new Fight(data);
 
@@ -98,7 +104,7 @@ public class FightMapReceiver {
         FightUIManager.ShowSpells(Fight.GetMainFighter().GetSpells());
     }
 
-    
+
     private void TeleportPreFight(string json)
     {
 
@@ -114,7 +120,7 @@ public class FightMapReceiver {
             }
         }
 
-        if(FighterContainerDTG.GetMainFighter().GetFighter().Id == data.playerId)
+        if (FighterContainerDTG.GetMainFighter().GetFighter().Id == data.playerId)
         {
             FighterContainerDTG.TeleportMainFighter(data.position);
         }
@@ -124,14 +130,14 @@ public class FightMapReceiver {
         }
     }
 
-    
+
     private void SetReady(string json)
     {
         PlayerIdResponse data = JsonConvert.DeserializeObject<PlayerIdResponse>(json);
 
         foreach (var fighter in Fight.GetFighters())
         {
-            if(fighter.Id == data.playerId)
+            if (fighter.Id == data.playerId)
             {
                 fighter.Ready = true;
                 if (fighter.IsMainPlayer) FightUIManager.ActivateReadyButton(false);
@@ -161,7 +167,7 @@ public class FightMapReceiver {
     private void FighterMove(string json)
     {
         FighterMoveResponse data = JsonConvert.DeserializeObject<FighterMoveResponse>(json);
-        
+
         List<Vector2> path = data.path.ToList();
 
         if (FighterContainerDTG.GetMainFighter().GetFighter().Id == data.playerId)
@@ -180,16 +186,16 @@ public class FightMapReceiver {
 
         Fighter user = Fight.GetFighter(data.playerId);
         Spell spell = ResourcesLoader.Instance.GetSpell(data.spellId);
-        List<Impact> impacts =  new List<Impact>();
+        List<Impact> impacts = new List<Impact>();
         for (var i = 0; i < data.impacts.Length; i++)
         {
             Impact impact = new Impact(data.impacts[i]);
             impacts.Add(impact);
         }
 
-        if(data.fightEnd != null)
+        if (data.fightEnd != null)
         {
-            FighterContainerDTG.FighterUseSpell(user, spell, data.position, impacts, ()=> { FightFinished(data.fightEnd); });
+            FighterContainerDTG.FighterUseSpell(user, spell, data.position, impacts, () => { FightFinished(data.fightEnd); });
         }
         else
         {

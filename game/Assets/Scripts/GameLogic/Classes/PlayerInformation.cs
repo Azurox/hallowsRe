@@ -7,6 +7,8 @@ public class PlayerInformation : Singleton<PlayerInformation>
 {
     protected PlayerInformation() { }
 
+
+
     private Texture2D playerImage;
     private Texture2D fighterImage;
 
@@ -46,5 +48,4 @@ public class PlayerInformation : Singleton<PlayerInformation>
     {
         fighterGameObject = gameObject;
     }
-
 }

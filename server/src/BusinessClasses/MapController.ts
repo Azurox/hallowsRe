@@ -93,7 +93,9 @@ export default class MapController {
     let found = false;
     for (let i = 0; i < map.monsterGroups.length; i++) {
       const element = map.monsterGroups[i];
-      if (element.equals(groupId)) { found = true; }
+      if (element.equals(groupId)) {
+        found = true;
+      }
     }
 
     return found;
@@ -101,13 +103,14 @@ export default class MapController {
 
   async removeMonsterGroupFromMap(x: number, y: number, groupId: string) {
     const map = await this.worldMap.getMap(x, y);
+    this.state.io.to(map.name).emit("removeMonsterGroup", { id: groupId });
     for (let i = 0; i < map.monsterGroups.length; i++) {
       const element = map.monsterGroups[i];
       if (element.equals(groupId)) {
         map.monsterGroups.splice(i, 1);
         await map.save();
         return;
-       }
+      }
     }
   }
 }

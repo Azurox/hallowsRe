@@ -26,9 +26,9 @@ public class MonsterGroupContainer : MonoBehaviour
         var monsterGroup = new MonsterGroup(group.id, group.position);
         foreach (var monsterResponse in group.monsters)
         {
-            monsterGroup.monsters.Add(new Monster(monsterResponse.name, monsterResponse.level ,monsterResponse.id, group.position));
+            monsterGroup.monsters.Add(new Monster(monsterResponse.name, monsterResponse.level, monsterResponse.id, group.position));
         }
-        
+
         var go = Instantiate(MonsterGroupDtg, transform).GetComponent<MonsterGroupDTG>();
         monsterGroups[monsterGroup.id] = go;
         go.Init(MapPathFinding);
@@ -44,4 +44,24 @@ public class MonsterGroupContainer : MonoBehaviour
         });
     }
 
+
+    public void Clear()
+    {
+        foreach (var group in monsterGroups)
+        {
+            Destroy(group.Value.gameObject);
+        }
+
+        monsterGroups.Clear();
+    }
+
+    internal void RemoveGroup(string id)
+    {
+        if (monsterGroups.ContainsKey(id))
+        {
+            var group = monsterGroups[id];
+            Destroy(group.gameObject);
+            monsterGroups.Remove(id);
+        }
+    }
 }

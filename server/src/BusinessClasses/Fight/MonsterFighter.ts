@@ -25,28 +25,29 @@ export default class MonsterFighter extends Fighter {
     this.currentMovementPoint = monster.stats.movementPoint;
     this.actionPoint = monster.stats.actionPoint;
     this.currentActionPoint = monster.stats.actionPoint;
+    this.ready = true;
   }
 
-    getId(): string {
-        return this.player.id;
-    }
+  getId(): string {
+    return this.player.id;
+  }
 
-    isRealPlayer(): boolean {
-        return false;
-      }
+  isRealPlayer(): boolean {
+    return false;
+  }
 
-    getName(): string {
-        return this.player.name;
-    }
+  getName(): string {
+    return this.player.name;
+  }
 
-    /**
-     * Warning about this. It should never be used other than for comparing with a real Fighter Id.
-     */
-    getSocketId(): string {
-        return "noSocketId";
-    }
+  /**
+   * Warning about this. It should never be used other than for comparing with a real Fighter Id.
+   */
+  getSocketId(): string {
+    return "noSocketId";
+  }
 
-    getSpells(): mongoose.Types.ObjectId[] {
-        return this.player.spells;
-    }
+  getSpells(): mongoose.Types.ObjectId[] {
+    return this.player.spells;
+  }
 }

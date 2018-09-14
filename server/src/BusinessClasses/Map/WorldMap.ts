@@ -80,7 +80,7 @@ export default class WorldMap {
     mob.name = "Bims";
     mob.level = 1;
     mob.stats = mobStats;
-    mob.spells = [mobSpell];
+    mob.spells = [mobSpell.id];
     mob.loot = [];
     await mob.save();
 

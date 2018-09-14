@@ -17,6 +17,7 @@ public class MapReceiver {
     public MonsterGroupContainer MonsterGroupContainer;
     public NpcHandler NpcHandler;
     private readonly SocketManager socket;
+    private bool needToReload = false;
 
     public MapReceiver(SocketManager socket)
     {
@@ -46,28 +47,43 @@ public class MapReceiver {
         socket.On("disconnectPlayer", DisconnectPlayer);
         socket.On("playerMove", PlayerMove);
         socket.On("spawnMonsterGroup", SpawnMonsterGroup);
-
-        // socket.On("spawnMonsterGroup", SpawnMonsterGroup);
+        socket.On("removeMonsterGroup", RemoveMonsterGroup);
+        socket.On("removePlayer", RemovePlayer);
+        socket.On("fightStarted", (json) => needToReload = true);
     }
-    
+
+
+    private void ClearMap()
+    {
+        if (needToReload)
+        {
+            NpcContainerDTG.Clear();
+            PlayerContainerDTG.Clear();
+            MonsterGroupContainer.Clear();
+            needToReload = false;
+        }
+    }
+
     private void LoadMap(string json)
     {
+        ClearMap();
         LoadMapResponse data = JsonConvert.DeserializeObject<LoadMapResponse>(json);
         Debug.Log("Load new map");
         string mapName = data.mapName;
         PlayerContainerDTG.gameObject.SetActive(true);
-        PlayerContainerDTG.Clear();
         GameMap map = ResourcesLoader.Instance.GetGameMap(mapName);
         WorldMapDTG.SetMap(map);
         WorldMapDTG.ActivateCell();
         MapDTG.Init();
         NpcContainerDTG.gameObject.SetActive(true);
         NpcContainerDTG.LoadNpcs(map.npcs);
+        MonsterGroupContainer.gameObject.SetActive(true);
         GlobalUIManager.SwitchToWorldUI();
     }
     
     private void SpawnMainPlayer(string json)
     {
+        ClearMap();
         SpawnMainPlayerResponse data = JsonConvert.DeserializeObject<SpawnMainPlayerResponse>(json);
         var player = PlayerContainerDTG.SpawnMainPlayer((int) data.position.x, (int) data.position.y);
         MapHandler.SetMainPlayer(player.GetComponent<MainPlayerHandler>());
@@ -80,14 +96,13 @@ public class MapReceiver {
  
     private void SpawnPlayer(string json)
     {
-
+        ClearMap();
         SpawnPlayerResponse data = JsonConvert.DeserializeObject<SpawnPlayerResponse>(json);
         PlayerContainerDTG.SpawnPlayer((int)data.position.x, (int)data.position.y, data.id);
         if (data.path != null)
         {
             Debug.Log("player is currently moving");
             PlayerContainerDTG.MovePlayer(data.id, data.path);
-
         }
     }
     
@@ -106,11 +121,23 @@ public class MapReceiver {
 
     private void SpawnMonsterGroup(string json)
     {
-        Debug.Log("receive monster");
+        ClearMap();
         SpawnMonsterGroupResponse data = JsonConvert.DeserializeObject<SpawnMonsterGroupResponse>(json);
         foreach (MonsterGroupResponse monsterGroupResponse in data.monsterGroups)
         {
             MonsterGroupContainer.LoadMonsterGroup(monsterGroupResponse);
         }
+    }
+
+    private void RemoveMonsterGroup(string json)
+    {
+        RemoveMonsterGroupResponse data = JsonConvert.DeserializeObject<RemoveMonsterGroupResponse>(json);
+        MonsterGroupContainer.RemoveGroup(data.id);
+    }
+
+    private void RemovePlayer(string json)
+    {
+        DisconnectPlayerResponse data = JsonConvert.DeserializeObject<DisconnectPlayerResponse>(json);
+        PlayerContainerDTG.DestroyPlayer(data.id);
     }
 }

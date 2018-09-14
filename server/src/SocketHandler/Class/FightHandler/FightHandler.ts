@@ -45,21 +45,31 @@ export default class FightHandler {
     }
     const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
     this.F.startFight(firstTeam, secondTeam, map);
+
+    this.socket.to(map.name).emit("removePlayer", { id: this.socket.player.id });
+    for (let i = 0; i < secondTeam.length; i++) {
+      this.socket.to(map.name).emit("removePlayer", { id: secondTeam[i].id });
+    }
   }
 
   async startMonsterFight(target: { id: string }) {
     const firstTeam: IPlayer[] = [this.socket.player];
+    await this.socket.player.enterInFight();
     const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
     try {
       const monsterGroup = await MonsterGroup.findById(target.id);
-      const mapHasGroup = await this.M.checkIfMapHasMonsterGroup(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
+      const mapHasGroup = await this.M.checkIfMapHasMonsterGroup(
+        this.socket.player.mapPosition.x,
+        this.socket.player.mapPosition.y,
+        target.id
+      );
       if (!mapHasGroup) throw new Error("Map doesn't have group !");
       const secondTeam: IMonster[] = await this.E.RetrieveMonsters(monsterGroup);
       if (!secondTeam) throw new Error("Cannot retrieve monster from map !");
 
       this.M.removeMonsterGroupFromMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
+      this.socket.to(map.name).emit("removePlayer", { id: this.socket.player.id });
       this.F.startMonsterFight(firstTeam, secondTeam, map);
-
     } catch (error) {
       console.log(error);
     }

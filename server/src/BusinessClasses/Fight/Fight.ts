@@ -1,4 +1,5 @@
 import uuid from "uuid/v4";
+import shuffle from "shuffle-array";
 import HumanFighter from "./HumanFighter";
 import { IMap } from "../../Schema/Map";
 import Position from "../RelationalObject/Position";
@@ -39,6 +40,9 @@ export default class Fight {
     this.redCells = map.redCells.map(cell => {
       return { position: cell, taken: false };
     });
+
+    shuffle(this.blueCells);
+    shuffle(this.redCells);
 
     this.obstacles = map.getObstacles();
   }
@@ -83,7 +87,6 @@ export default class Fight {
     this.placeFighter();
 
     for (let i = 0; i < this.fightOrder.length; i++) {
-
       if (!this.fightOrder[i].isRealPlayer()) continue;
 
       const currentFighter = <HumanFighter>this.fightOrder[i];
@@ -109,7 +112,8 @@ export default class Fight {
             attackDamage: fighter.attackDamage,
             movementPoint: fighter.movementPoint,
             actionPoint: fighter.actionPoint,
-            spells: fighter.getSocketId() == this.fightOrder[i].getSocketId() ? this.fightOrder[i].getSpells() : undefined
+            spells:
+              fighter.getSocketId() == this.fightOrder[i].getSocketId() ? this.fightOrder[i].getSpells() : undefined
           };
         }),
         blueCells: this.blueCells,
@@ -329,7 +333,6 @@ export default class Fight {
       } else {
         const fighters = this.blueTeam.concat(this.redTeam);
         for (let i = 0; i < fighters.length; i++) {
-
           if (!fighters[i].isRealPlayer()) continue;
 
           const currentFighter = <HumanFighter>fighters[i];

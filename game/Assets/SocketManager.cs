@@ -11,7 +11,7 @@ public class SocketManager : MonoBehaviour
 {
 
     private WebSocket _socket;
-    private readonly Dictionary<string, Action<string>> _registeredActions = new Dictionary<string, Action<string>>();
+    private readonly Dictionary<string, List<Action<string>>> _registeredActions = new Dictionary<string, List<Action<string>>>();
     private readonly  Queue<string> _registeredQueries = new Queue<string>();
     private readonly  ConcurrentStack<KeyValuePair<Action<string>, string>> _callBackStack = new ConcurrentStack<KeyValuePair<Action<string>, string>>();
     private const float MAX_PING_TIMEOUT = 25f;
@@ -81,7 +81,10 @@ public class SocketManager : MonoBehaviour
             // Debug.Log(data);
             if (_registeredActions.ContainsKey(eventName))
             {
-                _callBackStack.Push(new KeyValuePair<Action<string>, string>(_registeredActions[eventName], data));
+                foreach (var action in _registeredActions[eventName])
+                {
+                    _callBackStack.Push(new KeyValuePair<Action<string>, string>(action, data));
+                }
             }
             else
             {
@@ -97,8 +100,12 @@ public class SocketManager : MonoBehaviour
 
     public void On(string eventName, Action<string> callback)
     {
-        if (_registeredActions.ContainsKey(eventName)) throw new Exception("Cannot register event with the same name");
-        _registeredActions[eventName] = callback;
+        // if (_registeredActions.ContainsKey(eventName)) throw new Exception("Cannot register event with the same name");
+        if (!_registeredActions.ContainsKey(eventName))
+        {
+            _registeredActions[eventName] = new List<Action<string>>();
+        }
+        _registeredActions[eventName].Add(callback);
     }
 
     public void Emit(string eventName, string data = "")
