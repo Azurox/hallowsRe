@@ -26,12 +26,7 @@ export default class MonsterController {
     const filteredGroups = [];
     for (let i = 0; i < groups.length; i++) {
       const group = groups[i];
-      console.log(group);
-      const filteredGroup: any = {
-        id: group._id,
-        monsters: [],
-        position: group.position
-      };
+      const filteredGroup: any = { id: group._id, monsters: [], position: group.position };
 
       for (let j = 0; j < group.monsters.length; j++) {
         const monster = await Monster.findById(group.monsters[j]);
@@ -47,7 +42,6 @@ export default class MonsterController {
   }
 
   async SpawnMonsters(mapPosition: Position) {
-    console.log("spawn a monster group");
     const map = await this.state.MapController.getMap(mapPosition.x, mapPosition.y);
     if (map.monsterGroups.length < this.MAX_MONSTERS_GROUP_BY_MAP) {
       const zone = await Zone.findById(map.zone);
@@ -56,11 +50,7 @@ export default class MonsterController {
         map.monsterGroups.push(zone.specificMonsterGroup);
         await map.save();
         const monsterGroup: IMonsterGroup = await MonsterGroup.findById(zone.specificMonsterGroup).lean();
-        const filteredGroup: any = {
-          id: monsterGroup._id,
-          monsters: [],
-          position: monsterGroup.position
-        };
+        const filteredGroup: any = { id: monsterGroup._id, monsters: [], position: monsterGroup.position };
         for (let i = 0; i < monsterGroup.monsters.length; i++) {
           const monster = await Monster.findById(monsterGroup.monsters[i]);
           filteredGroup.monsters.push({
@@ -70,8 +60,36 @@ export default class MonsterController {
           });
         }
         this.state.io.to(map.name).emit("spawnMonsterGroup", { monsterGroups: [filteredGroup] });
+        this.SetMovingMonsterGroup(mapPosition, monsterGroup._id.toString());
       } else {
         // select random monster from the pool
+      }
+    }
+  }
+
+  SetMovingMonsterGroup(mapPosition: Position, monsterGroupId: string) {
+    console.log("attach change position");
+    this.MoveMonsterGroup(mapPosition, monsterGroupId);
+  }
+
+  async MoveMonsterGroup(mapPosition: Position, monsterGroupId: string) {
+    const map = await this.state.MapController.getLeanMap(mapPosition.x, mapPosition.y);
+    for (let i = 0; i < map.monsterGroups.length; i++) {
+      if (map.monsterGroups[i].equals(monsterGroupId)) {
+        const group = await MonsterGroup.findById(monsterGroupId);
+        const cell = await this.state.MapController.findValidRandomCellInRange(
+          new Position(map.x, map.y),
+          group.position,
+          4
+        );
+        if (cell) {
+          group.position = { x: cell.x, y: cell.y };
+          await group.save();
+          this.state.io
+            .to(map.name)
+            .emit("moveMonsterGroup", { id: monsterGroupId, position: new Position(cell.x, cell.y) });
+          setTimeout(() => this.MoveMonsterGroup(mapPosition, monsterGroupId), 5000);
+        }
       }
     }
   }

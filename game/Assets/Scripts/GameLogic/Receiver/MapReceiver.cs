@@ -48,6 +48,7 @@ public class MapReceiver {
         socket.On("playerMove", PlayerMove);
         socket.On("spawnMonsterGroup", SpawnMonsterGroup);
         socket.On("removeMonsterGroup", RemoveMonsterGroup);
+        socket.On("moveMonsterGroup", MoveMonsterGroup);
         socket.On("removePlayer", RemovePlayer);
         socket.On("fightStarted", (json) => needToReload = true);
     }
@@ -133,6 +134,12 @@ public class MapReceiver {
     {
         RemoveMonsterGroupResponse data = JsonConvert.DeserializeObject<RemoveMonsterGroupResponse>(json);
         MonsterGroupContainer.RemoveGroup(data.id);
+    }
+
+    private void MoveMonsterGroup(string json)
+    {
+        MoveMonsterGroupResponse data = JsonConvert.DeserializeObject<MoveMonsterGroupResponse>(json);
+        MonsterGroupContainer.MoveMonsterGroup(data.id, data.position);
     }
 
     private void RemovePlayer(string json)

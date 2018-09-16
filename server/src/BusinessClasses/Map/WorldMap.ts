@@ -8,9 +8,12 @@ import Spell from "../../Schema/Spell";
 import Monster from "../../Schema/Monster";
 import MonsterGroup from "../../Schema/MonsterGroup";
 import Zone from "../../Schema/Zone";
+import State from "../State";
 
 export default class WorldMap {
-  constructor() {
+  state: State;
+  constructor(state: State) {
+    this.state = state;
     this.saveMap();
     this.saveAccount();
   }
@@ -92,7 +95,6 @@ export default class WorldMap {
     await mobGroup.save();
     map.monsterGroups = [mobGroup.id];
 
-
     const zone = new Zone();
     zone.name = "Freljord";
     zone.forceSpecificMonster = true;
@@ -102,6 +104,7 @@ export default class WorldMap {
 
     map.zone = zone.id;
     await map.save();
+    this.state.MonsterController.SetMovingMonsterGroup(new Position(map.x, map.y), mobGroup.id);
   }
 
   async saveAccount() {

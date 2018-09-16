@@ -4,6 +4,7 @@ import WorldMap from "./Map/WorldMap";
 import Position from "./RelationalObject/Position";
 import Player, { IPlayer } from "../Schema/Player";
 import { IMap } from "../Schema/Map";
+import { ICell } from "../Schema/Cell";
 
 export default class MapController {
   worldMap: WorldMap;
@@ -11,7 +12,7 @@ export default class MapController {
 
   constructor(state: State) {
     this.state = state;
-    this.worldMap = new WorldMap();
+    this.worldMap = new WorldMap(state);
   }
 
   async spawnPlayer(socket: GSocket) {
@@ -112,5 +113,52 @@ export default class MapController {
         return;
       }
     }
+  }
+
+  async findValidRandomCellInRange(mapPosition: Position, position: Position, range: number): Promise<ICell> {
+    const map = await this.worldMap.getMap(mapPosition.x, mapPosition.y);
+
+    const firstHashset: { [id: string]: ICell } = {};
+    firstHashset[map.cells[position.x][position.y].id] = map.cells[position.x][position.y];
+
+    let newCells: { [id: string]: ICell } = this.findValidNeibhors(map, firstHashset);
+
+    let totalCells = {};
+
+    for (let i = 0; i < range - 1; i++) {
+      newCells = this.findValidNeibhors(map, newCells);
+      totalCells = { ...totalCells, ...newCells };
+    }
+
+    const totalArray: ICell[] = Object.values(totalCells);
+    return totalArray[Math.floor(Math.random() * totalArray.length)];
+  }
+
+  findValidNeibhors(map: IMap, cells: { [id: string]: ICell }): { [id: string]: ICell } {
+    const newCell: { [id: string]: ICell } = {};
+
+    for (const id in cells) {
+      const cell = cells[id];
+      let tmpCell;
+      if (cell.x + 1 < map.cells.length) {
+        tmpCell = map.cells[cell.x + 1][cell.y];
+        if (tmpCell && !tmpCell.offScreen && tmpCell.isAccessible) newCell[tmpCell.id] = tmpCell;
+      }
+      if (cell.x - 1 >= 0) {
+        tmpCell = map.cells[cell.x - 1][cell.y];
+        if (tmpCell && !tmpCell.offScreen && tmpCell.isAccessible) newCell[tmpCell.id] = tmpCell;
+      }
+      if (cell.y + 1 < map.cells[cell.x].length) {
+        tmpCell = map.cells[cell.x][cell.y + 1];
+        if (tmpCell && !tmpCell.offScreen && tmpCell.isAccessible) newCell[tmpCell.id] = tmpCell;
+      }
+
+      if (cell.y - 1 >= 0) {
+        tmpCell = map.cells[cell.x][cell.y - 1];
+        if (tmpCell && !tmpCell.offScreen && tmpCell.isAccessible) newCell[tmpCell.id] = tmpCell;
+      }
+    }
+
+    return newCell;
   }
 }

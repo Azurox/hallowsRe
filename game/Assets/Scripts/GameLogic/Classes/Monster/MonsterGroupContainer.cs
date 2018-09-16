@@ -44,6 +44,13 @@ public class MonsterGroupContainer : MonoBehaviour
         });
     }
 
+    public void MoveMonsterGroup(string id, Vector2 position)
+    {
+        if (monsterGroups.ContainsKey(id))
+        {
+            monsterGroups[id].UpdateMonsterGroupPosition(position);
+        }
+    }
 
     public void Clear()
     {
@@ -55,7 +62,8 @@ public class MonsterGroupContainer : MonoBehaviour
         monsterGroups.Clear();
     }
 
-    internal void RemoveGroup(string id)
+
+    public void RemoveGroup(string id)
     {
         if (monsterGroups.ContainsKey(id))
         {
