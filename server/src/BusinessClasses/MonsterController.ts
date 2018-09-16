@@ -56,13 +56,23 @@ export default class MonsterController {
         map.monsterGroups.push(zone.specificMonsterGroup);
         await map.save();
         const monsterGroup: IMonsterGroup = await MonsterGroup.findById(zone.specificMonsterGroup).lean();
+        const filteredGroup: any = {
+          id: monsterGroup._id,
+          monsters: [],
+          position: monsterGroup.position
+        };
         for (let i = 0; i < monsterGroup.monsters.length; i++) {
-          monsters.push(await Monster.findById(monsterGroup.monsters[i]));
+          const monster = await Monster.findById(monsterGroup.monsters[i]);
+          filteredGroup.monsters.push({
+            id: monster.id,
+            name: monster.name,
+            level: monster.level
+          });
         }
+        this.state.io.to(map.name).emit("spawnMonsterGroup", { monsterGroups: [filteredGroup] });
       } else {
         // select random monster from the pool
       }
-      this.state.io.to(map.name).emit("spawnMonsterGroup", monsters);
     }
   }
 

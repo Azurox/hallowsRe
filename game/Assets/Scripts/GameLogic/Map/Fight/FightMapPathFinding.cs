@@ -16,6 +16,8 @@ public class FightMapPathFinding : MonoBehaviour
     {
 
         Init();
+        if (grid == null) return null;
+
 
         Node startNode = grid[(int)from.x, (int)from.y];
         Node targetNode = grid[(int)to.x, (int)to.y];
@@ -74,6 +76,7 @@ public class FightMapPathFinding : MonoBehaviour
     {
         fightMapDTG = GetComponent<FightMapDTG>();
         currentMap = fightMapDTG.GetCells();
+        if (currentMap == null) return;
         grid = new Node[currentMap.GetLength(0), currentMap.GetLength(1)];
 
         for (var i = 0; i < currentMap.GetLength(0); i++)
