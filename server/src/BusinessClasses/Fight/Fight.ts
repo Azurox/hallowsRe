@@ -10,7 +10,7 @@ import SpellImpact from "./SpellImpact";
 import FightEndProcessor from "./FightEndProcessor";
 import Fighter from "./Fighter";
 import MonsterFighter from "./MonsterFighter";
-import AIProcessor from "./IAProcessor";
+import AIProcessor from "./AIProcessor";
 
 export default class Fight {
   /* CONST */
@@ -36,7 +36,6 @@ export default class Fight {
   isFinished: Boolean = false;
   monsterGroupId?: string;
   onFinish?: (id: string, mapPosition: Position) => void;
-
 
   constructor(io: SocketIO.Server, map: IMap) {
     this.io = io;
@@ -370,7 +369,6 @@ export default class Fight {
           if (this.onFinish) {
             this.onFinish(this.monsterGroupId, this.mapPosition);
           }
-
         }
         this.isFinished = true;
       }
