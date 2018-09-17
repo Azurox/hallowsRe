@@ -16,9 +16,11 @@
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\""
   },
   "dependencies": {
+    "@types/pathfinding": "0.0.2",
     "@types/shuffle-array": "0.0.28",
     "async": "^2.6.0",
     "mongoose": "5.2.7",
+    "pathfinding": "^0.4.18",
     "shuffle-array": "^1.0.1",
     "socket.io": "^2.1.1",
     "uuid": "^3.3.2"

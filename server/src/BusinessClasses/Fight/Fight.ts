@@ -9,6 +9,8 @@ import SpellProcessor from "./SpellProcessor";
 import SpellImpact from "./SpellImpact";
 import FightEndProcessor from "./FightEndProcessor";
 import Fighter from "./Fighter";
+import MonsterFighter from "./MonsterFighter";
+import AIProcessor from "./IAProcessor";
 
 export default class Fight {
   /* CONST */
@@ -24,6 +26,7 @@ export default class Fight {
   fightOrder: Fighter[] = [];
   phase: number = 0;
   clock: number = 0;
+  map: IMap;
   blueCells: { position: Position; taken: boolean }[];
   redCells: { position: Position; taken: boolean }[];
   obstacles: Position[];
@@ -38,6 +41,7 @@ export default class Fight {
   constructor(io: SocketIO.Server, map: IMap) {
     this.io = io;
     this.id = uuid();
+    this.map = map;
     this.blueCells = map.blueCells.map(cell => {
       return { position: cell, taken: false };
     });
@@ -251,12 +255,19 @@ export default class Fight {
       if (this.fightOrder[i].getId() == this.acceptedId) {
         if (i + 1 < this.fightOrder.length) {
           this.acceptedId = this.fightOrder[i + 1].getId();
+          if (!this.fightOrder[i + 1].isRealPlayer()) {
+            this.basicAI(<MonsterFighter>this.fightOrder[i + 1]);
+          }
         } else {
           this.acceptedId = this.fightOrder[0].getId();
+          if (!this.fightOrder[0].isRealPlayer()) {
+            this.basicAI(<MonsterFighter>this.fightOrder[0]);
+          }
         }
         break;
       }
     }
+
     this.io.to(this.id).emit("nextTurn", { playerId: this.acceptedId });
   }
 
@@ -427,5 +438,11 @@ export default class Fight {
     }
     console.log(`${fighter.getName()} is dead !`);
     return fightIsFinished;
+  }
+
+  basicAI(monster: MonsterFighter) {
+    console.log("start basic ia");
+    const processor = new AIProcessor(this, monster, this.map, this.blueTeam, this.redTeam, this.fightOrder);
+    processor.process();
   }
 }
