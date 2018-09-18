@@ -6,6 +6,7 @@ import { IMap } from "../Schema/Map";
 import { IMonster } from "../Schema/Monster";
 import MonsterFighter from "./Fight/MonsterFighter";
 import Position from "./RelationalObject/Position";
+import FightRework from "./FightRework/FightRework";
 
 export default class FightController {
   state: State;
@@ -31,7 +32,13 @@ export default class FightController {
     fight.startFight();
   }
 
-  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], monsterGroupId: string , map: IMap, callback: (id: string, mapPosition: Position) => void) {
+  startMonsterFight(
+    firstTeam: IPlayer[],
+    secondTeam: IMonster[],
+    monsterGroupId: string,
+    map: IMap,
+    callback: (id: string, mapPosition: Position) => void
+  ) {
     const fight = new Fight(this.state.io, map);
     fight.monsterGroupId = monsterGroupId;
     this.fights[fight.id] = fight;
@@ -45,6 +52,11 @@ export default class FightController {
     }
 
     fight.startFight(callback);
+  }
+
+  startReworkFight(firstTeam: IPlayer[], secondTeam: IPlayer[], map: IMap) {
+    const fight = new FightRework();
+    fight.on("end", () => {});
   }
 
   tick() {

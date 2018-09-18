@@ -9,8 +9,7 @@ export interface IMap extends Mongoose.Document {
   x: number;
   y: number;
   cells: ICell[][];
-  redCells: Position[];
-  blueCells: Position[];
+  placementCells: { position: Position; color: Side }[];
   npcs: Mongoose.Types.ObjectId[];
   monsterGroups: Mongoose.Types.ObjectId[];
   zone: Mongoose.Types.ObjectId;
@@ -30,8 +29,7 @@ export const MapSchema = new Mongoose.Schema({
   mapPosition: { x: Number, y: Number },
   position: { x: Number, y: Number },
   cells: [[{ type: Mongoose.Schema.Types.ObjectId, ref: "Player" }]],
-  redCells: [{ x: Number, y: Number }],
-  blueCells: [{ x: Number, y: Number }],
+  placementCells: [{ position: { x: Number, y: Number }, color: String }],
   npcs: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Npc", default: [] }],
   monsterGroups: [{ type: Mongoose.Schema.Types.ObjectId, ref: "MonsterGroup", default: [] }],
   zone: { type: Mongoose.Schema.Types.ObjectId, ref: "Zone" }
