@@ -6,6 +6,7 @@ import PathFinding from "pathfinding";
 import AIAction from "./AIAction";
 import AIImpact from "./AIImpact";
 import Position from "../RelationalObject/Position";
+import Spell, { ISpell } from "../../Schema/Spell";
 
 export default class AIProcessor {
   fight: Fight;
@@ -31,7 +32,7 @@ export default class AIProcessor {
     this.fighterOrder = fightOrder;
   }
 
-  process() {
+  async process(): Promise<AIImpact> {
     const weakestTarget = this.findWeakestTarget();
     const grid = this.constructGrid();
     grid.setWalkableAt(weakestTarget.position.x, weakestTarget.position.y, true);
@@ -61,7 +62,13 @@ export default class AIProcessor {
     }
     impact.addPath(clearedPath);
     if (useSpell) {
+      const spell: ISpell = await Spell.findById(this.monster.getSpells()[0]).lean();
+      if (spell.actionPointCost <= this.monster.currentActionPoint) {
+        impact.addSpell(spell._id.toString(), weakestTarget.position);
+      }
     }
+
+    return impact;
   }
 
   findWeakestTarget(): Fighter {

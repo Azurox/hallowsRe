@@ -438,9 +438,10 @@ export default class Fight {
     return fightIsFinished;
   }
 
-  basicAI(monster: MonsterFighter) {
+  async basicAI(monster: MonsterFighter) {
     console.log("start basic ia");
     const processor = new AIProcessor(this, monster, this.map, this.blueTeam, this.redTeam, this.fightOrder);
-    processor.process();
+    const impact = await processor.process();
+   // impact.
   }
 }
