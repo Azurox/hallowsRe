@@ -12,7 +12,7 @@ import CheckinManager from "./CheckinManager";
 import FightEndProcessor from "./FightEndProcessor";
 import MonsterFighter from "../Fight/MonsterFighter";
 import AIProcessor from "./AIProcessor";
-
+import AICommand from "./AICommand";
 
 export default class FightRework extends EventEmitter {
   /* CONST */
@@ -203,7 +203,16 @@ export default class FightRework extends EventEmitter {
     if (canMove) {
       this.io.to(this.id).emit("fighterMove", { playerId: id, path: path });
     }
+  }
 
+  moveMonsterFighter(monster: MonsterFighter, path: Position[]) {
+    for (let i = 0; i < path.length; i++) {
+      const appliedMove = this.applyCell(monster, path[i]);
+      if (appliedMove) {
+        monster.currentMovementPoint--;
+        monster.position = path[i];
+      }
+    }
   }
 
   tick() {
@@ -234,7 +243,7 @@ export default class FightRework extends EventEmitter {
     let nextPlayer: Fighter;
     for (let i = 0; i < this.fightOrder.length; i++) {
       if (this.fightOrder[i].getId() == this.acceptedId) {
-        if ( i + 1 < this.fightOrder.length) {
+        if (i + 1 < this.fightOrder.length) {
           nextPlayer = this.fightOrder[i + 1];
         } else {
           nextPlayer = this.fightOrder[0];
@@ -244,7 +253,7 @@ export default class FightRework extends EventEmitter {
 
     this.acceptedId = nextPlayer.getId();
     this.io.to(this.id).emit("nextTurn", { playerId: nextPlayer.getId() });
-    if (!nextPlayer.isRealPlayer) this.basicAI(<MonsterFighter> nextPlayer);
+    if (!nextPlayer.isRealPlayer) this.basicAI(<MonsterFighter>nextPlayer);
   }
 
   checkPlayerTurn(id: string): boolean {
@@ -262,7 +271,7 @@ export default class FightRework extends EventEmitter {
   useSpell(id: string, spell: ISpell, targetPosition: Position) {
     if (!this.checkPlayerTurn(id)) return;
     const fighter = this.retrieveFighterFromPlayerId(id);
-    const processor = new SpellProcessor (
+    const processor = new SpellProcessor(
       this,
       spell,
       fighter,
@@ -283,12 +292,29 @@ export default class FightRework extends EventEmitter {
           position: targetPosition,
           spellId: spell.id,
           impacts: impacts,
-          checkin: fightIsfinished ? this.checkinManager.createSoftCheckin(human.getId(), this.sendFightResult) : undefined
+          checkin: fightIsfinished
+            ? this.checkinManager.createSoftCheckin(human.getId(), this.sendFightResult)
+            : undefined
         });
       }
     } catch (error) {
       console.log(error);
     }
+  }
+
+  monsterUseSpell(monster: MonsterFighter, spell: ISpell, targetPosition: Position): SpellImpact[] {
+    const processor = new SpellProcessor(
+      this,
+      spell,
+      monster,
+      targetPosition,
+      this.getFightersPosition().concat(this.map.getObstacles())
+    );
+    const impacts = processor.process();
+    monster.currentActionPoint -= spell.actionPointCost;
+    this.applySpellImpacts(impacts);
+    this.updateTimeline();
+    return impacts;
   }
 
   applySpellImpacts(impacts: SpellImpact[]) {
@@ -311,7 +337,7 @@ export default class FightRework extends EventEmitter {
   }
 
   isFightFinished(): boolean {
-    if (this.fightOrder.length == 1 || this.fightOrder.length == 0)  return true;
+    if (this.fightOrder.length == 1 || this.fightOrder.length == 0) return true;
     const baseSide: Side = this.fightOrder[0].side;
     for (const fighter of this.fightOrder) {
       if (fighter.side != baseSide) return false;
@@ -332,7 +358,31 @@ export default class FightRework extends EventEmitter {
   basicAI(monster: MonsterFighter) {
     const processor = new AIProcessor(this, monster, this.map, this.blueTeam, this.redTeam, this.fightOrder);
     const impact = processor.process();
+    const commands: AICommand[] = [];
+    let fightIsfinished: boolean;
+    for (const action of impact.actions) {
+      if (action.path) {
+        const command = new AICommand();
+        command.path = action.path;
+        this.moveMonsterFighter(monster, action.path);
+        commands.push(command);
+      } else if (action.spell) {
+        const command = new AICommand();
+        command.spellId = action.spell.spell;
+        command.targetPosition = action.spell.position; // Fix ambiguous action spell.
+        command.spellImpacts = this.monsterUseSpell(monster, action.spell, command.targetPosition);
+        fightIsfinished = this.isFightFinished();
+        commands.push(command);
+      }
+    }
 
+    const humans = this.getTotalHumansFighter();
+    for (const human of humans) {
+      this.io.to(human.getSocketId()).emit("fighterUseSpell", {
+        monsterId: monster.getId(),
+        commands: commands,
+        checkin: undefined
+      });
+    }
   }
-
 }

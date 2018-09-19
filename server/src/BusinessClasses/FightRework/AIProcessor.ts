@@ -1,4 +1,4 @@
-import Fight from "./Fight";
+import Fight from "./FightRework";
 import { IMap } from "../../Schema/Map";
 import Fighter from "./Fighter";
 import MonsterFighter from "./MonsterFighter";
@@ -31,7 +31,7 @@ export default class AIProcessor {
     this.fighterOrder = fightOrder;
   }
 
-  process() {
+  process(): AIImpact {
     const weakestTarget = this.findWeakestTarget();
     const grid = this.constructGrid();
     grid.setWalkableAt(weakestTarget.position.x, weakestTarget.position.y, true);
@@ -61,7 +61,9 @@ export default class AIProcessor {
     }
     impact.addPath(clearedPath);
     if (useSpell) {
+      impact.addSpell(this.monster.getSpells()[0].toString(), weakestTarget.position);
     }
+    return impact;
   }
 
   findWeakestTarget(): Fighter {
