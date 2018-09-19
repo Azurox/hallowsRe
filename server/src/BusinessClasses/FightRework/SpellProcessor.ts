@@ -1,4 +1,4 @@
-import Fight from "./Fight";
+import Fight from "./FightRework";
 import { ISpell } from "../../Schema/Spell";
 import SpellImpact from "./SpellImpact";
 import Position from "../RelationalObject/Position";

@@ -7,7 +7,7 @@ export default class FightEndProcessor {
     if (win) {
       return new FightResult(win, 50, 15, undefined);
     } else {
-      return new FightResult(win, 0, 0, undefined);
+      return new FightResult(!win, 0, 0, undefined);
     }
   }
 }
