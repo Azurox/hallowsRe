@@ -23,6 +23,7 @@ export default class FightRework extends EventEmitter {
   id: string;
   io: SocketIO.Server;
   clock: number = 0;
+  lockClock: boolean = false;
   phase: number = 0;
   started: boolean = false;
   blueTeam: Fighter[];
@@ -171,6 +172,14 @@ export default class FightRework extends EventEmitter {
     throw Error("Fighter not found");
   }
 
+  retrieveHumanFighterFromSocketId(id: string): HumanFighter {
+    const humans = this.getTotalHumansFighter();
+    for (const human of humans) {
+      if (human.getSocketId() == id) return human;
+    }
+    throw Error("Fighter not found");
+  }
+
   retrieveFighterFromPlayerId(id: string): Fighter {
     for (const fighter of this.fightOrder) {
       if (fighter.getId() == id) return fighter;
@@ -225,6 +234,7 @@ export default class FightRework extends EventEmitter {
         this.startFightPhase1();
       }
     } else {
+      if (this.lockClock) return;
       if (this.clock > this.TURN_TIME) {
         this.nextTurn();
       }
@@ -239,6 +249,7 @@ export default class FightRework extends EventEmitter {
 
   nextTurn() {
     this.clock = 0;
+    this.lockClock = false;
     this.softResetPlayerStats(this.acceptedId);
     let nextPlayer: Fighter;
     for (let i = 0; i < this.fightOrder.length; i++) {
@@ -346,18 +357,18 @@ export default class FightRework extends EventEmitter {
     return true;
   }
 
-  sendFightResult(id: string) {
+  sendFightResult(socketId: string) {
     const fightEndProcessor = new FightEndProcessor();
-    const human = this.retrieveHumanFighterFromPlayerId(id);
+    const human = this.retrieveHumanFighterFromSocketId(socketId);
     const fightResult = fightEndProcessor.process(human.side == this.winningSide);
     this.io.sockets.connected[human.getSocketId()].leave(this.id);
     human.player.leaveFight();
     this.io.to(human.getSocketId()).emit("fightResult", fightResult);
   }
 
-  basicAI(monster: MonsterFighter) {
+  async basicAI(monster: MonsterFighter) {
     const processor = new AIProcessor(this, monster, this.map, this.blueTeam, this.redTeam, this.fightOrder);
-    const impact = processor.process();
+    const impact = await processor.process();
     const commands: AICommand[] = [];
     let fightIsfinished: boolean;
     for (const action of impact.actions) {
@@ -368,21 +379,56 @@ export default class FightRework extends EventEmitter {
         commands.push(command);
       } else if (action.spell) {
         const command = new AICommand();
-        command.spellId = action.spell.spell;
-        command.targetPosition = action.spell.position; // Fix ambiguous action spell.
-        command.spellImpacts = this.monsterUseSpell(monster, action.spell, command.targetPosition);
+        command.spellId = action.spell.spell._id;
+        command.targetPosition = action.spell.position;
+        command.spellImpacts = this.monsterUseSpell(monster, action.spell.spell, command.targetPosition);
         fightIsfinished = this.isFightFinished();
         commands.push(command);
       }
     }
 
     const humans = this.getTotalHumansFighter();
-    for (const human of humans) {
-      this.io.to(human.getSocketId()).emit("fighterUseSpell", {
-        monsterId: monster.getId(),
-        commands: commands,
-        checkin: undefined
-      });
+    if (fightIsfinished) {
+      for (const human of humans) {
+        this.io.to(human.getSocketId()).emit("monsterCommand", {
+          monsterId: monster.getId(),
+          commands: commands,
+          checkin: this.checkinManager.createSoftCheckin(human.getId(), this.sendFightResult)
+        });
+      }
+    } else {
+      const socketsIds = [];
+      for (const human of humans) {
+        socketsIds.push(human.getSocketId());
+      }
+      this.lockClock = true; // Clock is locked till everyone checked or the timeout run.
+      const checkId = this.checkinManager.createComplexCheckin(
+        socketsIds,
+        this.everyOneReceivedIACommand,
+        30,
+        this.waitingForPlayer
+      );
+      for (const human of humans) {
+        this.io.to(human.getSocketId()).emit("monsterCommand", {
+          monsterId: monster.getId(),
+          commands: commands,
+          checkin: checkId
+        });
+      }
     }
+  }
+
+  everyOneReceivedIACommand(ids: string[]) {
+    this.nextTurn();
+  }
+
+  waitingForPlayer(ids: { [id: string]: boolean }) {
+    for (const id in ids) {
+      if (ids[id] == false) {
+        console.log("waiting for " + id + " checking. Timeouted"); // May send "En attente de ..." to room.
+      }
+    }
+
+    this.nextTurn();
   }
 }
