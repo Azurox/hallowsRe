@@ -3,7 +3,7 @@ import Position from "../BusinessClasses/RelationalObject/Position";
 
 export interface IMonsterGroup extends Mongoose.Document {
   monsters: Mongoose.Types.ObjectId[];
-  position: Position;
+  position: { x: number; y: number };
   volatile: boolean;
 }
 

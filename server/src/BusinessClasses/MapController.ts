@@ -55,7 +55,7 @@ export default class MapController {
 
   async checkMovementPossibility(socket: GSocket, position: Position) {
     const map = await this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y);
-    return map.checkPosition(socket.player.position, position);
+    return map.checkPosition(new Position(socket.player.position.x, socket.player.position.y), position);
   }
 
   async playerIsMoving(socket: GSocket, positions: Position[]) {

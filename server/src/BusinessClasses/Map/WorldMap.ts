@@ -52,9 +52,16 @@ export default class WorldMap {
         map.cells[i][j] = cell.id;
       }
     }
-
-    map.blueCells = [new Position(20, 11), new Position(20, 14), new Position(20, 17), new Position(17, 15)];
-    map.redCells = [new Position(14, 17), new Position(14, 14), new Position(14, 11), new Position(17, 16)];
+    map.placementCells = [
+      { position: new Position(20, 11), color: "blue" },
+      { position: new Position(20, 14), color: "blue" },
+      { position: new Position(20, 17), color: "blue" },
+      { position: new Position(17, 15), color: "blue" },
+      { position: new Position(14, 17), color: "red" },
+      { position: new Position(14, 14), color: "red" },
+      { position: new Position(14, 11), color: "red" },
+      { position: new Position(17, 16), color: "red" }
+    ];
 
     const mobStats = new Stats();
     mobStats.life = 15;

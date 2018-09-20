@@ -79,7 +79,7 @@ export default class MonsterController {
         const group = await MonsterGroup.findById(monsterGroupId);
         const cell = await this.state.MapController.findValidRandomCellInRange(
           new Position(map.x, map.y),
-          group.position,
+          new Position(group.position.x, group.position.y),
           4
         );
         if (cell) {

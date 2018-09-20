@@ -313,6 +313,10 @@ export default class FightRework extends EventEmitter {
     }
   }
 
+  checkin(checkId: string, socketId: string) {
+    this.checkinManager.check(checkId, socketId);
+  }
+
   monsterUseSpell(monster: MonsterFighter, spell: ISpell, targetPosition: Position): SpellImpact[] {
     const processor = new SpellProcessor(
       this,
