@@ -9,4 +9,9 @@ export default class SoftCheckin extends Checkin {
         this.socketId = socketId;
         this.callback = callback;
     }
+
+    check(socketId: string): boolean {
+        this.callback(socketId);
+        return true;
+    }
   }

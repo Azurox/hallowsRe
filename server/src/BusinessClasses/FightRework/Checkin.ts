@@ -1,3 +1,3 @@
-export default class Checkin {
-    check() {}
+export default abstract class  Checkin {
+    abstract check(socketId: string): boolean;
 }
