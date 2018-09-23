@@ -35,20 +35,22 @@ export default class MapHandler {
   }
 
   async initializeMovement(positions: Position[]) {
-    const possible = await this.M.checkMovementsPossibility(this.socket, positions);
+    const positionsObject = Position.ToPositions(positions);
+    const possible = await this.M.checkMovementsPossibility(this.socket, positionsObject);
     if (possible) {
-      await this.M.playerIsMoving(this.socket, positions);
-      await this.P.playerIsMoving(this.socket, positions);
+      await this.M.playerIsMoving(this.socket, positionsObject);
+      await this.P.playerIsMoving(this.socket, positionsObject);
     } else {
       console.log("unauthorized movement");
     }
   }
 
   async newPosition(position: Position) {
-    const possible = await this.M.checkMovementPossibility(this.socket, position);
+    const positionsObject = Position.ToPosition(position);
+    const possible = await this.M.checkMovementPossibility(this.socket, positionsObject);
     if (possible) {
-      await this.M.movePlayer(this.socket, position);
-      await this.P.movePlayer(this.socket, position);
+      await this.M.movePlayer(this.socket, positionsObject);
+      await this.P.movePlayer(this.socket, positionsObject);
     } else {
       console.log("unauthorized movement");
     }

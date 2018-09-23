@@ -4,13 +4,13 @@ import SoftCheckin from "./SoftCheckin";
 import ComplexCheckin from "./ComplexCheckin";
 
 export default class CheckinManager {
-  checkins: { [id: string]: Checkin };
+  checkins: { [id: string]: Checkin } = {};
 
   constructor() {}
 
-  createSoftCheckin(socketId: string, callback: (id: string) => void): string {
+  createSoftCheckin(socketIds: string[], callback: (id: string) => void, everyBodyChecked: () => void): string {
     const checkId = uuid();
-    this.checkins[checkId] = new SoftCheckin(socketId, callback);
+    this.checkins[checkId] = new SoftCheckin(socketIds, callback, everyBodyChecked);
     return checkId;
   }
 

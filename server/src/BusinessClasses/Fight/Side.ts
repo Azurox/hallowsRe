@@ -1,1 +1,0 @@
-type Side = "red" | "blue";

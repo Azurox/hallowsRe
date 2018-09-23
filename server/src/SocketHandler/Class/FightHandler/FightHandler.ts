@@ -34,6 +34,7 @@ export default class FightHandler {
     this.socket.on("fighterFinishTurn", this.fighterFinishTurn.bind(this));
     this.socket.on("fighterMove", this.fighterMove.bind(this));
     this.socket.on("fighterUseSpell", this.fighterUseSpell.bind(this));
+    this.socket.on("checkin", this.checkin.bind(this));
   }
 
   async startFight(target: { id: string }) {
@@ -69,7 +70,7 @@ export default class FightHandler {
 
       this.M.removeMonsterGroupFromMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
       this.socket.to(map.name).emit("removePlayer", { id: this.socket.player.id });
-      this.F.startMonsterFight(firstTeam, secondTeam, target.id, map, this.monsterFightFinished.bind(this));
+      this.F.startMonsterFight(firstTeam, secondTeam, map);
     } catch (error) {
       console.log(error);
     }
@@ -81,7 +82,7 @@ export default class FightHandler {
     const monsterGroup: IMonsterGroup = await MonsterGroup.findById(groupId);
     if (monsterGroup.volatile) {
       console.log("group is volatile so destroy it");
-     monsterGroup.remove();
+      monsterGroup.remove();
     }
 
     setTimeout(() => this.E.SpawnMonsters(mapPosition), 5000);
@@ -119,34 +120,39 @@ export default class FightHandler {
     }
   }
 
-  async fighterMove(data: { fightId: string; path: Position[] }) {
+  async fighterMove(data: { fightId: string; path: { x: number; y: number }[] }) {
     const fight = this.F.retrieveFight(data.fightId);
     if (!fight) return;
     if (data.path.length == 0) return;
-    const possible = await this.M.checkMovementsPossibility(this.socket, data.path);
+    const positions = Position.ToPositions(data.path);
+    const possible = await this.M.checkMovementsPossibility(this.socket, positions);
     if (possible) {
       try {
-        fight.moveFighter(this.socket.player.id, data.path);
+        fight.moveHumanFighter(this.socket.player.id, positions);
       } catch (error) {
         console.log(error);
       }
     }
   }
 
-  async fighterUseSpell(data: { fightId: string; spellId: string; position: Position }) {
+  async fighterUseSpell(data: { fightId: string; spellId: string; position: { x: number; y: number } }) {
     const fight = this.F.retrieveFight(data.fightId);
     if (!fight) return;
-    const possible = await this.M.checkMovementPossibility(this.socket, data.position);
+    const position = Position.ToPosition(data.position);
+    const possible = await this.M.checkMovementPossibility(this.socket, position);
     try {
       if (possible && this.socket.player.hasSpell(data.spellId)) {
         const spell = await Spell.findById(data.spellId);
-        await fight.useSpell(this.socket.player.id, spell, data.position);
-        if (fight.isFinished) {
-          this.F.removeFight(data.fightId);
-        }
+        await fight.useSpell(this.socket.player.id, spell, position);
       }
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async checkin(data: { fightId: string; checkId: string }) {
+    const fight = this.F.retrieveFight(data.fightId);
+    if (!fight) return;
+    fight.checkin(data.checkId, this.socket.id);
   }
 }

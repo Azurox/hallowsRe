@@ -1,16 +1,15 @@
 import State from "./State";
-import Fight from "./Fight/Fight";
 import { IPlayer } from "../Schema/Player";
-import HumanFighter from "./Fight/HumanFighter";
+import HumanFighter from "./FightRework/HumanFighter";
 import { IMap } from "../Schema/Map";
-import { IMonster } from "../Schema/Monster";
-import MonsterFighter from "./Fight/MonsterFighter";
+import Monster, { IMonster } from "../Schema/Monster";
+import MonsterFighter from "./FightRework/MonsterFighter";
 import Position from "./RelationalObject/Position";
 import FightRework from "./FightRework/FightRework";
 
 export default class FightController {
   state: State;
-  fights: { [id: string]: Fight } = {};
+  fights: { [id: string]: FightRework } = {};
 
   constructor(state: State) {
     this.state = state;
@@ -18,8 +17,8 @@ export default class FightController {
   }
 
   startFight(firstTeam: IPlayer[], secondTeam: IPlayer[], map: IMap) {
-    const fight = new Fight(this.state.io, map);
-    this.fights[fight.id] = fight;
+    /*const fight = new FightRework(this.state.io, map);
+    // this.fights[fight.id] = fight;
 
     for (let i = 0; i < firstTeam.length; i++) {
       fight.addFighter(new HumanFighter(firstTeam[i], "blue"));
@@ -29,10 +28,10 @@ export default class FightController {
       fight.addFighter(new HumanFighter(secondTeam[i], "red"));
     }
 
-    fight.startFight();
+    fight.startFight();*/
   }
 
-  startMonsterFight(
+  /* startMonsterFight(
     firstTeam: IPlayer[],
     secondTeam: IMonster[],
     monsterGroupId: string,
@@ -52,11 +51,26 @@ export default class FightController {
     }
 
     fight.startFight(callback);
-  }
+  }*/
 
-  startReworkFight(firstTeam: IPlayer[], secondTeam: IPlayer[], map: IMap) {
-    const fight = new FightRework();
-    fight.on("end", () => {});
+  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], map: IMap) {
+    const blueTeam: HumanFighter[] = [];
+    for (let i = 0; i < firstTeam.length; i++) {
+      blueTeam.push(new HumanFighter(firstTeam[i], "blue"));
+    }
+
+    const redTeam: MonsterFighter[] = [];
+    for (let i = 0; i < secondTeam.length; i++) {
+      redTeam.push(new MonsterFighter(secondTeam[i], "red"));
+    }
+
+    const fight = new FightRework(this.state.io, blueTeam, redTeam, map);
+    this.fights[fight.id] = fight;
+
+    fight.startFight();
+    fight.on("end", () => {
+      this.removeFight(fight.id);
+    });
   }
 
   tick() {
@@ -65,11 +79,12 @@ export default class FightController {
     }
   }
 
-  retrieveFight(id: string): Fight {
+  retrieveFight(id: string): FightRework {
     return this.fights[id];
   }
 
   removeFight(id: string) {
+    this.fights[id] = undefined;
     delete this.fights[id];
   }
 }

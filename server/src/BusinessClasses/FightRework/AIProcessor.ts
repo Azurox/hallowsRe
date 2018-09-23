@@ -47,17 +47,16 @@ export default class AIProcessor {
     );
     const impact = new AIImpact(this.monster.getId());
     path.splice(0, 1);
-    console.log(path);
-    if (path[path.length][0] == weakestTarget.position.x && path[path.length][1] == weakestTarget.position.y) {
-      console.log("monster can move near target");
-    }
     const clearedPath: Position[] = [];
     let useSpell = false;
     for (let i = 0; i < this.monster.currentMovementPoint; i++) {
-      if (path[i][0] == weakestTarget.position.x && path[i][1] == weakestTarget.position.y) {
-        useSpell = true;
-      } else {
-        clearedPath.push(new Position(path[i][0], path[i][1]));
+      if (path[i]) {
+        if (path[i][0] == weakestTarget.position.x && path[i][1] == weakestTarget.position.y) {
+          useSpell = true;
+          break;
+        } else {
+          clearedPath.push(new Position(path[i][0], path[i][1]));
+        }
       }
     }
     impact.addPath(clearedPath);

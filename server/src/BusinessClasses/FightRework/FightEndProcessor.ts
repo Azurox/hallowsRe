@@ -5,9 +5,9 @@ export default class FightEndProcessor {
 
   process(win: boolean): FightResult {
     if (win) {
-      return new FightResult(win, 50, 15, undefined);
+      return new FightResult(true, 50, 15, undefined);
     } else {
-      return new FightResult(!win, 0, 0, undefined);
+      return new FightResult(false, 0, 0, undefined);
     }
   }
 }

@@ -1,0 +1,18 @@
+{
+  "id": "5b9822eee5428c09c8a3c559",
+  "name": "Peck",
+  "actionPointCost": 3,
+  "range": 1,
+  "hitArea": [
+    {
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "physicalDamage": 4,
+  "magicDamage": 0,
+  "selfUse": true,
+  "line": false,
+  "heal": false,
+  "ignoreObstacle": false
+}

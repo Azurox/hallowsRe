@@ -20,6 +20,7 @@ public class FightMapReceiver
     public FightUIManager FightUIManager;
     public NpcContainerDTG NpcContainerDTG;
     public MonsterGroupContainer MonsterGroupContainer;
+    public MainFighterEmitter MainFighterEmitter; // Can be null
     private SocketManager socket;
     private Fight Fight;
 
@@ -59,6 +60,8 @@ public class FightMapReceiver
         socket.On("nextTurn", NextTurn);
         socket.On("fighterMove", FighterMove);
         socket.On("fighterUseSpell", FighterUseSpell);
+        socket.On("fightResult", FightResult);
+        socket.On("monsterCommand", MonsterCommand);
     }
 
     private void FightStarted(string json)
@@ -79,19 +82,22 @@ public class FightMapReceiver
 
         var mainFighterEmitter = mainFighterDTG.GetComponent<MainFighterEmitter>();
         mainFighterEmitter.Init(Fight.Id);
+        MainFighterEmitter = mainFighterEmitter;
 
         FightMapHandler.Init(mainFighterDTG, Fight);
         FighterHandler.SetMainFighter(FighterContainerDTG.GetMainFighter());
 
-        for (var i = 0; i < data.blueCells.Length; i++)
+        for (var i = 0; i < data.placementCells.Length; i++)
         {
-            FightMapDTG.SetSpawnCell(Side.blue, data.blueCells[i].position, data.blueCells[i].taken);
-        }
-
-
-        for (var i = 0; i < data.redCells.Length; i++)
-        {
-            FightMapDTG.SetSpawnCell(Side.red, data.redCells[i].position, data.redCells[i].taken);
+            var cell = data.placementCells[i];
+            if(cell.side == "blue")
+            {
+                FightMapDTG.SetSpawnCell(Side.blue, cell.position, cell.taken);
+            }
+            else
+            {
+                FightMapDTG.SetSpawnCell(Side.red, cell.position, cell.taken);
+            }
 
         }
 
@@ -159,7 +165,7 @@ public class FightMapReceiver
     private void NextTurn(string json)
     {
         PlayerIdResponse data = JsonConvert.DeserializeObject<PlayerIdResponse>(json);
-
+        Debug.Log("Its now " + data.playerId + " turn");
         Fight.SetTurnId(data.playerId);
         FightUIManager.HighlightFighter(data.playerId);
     }
@@ -193,9 +199,9 @@ public class FightMapReceiver
             impacts.Add(impact);
         }
 
-        if (data.fightEnd != null)
+        if (data.checkin != null)
         {
-            FighterContainerDTG.FighterUseSpell(user, spell, data.position, impacts, () => { FightFinished(data.fightEnd); });
+            FighterContainerDTG.FighterUseSpell(user, spell, data.position, impacts, () => { if (MainFighterEmitter != null) MainFighterEmitter.Checkin(data.checkin); });
         }
         else
         {
@@ -203,14 +209,50 @@ public class FightMapReceiver
         }
     }
 
-    private void FightFinished(string json)
+    private void MonsterCommand(string json)
     {
-        FightEndResponse data = JsonConvert.DeserializeObject<FightEndResponse>(json);
-        FightFinished(data);
+        Debug.Log("receive monster command");
+        MonsterCommandResponse data = JsonConvert.DeserializeObject<MonsterCommandResponse>(json);
+        ProcessCommand(data, 0);
     }
 
-    private void FightFinished(FightEndResponse data)
+    private void ProcessCommand(MonsterCommandResponse data, int i)
     {
+        if (data.commands != null && i < data.commands.Length && data.commands[i] != null)
+        {
+            if (data.commands[i].path != null && data.commands[i].path.Length > 0)
+            {
+                FighterContainerDTG.MoveFighter(data.monsterId, data.commands[0].path.ToList(), ()=> { ProcessCommand(data, i + 1); });
+            }else if(data.commands[i].spellId != null)
+            {
+                Fighter user = Fight.GetFighter(data.monsterId);
+                Spell spell = ResourcesLoader.Instance.GetSpell(data.commands[i].spellId);
+                List<Impact> impacts = new List<Impact>();
+                for (var j = 0; j < data.commands[i].spellImpacts.Length; j++)
+                {
+                    Impact impact = new Impact(data.commands[i].spellImpacts[j]);
+                    impacts.Add(impact);
+                }
+                FighterContainerDTG.FighterUseSpell(user, spell, data.commands[i].targetPosition, impacts, () => { ProcessCommand(data, i + 1); });
+            }
+            else
+            {
+                ProcessCommand(data, i + 1);
+            }
+        }
+        else
+        {
+            if (data.checkin != null)
+            {
+                Debug.Log("Checked monster action");
+                MainFighterEmitter.Checkin(data.checkin);
+            }
+        }
+    }
+
+    private void FightResult(string json)
+    {
+        FightEndResponse data = JsonConvert.DeserializeObject<FightEndResponse>(json);
         FighterContainerDTG.gameObject.SetActive(false);
         FighterContainerDTG.Clear();
         FightMapDTG.Clear();
@@ -218,4 +260,5 @@ public class FightMapReceiver
         GlobalUIManager.GetWorldUIManager().ShowAfterFightStats(afterFightStats);
         socket.Emit("loadMap");
     }
+
 }

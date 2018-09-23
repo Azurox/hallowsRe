@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -55,4 +56,15 @@ public class MainFighterEmitter : MonoBehaviour
         UseSpellRequest request = new UseSpellRequest(fightId, spell.id, new PositionRequest(position));
         socket.Emit("fighterUseSpell", JsonConvert.SerializeObject(request));
     }
+
+    public void Checkin(string checkin)
+    {
+        CheckinRequest request = new CheckinRequest(fightId, checkin);
+        Utils.Instance.DelayCoroutine(0.200f, () =>
+        {
+            socket.Emit("checkin", JsonConvert.SerializeObject(request));
+
+        });
+    }
+
 }

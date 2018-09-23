@@ -43,9 +43,9 @@ export default class ComplexCheckin extends Checkin {
         if (this.timeout) {
           clearTimeout(this.timeoutReference);
         }
-        this.callback(Object.keys(this.checkList));
-        return true;
       }
+      this.callback(Object.keys(this.checkList));
+      return true;
     } else {
       return false;
     }

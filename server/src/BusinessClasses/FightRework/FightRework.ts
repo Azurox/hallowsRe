@@ -10,7 +10,7 @@ import SpellProcessor from "./SpellProcessor";
 import SpellImpact from "./SpellImpact";
 import CheckinManager from "./CheckinManager";
 import FightEndProcessor from "./FightEndProcessor";
-import MonsterFighter from "../Fight/MonsterFighter";
+import MonsterFighter from "../FightRework/MonsterFighter";
 import AIProcessor from "./AIProcessor";
 import AICommand from "./AICommand";
 
@@ -51,7 +51,7 @@ export default class FightRework extends EventEmitter {
 
     // Initialize placement cells
     this.placementCells = this.map.placementCells.map(cell => {
-      return { position: cell.position, taken: false, side: cell.color };
+      return { position: new Position(cell.position.x, cell.position.y), taken: false, side: cell.color };
     });
 
     this.mapObstacles = this.map.getObstacles(); // Get all obstacles of the current map.
@@ -104,15 +104,17 @@ export default class FightRework extends EventEmitter {
   teleportPlayerPhase0(fighter: Fighter, position: Position) {
     if (this.phase != 0) return;
     for (const targetCell of this.placementCells) {
-      if (targetCell.position.equals(position) && !targetCell.taken) {
-        for (const oldCell of this.placementCells) {
-          if (oldCell.position.equals(position)) {
-            oldCell.taken = false;
+      if (targetCell.position.equals(position)) {
+        if (!targetCell.taken) {
+          for (const oldCell of this.placementCells) {
+            if (oldCell.position.equals(fighter.position)) {
+              oldCell.taken = false;
+            }
           }
+          fighter.position = position;
+          targetCell.taken = false;
+          this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.getId() });
         }
-        fighter.position = position;
-        targetCell.taken = false;
-        this.io.to(this.id).emit("teleportPreFight", { position: position, playerId: fighter.getId() });
       }
     }
   }
@@ -130,11 +132,11 @@ export default class FightRework extends EventEmitter {
   startFightPhase1(timeout: boolean = false) {
     this.clock = 0;
     if (timeout) {
-      this.phase = 1;
       for (let i = 0; i < this.fightOrder.length; i++) {
         this.fightOrder[i].ready = true;
       }
     }
+    this.phase = 1;
     this.acceptedId = this.fightOrder[0].getId();
     this.io.to(this.id).emit("fightPhase1", { playerId: this.acceptedId });
   }
@@ -151,7 +153,7 @@ export default class FightRework extends EventEmitter {
     const allPlayers = this.blueTeam.concat(this.redTeam);
     const humans: HumanFighter[] = [];
     for (let i = 0; i < allPlayers.length; i++) {
-      if (allPlayers[i].isRealPlayer) humans.push(<HumanFighter>allPlayers[i]);
+      if (allPlayers[i].isRealPlayer()) humans.push(<HumanFighter>allPlayers[i]);
     }
     return humans;
   }
@@ -190,7 +192,7 @@ export default class FightRework extends EventEmitter {
   moveHumanFighter(id: string, path: Position[]) {
     if (!this.checkPlayerTurn(id)) return new Error("Not player turn !");
     const currentFighter = this.retrieveHumanFighterFromPlayerId(id);
-    let canMove = false;
+    let canMove = true;
     for (const fighter of this.fightOrder) {
       for (let i = 0; i < path.length; i++) {
         if (fighter.position.equals(path[i]) && fighter.getId() != id) {
@@ -264,7 +266,7 @@ export default class FightRework extends EventEmitter {
 
     this.acceptedId = nextPlayer.getId();
     this.io.to(this.id).emit("nextTurn", { playerId: nextPlayer.getId() });
-    if (!nextPlayer.isRealPlayer) this.basicAI(<MonsterFighter>nextPlayer);
+    if (!nextPlayer.isRealPlayer()) this.basicAI(<MonsterFighter>nextPlayer);
   }
 
   checkPlayerTurn(id: string): boolean {
@@ -297,15 +299,33 @@ export default class FightRework extends EventEmitter {
       this.updateTimeline();
       const fightIsfinished = this.isFightFinished();
       const humans = this.getTotalHumansFighter();
-      for (const human of humans) {
-        this.io.to(human.getSocketId()).emit("fighterUseSpell", {
+
+      if (fightIsfinished) {
+        const socketsIds = [];
+        for (const human of humans) {
+          socketsIds.push(human.getSocketId());
+        }
+        const checkId = this.checkinManager.createSoftCheckin(
+          socketsIds,
+          this.sendFightResult.bind(this),
+          this.destroyFight.bind(this)
+        );
+
+        for (const human of humans) {
+          this.io.to(human.getSocketId()).emit("fighterUseSpell", {
+            playerId: id,
+            position: targetPosition,
+            spellId: spell.id,
+            impacts: impacts,
+            checkin: checkId
+          });
+        }
+      } else {
+        this.io.to(this.id).emit("fighterUseSpell", {
           playerId: id,
           position: targetPosition,
           spellId: spell.id,
-          impacts: impacts,
-          checkin: fightIsfinished
-            ? this.checkinManager.createSoftCheckin(human.getId(), this.sendFightResult)
-            : undefined
+          impacts: impacts
         });
       }
     } catch (error) {
@@ -352,7 +372,6 @@ export default class FightRework extends EventEmitter {
   }
 
   isFightFinished(): boolean {
-    if (this.fightOrder.length == 1 || this.fightOrder.length == 0) return true;
     const baseSide: Side = this.fightOrder[0].side;
     for (const fighter of this.fightOrder) {
       if (fighter.side != baseSide) return false;
@@ -393,11 +412,21 @@ export default class FightRework extends EventEmitter {
 
     const humans = this.getTotalHumansFighter();
     if (fightIsfinished) {
+      const socketsIds = [];
+      for (const human of humans) {
+        socketsIds.push(human.getSocketId());
+      }
+      const checkId = this.checkinManager.createSoftCheckin(
+        socketsIds,
+        this.sendFightResult.bind(this),
+        this.destroyFight.bind(this)
+      );
+
       for (const human of humans) {
         this.io.to(human.getSocketId()).emit("monsterCommand", {
           monsterId: monster.getId(),
           commands: commands,
-          checkin: this.checkinManager.createSoftCheckin(human.getId(), this.sendFightResult)
+          checkin: checkId
         });
       }
     } else {
@@ -408,9 +437,9 @@ export default class FightRework extends EventEmitter {
       this.lockClock = true; // Clock is locked till everyone checked or the timeout run.
       const checkId = this.checkinManager.createComplexCheckin(
         socketsIds,
-        this.everyOneReceivedIACommand,
-        30,
-        this.waitingForPlayer
+        this.everyOneReceivedIACommand.bind(this),
+        30000,
+        this.waitingForPlayer.bind(this)
       );
       for (const human of humans) {
         this.io.to(human.getSocketId()).emit("monsterCommand", {
@@ -434,5 +463,9 @@ export default class FightRework extends EventEmitter {
     }
 
     this.nextTurn();
+  }
+
+  destroyFight() {
+    this.emit("end");
   }
 }

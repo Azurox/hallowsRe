@@ -60,7 +60,7 @@ public class FighterContainerDTG : MonoBehaviour {
         return mainFighter;
     }
 
-    public void MoveFighter(string id, List<Vector2> path)
+    public void MoveFighter(string id, List<Vector2> path, Action endCallback = null)
     {
         if (fighters.ContainsKey(id))
         {
@@ -75,7 +75,7 @@ public class FighterContainerDTG : MonoBehaviour {
                 {
                     FightMapDTG.SetCellAvailability(fighter.GetFighter().Position, true);
                 }
-            });
+            }, endCallback);
 
         }
     }
@@ -126,6 +126,7 @@ public class FighterContainerDTG : MonoBehaviour {
 
     public void FighterUseSpell(Fighter fighter, Spell spell, Vector2 position, List<Impact> impacts, Action endCallback)
     {
+
         if (fighter.IsMainPlayer)
         {
             mainFighter.UseSpell(spell, position, () =>
@@ -141,12 +142,12 @@ public class FighterContainerDTG : MonoBehaviour {
                             DeleteFighterGameObject(target.GetFighter().Id);
                         }
 
-                        if(endCallback != null)
-                        {
-                            endCallback();
-                        }
                     });
                     FightUIManager.ShowImpact(impact, target.GetFighter().Position);
+                }
+                if(endCallback != null)
+                {
+                    endCallback();
                 }
             });
         }
@@ -166,10 +167,6 @@ public class FighterContainerDTG : MonoBehaviour {
                                 DeleteMainFighterGameObject();
                             }
 
-                            if (endCallback != null)
-                            {
-                                endCallback();
-                            }
                         });
                         FightUIManager.ShowImpact(impact, mainFighter.GetFighter().Position);
                     }
@@ -183,15 +180,13 @@ public class FighterContainerDTG : MonoBehaviour {
                             {
                                 DeleteFighterGameObject(target.GetFighter().Id);
                             }
-
-                            if (endCallback != null)
-                            {
-                                endCallback();
-                            }
                         });
                         FightUIManager.ShowImpact(impact, target.GetFighter().Position);
                     }
-
+                }
+                if (endCallback != null)
+                {
+                    endCallback();
                 }
             });
         }

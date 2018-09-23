@@ -9,7 +9,7 @@ export interface IMap extends Mongoose.Document {
   x: number;
   y: number;
   cells: ICell[][];
-  placementCells: { position: Position; color: Side }[];
+  placementCells: { position: { x: number; y: number }; color: Side }[];
   npcs: Mongoose.Types.ObjectId[];
   monsterGroups: Mongoose.Types.ObjectId[];
   zone: Mongoose.Types.ObjectId;

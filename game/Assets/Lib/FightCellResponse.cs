@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class FightCellResponse {
     public Vector2 position;
+    public string side;
     public bool taken;
 }

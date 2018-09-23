@@ -41,7 +41,7 @@ export default class PlayerController {
       if (socket.player.path.length == 0) {
         socket.player.isMoving = false;
       }
-      socket.player.position = position;
+      socket.player.position = position.toSimplePosition();
       await socket.player.save();
     }
   }

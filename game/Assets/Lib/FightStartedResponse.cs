@@ -5,6 +5,5 @@ using UnityEngine;
 public class FightStartedResponse {
     public string id;
     public FighterReponse[] fighters;
-    public FightCellResponse[] blueCells;
-    public FightCellResponse[] redCells;
+    public FightCellResponse[] placementCells;
 }

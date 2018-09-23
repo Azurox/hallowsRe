@@ -10,7 +10,8 @@
       "name": "Debug",
       "program": "${workspaceFolder}/dist/server.js",
       "outFiles": ["${workspaceFolder}/**/*.js"],
-      "sourceMaps": true
+      "sourceMaps": true,
+      "preLaunchTask": "tsc"
     }
   ]
 }

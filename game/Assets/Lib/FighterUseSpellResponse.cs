@@ -7,5 +7,5 @@ public class FighterUseSpellResponse {
     public Vector2 position;
     public string spellId;
     public ImpactResponse[] impacts;
-    public FightEndResponse fightEnd;
+    public string checkin;
 }
