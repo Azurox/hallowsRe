@@ -6,6 +6,12 @@ public class MapPathFinding : MonoBehaviour {
     private MapDTG mapDTG;
     private Cell[,] currentMap;
     public Node[,] grid;
+    private bool ready = false;
+
+    public bool IsReady()
+    {
+        return ready;
+    }
 
     private void Init()
     {
@@ -22,6 +28,7 @@ public class MapPathFinding : MonoBehaviour {
                     grid[i, j] = new Node(currentMap[j, i].IsAccessible, new Vector2(i, j), i, j);
                 }
             }
+            ready = true;
         }
         else
         {

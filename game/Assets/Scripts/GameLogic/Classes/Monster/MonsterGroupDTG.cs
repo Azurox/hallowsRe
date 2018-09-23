@@ -33,19 +33,33 @@ public class MonsterGroupDTG : MonoBehaviour
         monsterGroup.position = position;
         if (monsters.Count == 1)
         {
-            var path = mapPathFinding.FindPath(monsters[0].GetMonster().position, position);
+            List<Vector2> path = null;
+            if (mapPathFinding.IsReady())
+            {
+                path = mapPathFinding.FindPath(monsters[0].GetMonster().position, position);
+            }
             monsters[0].AttributePosition(position, path, withoutMovement);
         }
         else
         {
-
-            var availableCell = mapPathFinding.FindAvailableCellInRange(position, 2);
-
-            foreach (var monster in monsters)
+            List<Vector2> path = null;
+            List<Vector2> availableCell = null;
+            if (mapPathFinding.IsReady())
             {
-                var path = mapPathFinding.FindPath(monsters[0].GetMonster().position, availableCell[Utils.Instance.Random.Next(availableCell.Count)]);
-                monster.AttributePosition(position, path, withoutMovement);
+                availableCell = mapPathFinding.FindAvailableCellInRange(position, 2);
+                path = mapPathFinding.FindPath(monsters[0].GetMonster().position, position);
             }
+            monsters[0].AttributePosition(position, path, withoutMovement);
+
+            for (int i = 1; i< monsters.Count; i++)
+            {
+                if (availableCell != null)
+                {
+                    path = mapPathFinding.FindPath(monsters[i].GetMonster().position, availableCell[Utils.Instance.Random.Next(availableCell.Count)]);
+                }
+                monsters[i].AttributePosition(position, path, withoutMovement);
+            }
+
         }
     }
 

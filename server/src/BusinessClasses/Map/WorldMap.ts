@@ -95,8 +95,16 @@ export default class WorldMap {
     mob.loot = [];
     await mob.save();
 
+    const mob2 = new Monster();
+    mob2.name = "Grand Bims";
+    mob2.level = 1;
+    mob2.stats = mobStats;
+    mob2.spells = [mobSpell.id];
+    mob2.loot = [];
+    await mob2.save();
+
     const mobGroup = new MonsterGroup();
-    mobGroup.monsters = [mob.id];
+    mobGroup.monsters = [mob.id, mob2.id];
     mobGroup.volatile = false;
     mobGroup.position = { x: 15, y: 15 };
     await mobGroup.save();
