@@ -17,43 +17,22 @@ export default class FightController {
   }
 
   startFight(firstTeam: IPlayer[], secondTeam: IPlayer[], map: IMap) {
-    /*const fight = new FightRework(this.state.io, map);
-    // this.fights[fight.id] = fight;
-
+    const blueTeam: HumanFighter[] = [];
     for (let i = 0; i < firstTeam.length; i++) {
-      fight.addFighter(new HumanFighter(firstTeam[i], "blue"));
+      blueTeam.push(new HumanFighter(firstTeam[i], "blue"));
     }
 
+    const redTeam: HumanFighter[] = [];
     for (let i = 0; i < secondTeam.length; i++) {
-      fight.addFighter(new HumanFighter(secondTeam[i], "red"));
+      redTeam.push(new HumanFighter(secondTeam[i], "red"));
     }
 
-    fight.startFight();*/
+    const fight = new FightRework(this.state.io, blueTeam, redTeam, map);
+    this.fights[fight.id] = fight;
+    fight.startFight();
   }
 
-  /* startMonsterFight(
-    firstTeam: IPlayer[],
-    secondTeam: IMonster[],
-    monsterGroupId: string,
-    map: IMap,
-    callback: (id: string, mapPosition: Position) => void
-  ) {
-    const fight = new Fight(this.state.io, map);
-    fight.monsterGroupId = monsterGroupId;
-    this.fights[fight.id] = fight;
-
-    for (let i = 0; i < firstTeam.length; i++) {
-      fight.addFighter(new HumanFighter(firstTeam[i], "blue"));
-    }
-
-    for (let i = 0; i < secondTeam.length; i++) {
-      fight.addFighter(new MonsterFighter(secondTeam[i], "red"));
-    }
-
-    fight.startFight(callback);
-  }*/
-
-  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], map: IMap) {
+  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], map: IMap, monsterGroupId: string) {
     const blueTeam: HumanFighter[] = [];
     for (let i = 0; i < firstTeam.length; i++) {
       blueTeam.push(new HumanFighter(firstTeam[i], "blue"));
@@ -70,6 +49,7 @@ export default class FightController {
     fight.startFight();
     fight.on("end", () => {
       this.removeFight(fight.id);
+      this.state.MonsterController.monsterFightFinished(monsterGroupId, new Position(map.x, map.y));
     });
   }
 

@@ -70,22 +70,10 @@ export default class FightHandler {
 
       this.M.removeMonsterGroupFromMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
       this.socket.to(map.name).emit("removePlayer", { id: this.socket.player.id });
-      this.F.startMonsterFight(firstTeam, secondTeam, map);
+      this.F.startMonsterFight(firstTeam, secondTeam, map, target.id);
     } catch (error) {
       console.log(error);
     }
-  }
-
-  async monsterFightFinished(groupId: string, mapPosition: Position) {
-    console.log("Fight is finished, let's respawn a group");
-
-    const monsterGroup: IMonsterGroup = await MonsterGroup.findById(groupId);
-    if (monsterGroup.volatile) {
-      console.log("group is volatile so destroy it");
-      monsterGroup.remove();
-    }
-
-    setTimeout(() => this.E.SpawnMonsters(mapPosition), 5000);
   }
 
   async teleportPreFight(data: { x: number; y: number; fightId: string }) {

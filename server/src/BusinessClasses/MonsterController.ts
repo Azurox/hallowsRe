@@ -103,4 +103,14 @@ export default class MonsterController {
 
     return monsters;
   }
+
+  async monsterFightFinished(monsterGroupId: string, position: Position) {
+    const monsterGroup: IMonsterGroup = await MonsterGroup.findById(monsterGroupId);
+    if (monsterGroup.volatile) {
+      console.log("group is volatile so destroy it");
+      monsterGroup.remove();
+    }
+
+    setTimeout(() => this.SpawnMonsters(position), 5000);
+  }
 }

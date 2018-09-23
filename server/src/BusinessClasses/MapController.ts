@@ -73,10 +73,13 @@ export default class MapController {
   }
 
   async disconnectPlayer(socket: GSocket) {
-    const map = await this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y);
-
-    await map.removePlayer(socket.player._id);
-    socket.to(map.name).emit("disconnectPlayer", { id: socket.player._id });
+    if (socket.player && socket.player.mapPosition) {
+      const map = await this.worldMap.getMap(socket.player.mapPosition.x, socket.player.mapPosition.y);
+      await map.removePlayer(socket.player._id);
+      socket.to(map.name).emit("disconnectPlayer", { id: socket.player._id });
+    } else {
+      console.log("socket doesn't have a map position ! ");
+    }
   }
 
   async getLeanMap(x: number, y: number): Promise<IMap> {
