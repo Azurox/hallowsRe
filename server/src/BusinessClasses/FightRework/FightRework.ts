@@ -380,12 +380,12 @@ export default class FightRework extends EventEmitter {
     return true;
   }
 
-  sendFightResult(socketId: string) {
+  async sendFightResult(socketId: string) {
     const fightEndProcessor = new FightEndProcessor();
     const human = this.retrieveHumanFighterFromSocketId(socketId);
     const fightResult = fightEndProcessor.process(human.side == this.winningSide);
     this.io.sockets.connected[human.getSocketId()].leave(this.id);
-    human.player.leaveFight();
+    await human.player.leaveFight();
     this.io.to(human.getSocketId()).emit("fightResult", fightResult);
   }
 

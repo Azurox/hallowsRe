@@ -68,7 +68,7 @@ export default class FightHandler {
       const secondTeam: IMonster[] = await this.E.RetrieveMonsters(monsterGroup);
       if (!secondTeam) throw new Error("Cannot retrieve monster from map !");
 
-      this.M.removeMonsterGroupFromMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
+      await this.M.removeMonsterGroupFromMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
       this.socket.to(map.name).emit("removePlayer", { id: this.socket.player.id });
       this.F.startMonsterFight(firstTeam, secondTeam, map, target.id);
     } catch (error) {
