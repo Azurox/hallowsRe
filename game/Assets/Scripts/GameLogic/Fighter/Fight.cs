@@ -94,7 +94,7 @@ public class Fight {
         List<Vector2> positions = new List<Vector2>();
         foreach (var fighter in fightersBlue.Concat(fightersRed).ToList())
         {
-            if (fighter.Id != mainFighter.Id)
+            if (fighter.Id != mainFighter.Id && !fighter.IsDead())
             {
                 positions.Add(fighter.Position);
             }

@@ -21,6 +21,8 @@ export default class WorldMap {
   async saveMap() {
     await Map.remove({});
     await Cell.remove({});
+    await MonsterGroup.remove({});
+    await Monster.remove({});
     const map = new Map();
     map.x = 0;
     map.y = 0;

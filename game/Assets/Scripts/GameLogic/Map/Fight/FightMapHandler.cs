@@ -110,8 +110,10 @@ public class FightMapHandler : MonoBehaviour {
             {
                 var physicalObstacles = fightMapDTG.GetObstacles();
                 var fightersPosition = fight.GetFightersPositionsButMainFighter();
-                physicalObstacles.UnionWith(fightersPosition);
-                cells = GetComponent<FightMapPathFinding>().FindSpellRangeWithObstacle(position, physicalObstacles, spell.range, true, spell.line);
+                var totalObstacles = new HashSet<Vector2>(fightersPosition);
+                totalObstacles.UnionWith(physicalObstacles);
+
+                cells = GetComponent<FightMapPathFinding>().FindSpellRangeWithObstacle(position, totalObstacles, spell.range, true, spell.line);
             }
             else{
                 cells = GetComponent<FightMapPathFinding>().FindSpellRange(position, spell.range, true, spell.line);

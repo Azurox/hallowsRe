@@ -165,11 +165,17 @@ public class Fighter
     {
         if (isDead)
         {
+            Debug.Log("fighter is dead !");
             dead = true;
             if (Death != null)
             {
                 Death(Id);
             }
         }
+    }
+
+    public bool IsDead()
+    {
+        return dead;
     }
 }
