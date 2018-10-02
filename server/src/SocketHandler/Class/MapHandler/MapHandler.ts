@@ -39,7 +39,7 @@ export default class MapHandler {
     const possible = await this.M.checkMovementsPossibility(this.socket, positionsObject);
     if (possible) {
       await this.M.playerIsMoving(this.socket, positionsObject);
-      await this.P.playerIsMoving(this.socket, positionsObject);
+      this.P.playerIsMoving(this.socket, positionsObject);
     } else {
       console.log("unauthorized movement");
     }
@@ -50,7 +50,7 @@ export default class MapHandler {
     const possible = await this.M.checkMovementPossibility(this.socket, positionsObject);
     if (possible) {
       await this.M.movePlayer(this.socket, positionsObject);
-      await this.P.movePlayer(this.socket, positionsObject);
+      this.P.movePlayer(this.socket, positionsObject);
     } else {
       console.log("unauthorized movement");
     }

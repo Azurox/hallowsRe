@@ -29,20 +29,24 @@ export default class PlayerController {
     return players;
   }
 
-  async playerIsMoving(socket: GSocket, positions: Position[]): Promise<void> {
+  playerIsMoving(socket: GSocket, positions: Position[]): void {
     socket.player.isMoving = true;
     socket.player.path = positions;
-    await socket.player.save();
+    socket.player.save().catch(error => {
+      console.log("saving error on playerMoving");
+    });
   }
 
-  async movePlayer(socket: GSocket, position: Position): Promise<void> {
+  movePlayer(socket: GSocket, position: Position): void {
     if (socket.player.path[0].x == position.x && socket.player.path[0].y == position.y) {
       socket.player.path.shift();
       if (socket.player.path.length == 0) {
         socket.player.isMoving = false;
       }
       socket.player.position = position.toSimplePosition();
-      await socket.player.save();
+      socket.player.save().catch(error => {
+        console.log("saving error on movingPlayer");
+      });
     }
   }
 }
