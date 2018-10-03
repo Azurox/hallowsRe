@@ -9,21 +9,27 @@ export default class CheckinManager {
   constructor() {}
 
   createSoftCheckin(socketIds: string[], callback: (id: string) => void, everyBodyChecked: () => void): string {
-    const checkId = uuid();
-    this.checkins[checkId] = new SoftCheckin(socketIds, callback, everyBodyChecked);
-    return checkId;
+    if (socketIds.length == 0) {
+      everyBodyChecked();
+      return "noCheckId";
+    } else {
+      const checkId = uuid();
+      this.checkins[checkId] = new SoftCheckin(socketIds, callback, everyBodyChecked);
+
+      return checkId;
+    }
   }
 
   createComplexCheckin(
     socketIds: string[],
     callback: (ids: string[]) => void,
     timeout = 0,
-    callbackTimeout: (ids: { [id: string]: boolean }) => void = undefined
+    callbackTimeout: (checkId: string, ids: { [id: string]: boolean }) => void = undefined
   ): string {
     const checkId = uuid();
     const mergedCallback = (ids: { [id: string]: boolean }) => {
       if (callbackTimeout) {
-        callbackTimeout(ids);
+        callbackTimeout(checkId, ids);
       }
       this.deleteCheck(checkId);
     };

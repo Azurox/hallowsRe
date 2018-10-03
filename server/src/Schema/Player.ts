@@ -14,8 +14,10 @@ export interface IPlayer extends Mongoose.Document {
   stats: IStats;
   spells: Mongoose.Types.ObjectId[];
   inFight: boolean;
+  lastFightId: string;
   hasSpell(id: string): boolean;
   enterInFight(): Promise<void>;
+  setLastFightId(id: string): Promise<void>;
   leaveFight(): Promise<void>;
 }
 
@@ -29,7 +31,8 @@ export const PlayerSchema = new Mongoose.Schema({
   path: [{ x: Number, y: Number }],
   stats: { type: Mongoose.Schema.Types.ObjectId, ref: "Stats" },
   spells: [{ type: Mongoose.Schema.Types.ObjectId, ref: "Spell" }],
-  inFight: { type: Boolean, default: false }
+  inFight: { type: Boolean, default: false },
+  lastFightId: String
 });
 
 PlayerSchema.method("hasSpell", function(id: string): boolean {
@@ -53,12 +56,23 @@ PlayerSchema.method("enterInFight", async function(): Promise<void> {
   await player.save();
 });
 
+PlayerSchema.method("setLastFightId", async function(fightId: string): Promise<void> {
+  const player: IPlayer = this;
+  if (!player.inFight) {
+    throw new Error("Player not in fight !!");
+  }
+  player.lastFightId = fightId;
+  await player.save();
+});
+
+
 PlayerSchema.method("leaveFight", async function(): Promise<void> {
   const player: IPlayer = this;
   if (!player.inFight) {
     throw new Error("Player not in a fight !!");
   }
   player.inFight = false;
+  player.lastFightId = undefined;
   await player.save();
 });
 

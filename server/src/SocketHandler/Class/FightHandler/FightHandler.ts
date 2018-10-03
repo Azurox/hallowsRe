@@ -35,6 +35,7 @@ export default class FightHandler {
     this.socket.on("fighterMove", this.fighterMove.bind(this));
     this.socket.on("fighterUseSpell", this.fighterUseSpell.bind(this));
     this.socket.on("checkin", this.checkin.bind(this));
+    this.socket.on("disconnect", this.disconnect.bind(this));
   }
 
   async startFight(target: { id: string }) {
@@ -45,7 +46,11 @@ export default class FightHandler {
       await secondTeam[i].enterInFight();
     }
     const map = await this.M.getMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y);
-    this.F.startFight(firstTeam, secondTeam, map);
+    const fightId = this.F.startFight(firstTeam, secondTeam, map);
+    this.socket.player.setLastFightId(fightId);
+    for (let i = 0; i < secondTeam.length; i++) {
+      secondTeam[i].setLastFightId(fightId);
+    }
 
     this.socket.to(map.name).emit("removePlayer", { id: this.socket.player.id });
     for (let i = 0; i < secondTeam.length; i++) {
@@ -70,7 +75,8 @@ export default class FightHandler {
 
       await this.M.removeMonsterGroupFromMap(this.socket.player.mapPosition.x, this.socket.player.mapPosition.y, target.id);
       this.socket.to(map.name).emit("removePlayer", { id: this.socket.player.id });
-      this.F.startMonsterFight(firstTeam, secondTeam, map, target.id);
+      const fightId = this.F.startMonsterFight(firstTeam, secondTeam, map, target.id);
+      this.socket.player.setLastFightId(fightId);
     } catch (error) {
       console.log(error);
     }
@@ -142,5 +148,11 @@ export default class FightHandler {
     const fight = this.F.retrieveFight(data.fightId);
     if (!fight) return;
     fight.checkin(data.checkId, this.socket.id);
+  }
+
+  async disconnect() {
+    if (this.socket.player.lastFightId) {
+      this.F.disconnectPlayerFromFight(this.socket.id, this.socket.player.lastFightId);
+    }
   }
 }

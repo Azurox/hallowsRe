@@ -4,6 +4,7 @@ import State from "./State";
 import Account, { IAccount } from "../Schema/Account";
 import Player, { IPlayer } from "../Schema/Player";
 import Position from "./RelationalObject/Position";
+import CheckinHistory from "./FightRework/CheckinHistory";
 
 export default class PlayerController {
   state: State;

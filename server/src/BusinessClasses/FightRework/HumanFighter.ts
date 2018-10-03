@@ -1,10 +1,13 @@
 import { IPlayer } from "../../Schema/Player";
 import Fighter from "./Fighter";
 import mongoose from "mongoose";
+import CheckinHistory from "./CheckinHistory";
 
 export default class HumanFighter extends Fighter {
   player: IPlayer;
   socketId: string;
+  disconnected = false;
+  checkinHistory = new CheckinHistory();
 
   constructor(player: IPlayer, side: Side) {
     super();

@@ -10,7 +10,7 @@ import SpellProcessor from "./SpellProcessor";
 import SpellImpact from "./SpellImpact";
 import CheckinManager from "./CheckinManager";
 import FightEndProcessor from "./FightEndProcessor";
-import MonsterFighter from "../FightRework/MonsterFighter";
+import MonsterFighter from "./MonsterFighter";
 import AIProcessor from "./AIProcessor";
 import AICommand from "./AICommand";
 
@@ -153,7 +153,10 @@ export default class FightRework extends EventEmitter {
     const allPlayers = this.blueTeam.concat(this.redTeam);
     const humans: HumanFighter[] = [];
     for (let i = 0; i < allPlayers.length; i++) {
-      if (allPlayers[i].isRealPlayer()) humans.push(<HumanFighter>allPlayers[i]);
+      if (allPlayers[i].isRealPlayer()) {
+        const human = <HumanFighter>allPlayers[i];
+        if (!human.disconnected) humans.push(human);
+      }
     }
     return humans;
   }
@@ -312,6 +315,7 @@ export default class FightRework extends EventEmitter {
         );
 
         for (const human of humans) {
+          human.checkinHistory.addFightCheckin(checkId);
           this.io.to(human.getSocketId()).emit("fighterUseSpell", {
             playerId: id,
             position: targetPosition,
@@ -335,6 +339,12 @@ export default class FightRework extends EventEmitter {
 
   checkin(checkId: string, socketId: string) {
     this.checkinManager.check(checkId, socketId);
+    try {
+      const human = this.retrieveHumanFighterFromSocketId(socketId);
+      human.checkinHistory.removeFightCheckin(checkId);
+    } catch (error) {
+      console.log("Error while trying to remove checkin " + error);
+    }
   }
 
   monsterUseSpell(monster: MonsterFighter, spell: ISpell, targetPosition: Position): SpellImpact[] {
@@ -393,7 +403,7 @@ export default class FightRework extends EventEmitter {
     const processor = new AIProcessor(this, monster, this.map, this.blueTeam, this.redTeam, this.fightOrder);
     const impact = await processor.process();
     const commands: AICommand[] = [];
-    let fightIsfinished: boolean;
+    let fightIsFinished: boolean;
     for (const action of impact.actions) {
       if (action.path) {
         const command = new AICommand();
@@ -405,13 +415,13 @@ export default class FightRework extends EventEmitter {
         command.spellId = action.spell.spell._id;
         command.targetPosition = action.spell.position;
         command.spellImpacts = this.monsterUseSpell(monster, action.spell.spell, command.targetPosition);
-        fightIsfinished = this.isFightFinished();
+        fightIsFinished = this.isFightFinished();
         commands.push(command);
       }
     }
 
     const humans = this.getTotalHumansFighter();
-    if (fightIsfinished) {
+    if (fightIsFinished) {
       const socketsIds = [];
       for (const human of humans) {
         socketsIds.push(human.getSocketId());
@@ -423,6 +433,7 @@ export default class FightRework extends EventEmitter {
       );
 
       for (const human of humans) {
+        human.checkinHistory.addFightCheckin(checkId);
         this.io.to(human.getSocketId()).emit("monsterCommand", {
           monsterId: monster.getId(),
           commands: commands,
@@ -442,6 +453,7 @@ export default class FightRework extends EventEmitter {
         this.waitingForPlayer.bind(this)
       );
       for (const human of humans) {
+        human.checkinHistory.addFightCheckin(checkId);
         this.io.to(human.getSocketId()).emit("monsterCommand", {
           monsterId: monster.getId(),
           commands: commands,
@@ -455,10 +467,16 @@ export default class FightRework extends EventEmitter {
     this.nextTurn();
   }
 
-  waitingForPlayer(ids: { [id: string]: boolean }) {
+  waitingForPlayer(checkId: string, ids: { [id: string]: boolean }) {
     for (const id in ids) {
       if (ids[id] == false) {
         console.log("waiting for " + id + " checking. Timeouted"); // May send "En attente de ..." to room.
+        try {
+          const human = this.retrieveHumanFighterFromSocketId(id);
+          human.checkinHistory.removeFightCheckin(checkId);
+        } catch (error) {
+          console.log("Error while trying to remove checkin " + error);
+        }
       }
     }
 
@@ -467,5 +485,62 @@ export default class FightRework extends EventEmitter {
 
   destroyFight() {
     this.emit("end");
+  }
+
+  removeFighterFromFight(socketId: string) {
+    try {
+      const removedHuman = this.retrieveHumanFighterFromSocketId(socketId);
+      const ids = removedHuman.checkinHistory.getFightCheckin();
+      removedHuman.dead = true;
+      removedHuman.disconnected = true;
+
+      this.updateTimeline();
+
+      const humans = this.getTotalHumansFighter();
+
+      for (let i = 0; i < ids.length; i++) {
+        const checkId = ids[i];
+        this.checkinManager.check(checkId, socketId);
+      }
+
+      if (!this.winningSide) {
+        const finished = this.isFightFinished();
+
+        if (finished) {
+          const socketsIds = [];
+          for (const human of humans) {
+            socketsIds.push(human.getSocketId());
+          }
+          const checkId = this.checkinManager.createSoftCheckin(
+            socketsIds,
+            this.sendFightResult.bind(this),
+            this.destroyFight.bind(this)
+          );
+
+          for (const human of humans) {
+            this.io.to(human.getSocketId()).emit("removeFighter", {
+              id: human.getId(),
+              checkin: checkId
+            });
+          }
+        }
+      } else {
+
+        for (const human of humans) {
+          this.io.to(human.getSocketId()).emit("removeFighter", {
+            id: human.getId()
+          });
+        }
+
+        if (this.acceptedId == removedHuman.getId()) {
+          this.nextTurn();
+        }
+      }
+    } catch (error) {
+      console.log("Error while trying to remove checkin from disconnected player " + error);
+    }
+  }
+  disconnectPlayer(socketId: string) {
+    this.removeFighterFromFight(socketId);
   }
 }

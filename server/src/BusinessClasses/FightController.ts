@@ -16,7 +16,7 @@ export default class FightController {
     setInterval(this.tick.bind(this), 1000);
   }
 
-  startFight(firstTeam: IPlayer[], secondTeam: IPlayer[], map: IMap) {
+  startFight(firstTeam: IPlayer[], secondTeam: IPlayer[], map: IMap): string {
     const blueTeam: HumanFighter[] = [];
     for (let i = 0; i < firstTeam.length; i++) {
       blueTeam.push(new HumanFighter(firstTeam[i], "blue"));
@@ -30,9 +30,10 @@ export default class FightController {
     const fight = new FightRework(this.state.io, blueTeam, redTeam, map);
     this.fights[fight.id] = fight;
     fight.startFight();
+    return fight.id;
   }
 
-  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], map: IMap, monsterGroupId: string) {
+  startMonsterFight(firstTeam: IPlayer[], secondTeam: IMonster[], map: IMap, monsterGroupId: string): string {
     const blueTeam: HumanFighter[] = [];
     for (let i = 0; i < firstTeam.length; i++) {
       blueTeam.push(new HumanFighter(firstTeam[i], "blue"));
@@ -51,6 +52,8 @@ export default class FightController {
       this.removeFight(fight.id);
       this.state.MonsterController.monsterFightFinished(monsterGroupId, new Position(map.x, map.y));
     });
+
+    return fight.id;
   }
 
   tick() {
@@ -66,5 +69,11 @@ export default class FightController {
   removeFight(id: string) {
     this.fights[id] = undefined;
     delete this.fights[id];
+  }
+
+  disconnectPlayerFromFight(socketId: string, fightId: string) {
+   if (this.fights[fightId]) {
+    this.fights[fightId].disconnectPlayer(socketId);
+   }
   }
 }
