@@ -22,7 +22,7 @@ public class SocketManager : MonoBehaviour
     private IEnumerator Start()
     {
 
-        using (_socket = new WebSocket("ws://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket"))
+        using (_socket = new WebSocket("ws://localhost:54614/ws"))
         {
             _socket.OnMessage += (sender, e) => { ProcessMessage(e.Data); };
             _socket.Connect();
