@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ConnectionScreenController : MonoBehaviour {
@@ -83,6 +84,7 @@ public class ConnectionScreenController : MonoBehaviour {
 
     private void GoToSelectCharacter(string _)
     {
+        SceneManager.LoadScene("CharacterSelection");
         Debug.Log("go to select char");
     }
 }

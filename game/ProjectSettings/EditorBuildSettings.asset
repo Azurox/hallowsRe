@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/ConnectionScreen/Connection.unity
+    guid: 1dbcd5b6ce4d7b74aabef3ab4fc3d500
+  - enabled: 1
+    path: Assets/CharacterSelectionScreen/CharacterSelection.unity
+    guid: 9e821512638fbfc48b9d7a5184834357
   m_configObjects: {}
