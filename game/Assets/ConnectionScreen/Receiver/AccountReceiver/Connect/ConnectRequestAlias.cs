@@ -2,15 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConnectRequestAlias : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+public class ConnectRequestAlias {
+    private ConnectRequestAlias() { }
+    public const string CONNECT = "account/connect";
 }

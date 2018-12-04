@@ -45,7 +45,13 @@ public class ConnectionScreenController : MonoBehaviour {
     public void Connect()
     {
         Debug.Log("connect");
-        // socket.Emit("")
+        var guid = socket.Emit(ConnectRequestAlias.CONNECT, new ConnectRequest()
+        {
+            Email = emailInput.text,
+            Password = passwordInput.text
+        });
+        socket.AwaitOneResponse(guid, ConnectReceiverAlias.WRONG_CREDENTIAL, WrongCredentials);
+        socket.AwaitOneResponse(guid, ConnectReceiverAlias.GO_TO_SELECT_CHARACTER, GoToSelectCharacter);
     }
 
     public void Register()
@@ -56,8 +62,8 @@ public class ConnectionScreenController : MonoBehaviour {
             Email = emailInput.text,
             Password = passwordInput.text
         });
-        socket.AwaitOneResponse(guid, AccountReceiverAlias.ACCOUNT_CREATED, AccountCreated);
-        socket.AwaitOneResponse(guid, AccountReceiverAlias.EMAIL_ALREADY_TAKEN, EmailAlreadyTaken);
+        socket.AwaitOneResponse(guid, RegisterReceiverAlias.ACCOUNT_CREATED, AccountCreated);
+        socket.AwaitOneResponse(guid, RegisterReceiverAlias.EMAIL_ALREADY_TAKEN, EmailAlreadyTaken);
     }
 
     private void AccountCreated(string _)
@@ -68,5 +74,15 @@ public class ConnectionScreenController : MonoBehaviour {
     private void EmailAlreadyTaken(string _)
     {
         Debug.Log("Email already taken");
+    }
+
+    private void WrongCredentials(string _)
+    {
+        Debug.Log("Wrong credentials !");
+    }
+
+    private void GoToSelectCharacter(string _)
+    {
+        Debug.Log("go to select char");
     }
 }

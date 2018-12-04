@@ -18,9 +18,22 @@ public class SocketManager : MonoBehaviour
     private readonly  ConcurrentStack<KeyValuePair<Action<string>, string>> _callBackStack = new ConcurrentStack<KeyValuePair<Action<string>, string>>();
     private const float MAX_PING_TIMEOUT = 25f;
     private float _pingTimer = 0;
-    
 
-    // Use this for initialization
+
+   [UsedImplicitly]
+   private void Awake()
+    {
+        var objects = GameObject.FindGameObjectsWithTag("SocketManager");
+
+        if (objects.Length > 1)
+        {
+            Destroy(gameObject);
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    [UsedImplicitly]
     private IEnumerator Start()
     {
 
