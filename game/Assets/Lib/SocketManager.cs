@@ -95,10 +95,8 @@ public class SocketManager : MonoBehaviour
                 {
                     foreach (KeyValuePair<string, Action<string>> action in response.Value)
                     {
-                        Debug.Log(action.Key);
                         if (action.Key == eventName)
                         {
-                            Debug.Log($"found {eventName}  == {action.Key}");
                             actionFound = response.Key;
                             _callBackStack.Push(new KeyValuePair<Action<string>, string>(action.Value, data));
                             goto leaveMultiLoop; // cleanest way to exist nested loop :(
