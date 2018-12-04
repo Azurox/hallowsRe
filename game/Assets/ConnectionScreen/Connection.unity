@@ -661,7 +661,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 301006267}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 876222176}
+        m_MethodName: SwitchRegisterConnect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &301006267
@@ -947,8 +958,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   socket: {fileID: 1601429538}
   title: {fileID: 1038149000}
-  button: {fileID: 301006266}
-  buttonText: {fileID: 1189627918}
+  button: {fileID: 192140301}
+  buttonText: {fileID: 136390145}
+  buttonSwitchText: {fileID: 1189627918}
+  emailInput: {fileID: 188485043}
+  passwordInput: {fileID: 77979155}
 --- !u!224 &876222177
 RectTransform:
   m_ObjectHideFlags: 0
