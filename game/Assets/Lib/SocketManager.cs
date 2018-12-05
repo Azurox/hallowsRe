@@ -12,6 +12,7 @@ public class SocketManager : MonoBehaviour
 {
 
     private WebSocket _socket;
+
     private readonly Dictionary<string, List<Action<string>>> _registeredActions = new Dictionary<string, List<Action<string>>>();
     private readonly Dictionary<string, Dictionary<string, Action<string>>> _registeredAwaitedResponse = new Dictionary<string, Dictionary<string, Action<string>>>();
     private readonly  Queue<string> _registeredQueries = new Queue<string>();

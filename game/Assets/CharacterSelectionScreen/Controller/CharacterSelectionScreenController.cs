@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CharacterSelectionScreenController : MonoBehaviour {
@@ -57,6 +58,7 @@ public class CharacterSelectionScreenController : MonoBehaviour {
             name = Name.text
         });
         socket.AwaitOneResponse(guid, CharacterReceiverAlias.NAME_ALREADY_TAKEN, NameAlreadyTaken);
+        socket.AwaitOneResponse(guid, CharacterReceiverAlias.GO_TO_WORLD, GoToWorld);
     }
 
     private void NameAlreadyTaken(string _)
@@ -71,5 +73,12 @@ public class CharacterSelectionScreenController : MonoBehaviour {
             name = name
         });
         Debug.Log("try to log select char");
+        socket.AwaitOneResponse(guid, CharacterReceiverAlias.GO_TO_WORLD, GoToWorld);
+    }
+
+    private void GoToWorld(string _)
+    {
+        Debug.Log("redirect to world");
+        SceneManager.LoadScene("World");
     }
 }

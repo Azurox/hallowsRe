@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/CharacterSelectionScreen/CharacterSelection.unity
     guid: 9e821512638fbfc48b9d7a5184834357
+  - enabled: 1
+    path: Assets/WorldScreen/World.unity
+    guid: 64f1a43b5a93fd947a5ad769faff3f8a
   m_configObjects: {}
