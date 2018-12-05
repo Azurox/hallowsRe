@@ -1,3 +1,1 @@
-﻿public interface IReceiver {
-    void Listen(string data);
-}
+﻿public interface IReceiver { }

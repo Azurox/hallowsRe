@@ -145,11 +145,12 @@ public class SocketManager : MonoBehaviour
         _registeredActions[eventName].Add(callback);
     }
 
-    public void Emit(string eventName, string data = "")
+    public string Emit(string eventName, string data = "")
     {
-        var query = data.IsNullOrEmpty() ? string.Format("42[\"{0}\"]", eventName) : string.Format("42[\"{0}\", {1}]", eventName, data);
+        var query = data.IsNullOrEmpty() ? string.Format("42[\"{0}\", {{}}]", eventName) : string.Format("42[\"{0}\", {1}]", eventName, data);
         //Debug.Log(query);
         _registeredQueries.Enqueue(query);
+        return Guid.NewGuid().ToString();
     }
 
     public string Emit(string eventName, IRequest request)
