@@ -9,7 +9,10 @@ public class CharacterSelectionScreenController : MonoBehaviour {
     private SocketManager socket;
     public GameObject NoCharacterFoundPanel;
     public GameObject CreateCharacterPanel;
+    public GameObject CharacterContainer;
+    public CharacterUIComponent CharacterUIComponent;
     public Text Name;
+
 
 
     private void Awake ()
@@ -29,6 +32,15 @@ public class CharacterSelectionScreenController : MonoBehaviour {
         if(data.characters.Count == 0)
         {
             NoCharacterFoundPanel.SetActive(true);
+        }
+        else
+        {
+            foreach (var character in data.characters)
+            {
+                var go = Instantiate(CharacterUIComponent, CharacterContainer.transform);
+                go.Setup(character);
+            }
+            CharacterContainer.SetActive(true);
         }
     }
 
@@ -50,5 +62,14 @@ public class CharacterSelectionScreenController : MonoBehaviour {
     private void NameAlreadyTaken(string _)
     {
         Debug.Log("Name already taken");
+    }
+
+    public void Connect(string name)
+    {
+        var guid = socket.Emit(CharacterRequestAlias.SELECT_CHARACTER, new SelectCharacterRequest()
+        {
+            name = name
+        });
+        Debug.Log("try to log select char");
     }
 }

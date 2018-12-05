@@ -84,7 +84,7 @@ public class ConnectionScreenController : MonoBehaviour {
 
     private void GoToSelectCharacter(string _)
     {
-        SceneManager.LoadScene("CharacterSelection");
         Debug.Log("go to select char");
+        SceneManager.LoadScene("CharacterSelection");
     }
 }
