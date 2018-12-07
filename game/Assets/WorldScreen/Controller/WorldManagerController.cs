@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class WorldManagerController : MonoBehaviour {
@@ -10,6 +11,7 @@ public class WorldManagerController : MonoBehaviour {
     private void Awake()
     {
         socket = FindObjectOfType<SocketManager>();
+        mapController = GetComponent<MapController>();
     }
 
     private void Start()
@@ -19,7 +21,13 @@ public class WorldManagerController : MonoBehaviour {
 
     private void LoadingProcess()
     {
-        LoadingProcessMap();
+        mapController.LoadMap(new LoadMapReceiver()
+        {
+            mapName = "0-0",
+            position = Vector2.zero
+        });
+
+        // LoadingProcessMap();
     }
 
     private void LoadingProcessMap()
@@ -27,7 +35,7 @@ public class WorldManagerController : MonoBehaviour {
         var guid = socket.Emit(MapRequestAlias.LOAD_MAP);
         socket.AwaitOneResponse(guid, MapReceiverAlias.LOAD_MAP, (string data) =>
         {
-            mapController.LoapMap(data);
+            mapController.LoadMap(JsonConvert.DeserializeObject<LoadMapReceiver>(data));
             LoadingProcessMainCharacterInformation();
         });
     }
