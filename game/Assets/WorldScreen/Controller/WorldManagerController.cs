@@ -7,11 +7,13 @@ public class WorldManagerController : MonoBehaviour {
 
     private SocketManager socket;
     private MapController mapController;
+    private MainCharacterController MainCharacterController;
 
     private void Awake()
     {
         socket = FindObjectOfType<SocketManager>();
         mapController = GetComponent<MapController>();
+        MainCharacterController = GetComponent<MainCharacterController>();
     }
 
     private void Start()
@@ -21,13 +23,13 @@ public class WorldManagerController : MonoBehaviour {
 
     private void LoadingProcess()
     {
-        mapController.LoadMap(new LoadMapReceiver()
+       /* mapController.LoadMap(new LoadMapReceiver()
         {
             mapName = "0-0",
             position = Vector2.zero
-        });
+        });*/
 
-        // LoadingProcessMap();
+        LoadingProcessMap();
     }
 
     private void LoadingProcessMap()
@@ -45,7 +47,8 @@ public class WorldManagerController : MonoBehaviour {
         var guid = socket.Emit(MainCharacterRequestAlias.INFORMATION);
         socket.AwaitOneResponse(guid, MainCharacterReceiverAlias.INFORMATION, (string data) =>
         {
-
+            var mainCharacter = JsonConvert.DeserializeObject<InformationReceiver>(data).character;
+            MainCharacterController.Spawn(mainCharacter);
         });
     }
 
