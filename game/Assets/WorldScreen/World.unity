@@ -291,6 +291,7 @@ GameObject:
   - component: {fileID: 1498195251}
   - component: {fileID: 1498195250}
   - component: {fileID: 1498195252}
+  - component: {fileID: 1498195253}
   m_Layer: 0
   m_Name: WorldManager
   m_TagString: Untagged
@@ -347,6 +348,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MainCharacterComponent: {fileID: 114329920003327316, guid: defc11b86665dd44f977a83d3018f800,
+    type: 2}
+--- !u!114 &1498195253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1498195248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb6601b268cd1bc41b92525a81610911, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterComponent: {fileID: 114971210361207554, guid: 0149bdc51d9e1c4489424b0130f73f16,
     type: 2}
 --- !u!1 &1695789110
 GameObject:

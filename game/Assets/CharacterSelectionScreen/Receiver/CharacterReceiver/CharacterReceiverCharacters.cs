@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterReceiverCharacters : IReceiver {
-    public List<Character> characters;
+namespace CharacterSelectionScreen.CharacterReceiver
+{
+    public class CharacterReceiverCharacters : IReceiver
+    {
+        public List<Character> characters;
+    }
 }

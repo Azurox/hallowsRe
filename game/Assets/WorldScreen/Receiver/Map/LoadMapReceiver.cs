@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoadMapReceiver {
-    public string mapName;
-    public Vector2 position;
+
+namespace WorldScreen.MapReceiver { 
+    public class LoadMapReceiver
+    {
+        public string mapName;
+        public Vector2 position;
+    }
 }

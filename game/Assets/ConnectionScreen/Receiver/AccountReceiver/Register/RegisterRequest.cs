@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RegisterRequest: IRequest
+namespace ConnectionScreen.AccountReceiver
 {
-    public string Email;
-    public string Password;
+    public class RegisterRequest : IRequest
+    {
+        public string Email;
+        public string Password;
+    }
 }

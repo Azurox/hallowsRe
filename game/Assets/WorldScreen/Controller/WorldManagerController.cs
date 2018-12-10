@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using WorldScreen.CharacterReceiver;
+using WorldScreen.MainCharacterReceiver;
+using WorldScreen.MapReceiver;
 
 public class WorldManagerController : MonoBehaviour {
 
     private SocketManager socket;
     private MapController mapController;
     private MainCharacterController MainCharacterController;
+    private CharacterController CharacterController;
 
     private void Awake()
     {
         socket = FindObjectOfType<SocketManager>();
         mapController = GetComponent<MapController>();
         MainCharacterController = GetComponent<MainCharacterController>();
+        CharacterController = GetComponent<CharacterController>();
     }
 
     private void Start()
@@ -49,6 +54,17 @@ public class WorldManagerController : MonoBehaviour {
         {
             var mainCharacter = JsonConvert.DeserializeObject<InformationReceiver>(data).character;
             MainCharacterController.Spawn(mainCharacter);
+            LoadingProcessCharacters();
+        });
+    }
+
+    private void LoadingProcessCharacters()
+    {
+        var guid = socket.Emit(CharacterRequestAlias.CHARACTERS_ON_MAP);
+        socket.AwaitOneResponse(guid, CharacterReceiverAlias.CHARACTERS_ON_MAP, (string data) =>
+        {
+            var characters = JsonConvert.DeserializeObject<CharactersOnMapReceiver>(data).characters;
+            CharacterController.Spawn(characters);
         });
     }
 

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InformationReceiver: IReceiver  {
-    public Character character;
+namespace WorldScreen.MainCharacterReceiver
+{
+    public class InformationReceiver : IReceiver
+    {
+        public Character character;
+    }
 }

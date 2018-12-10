@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainCharacterComponent : MonoBehaviour {
+public class CharacterComponent : MonoBehaviour {
 
     public void Setup(Character character)
     {

@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Collections;
-using System.Collections.Generic;
+﻿using CharacterSelectionScreen.CharacterReceiver;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
