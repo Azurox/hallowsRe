@@ -18,7 +18,7 @@ public class CharacterController : MonoBehaviour {
 
     public void Spawn(Character character)
     {
-        currentCharacterComponent = Instantiate(CharacterComponent);
+        currentCharacterComponent = Instantiate(CharacterComponent, transform);
         currentCharacterComponent.Setup(character);
     }
 
