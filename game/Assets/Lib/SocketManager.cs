@@ -82,7 +82,8 @@ public class SocketManager : MonoBehaviour
     [UsedImplicitly]
     private void OnDestroy()
     {
-      _socket.Send("41");
+        // _socket.Send("41"); // Regarding Socket.Io implementation, client must send event 41 to indicate closing, but .close() seems to be enough.
+        _socket.Close();
     }
 
     private void ProcessMessage(string message)
