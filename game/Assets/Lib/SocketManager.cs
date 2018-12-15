@@ -94,8 +94,8 @@ public class SocketManager : MonoBehaviour
             eventAndData = eventAndData.Remove(eventAndData.Length - 1);
             var eventName = eventAndData.Split(',')[0].Trim('"');
             var data = eventAndData.Remove(0, eventName.Length + 3);
-            // Debug.Log(eventName);
-            // Debug.Log(data);
+            Debug.Log(eventName);
+            Debug.Log(data);
 
             if (_registeredActions.ContainsKey(eventName))
             {

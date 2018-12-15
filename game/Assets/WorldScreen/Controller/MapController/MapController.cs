@@ -23,4 +23,9 @@ public class MapController : MonoBehaviour
         currentMapComponent = Instantiate(MapComponent, transform);
         currentMapComponent.Setup(map);
     }
+
+    public void ActivateListeners()
+    {
+       
+    }
 }

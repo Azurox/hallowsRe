@@ -9,14 +9,14 @@ using WorldScreen.MapReceiver;
 public class WorldManagerController : MonoBehaviour {
 
     private SocketManager socket;
-    private MapController mapController;
+    private MapController MapController;
     private MainCharacterController MainCharacterController;
     private CharacterController CharacterController;
 
     private void Awake()
     {
         socket = FindObjectOfType<SocketManager>();
-        mapController = GetComponent<MapController>();
+        MapController = GetComponent<MapController>();
         MainCharacterController = GetComponent<MainCharacterController>();
         CharacterController = GetComponent<CharacterController>();
     }
@@ -42,7 +42,7 @@ public class WorldManagerController : MonoBehaviour {
         var guid = socket.Emit(MapRequestAlias.LOAD_MAP);
         socket.AwaitOneResponse(guid, MapReceiverAlias.LOAD_MAP, (string data) =>
         {
-            mapController.LoadMap(JsonConvert.DeserializeObject<LoadMapReceiver>(data));
+            MapController.LoadMap(JsonConvert.DeserializeObject<LoadMapReceiver>(data));
             LoadingProcessMainCharacterInformation();
         });
     }
@@ -65,21 +65,18 @@ public class WorldManagerController : MonoBehaviour {
         {
             var characters = JsonConvert.DeserializeObject<CharactersOnMapReceiver>(data).characters;
             CharacterController.Spawn(characters);
+            ActivateListeners();
         });
     }
 
     private void LoadingProcessMonsters()
     {
-
-    }
-
-    private void LoadingProcessPlayers()
-    {
-        ActivateListeners();
+        // TODO
     }
 
     private void ActivateListeners()
     {
-
+        MapController.ActivateListeners();
+        CharacterController.ActivateListeners();
     }
 }
