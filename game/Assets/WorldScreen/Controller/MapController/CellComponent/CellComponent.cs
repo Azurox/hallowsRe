@@ -65,5 +65,13 @@ public class CellComponent : MonoBehaviour, IPointerClickHandler, IPointerEnterH
         }
     }
 
+    public bool IsAccessible()
+    {
+        return currentCell.IsAccessible;
+    }
 
+    public bool IsOffscreen()
+    {
+        return currentCell.OffScreen;
+    }
 }

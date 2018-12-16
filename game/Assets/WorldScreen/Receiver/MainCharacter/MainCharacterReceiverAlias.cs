@@ -8,5 +8,7 @@ namespace WorldScreen.MainCharacterReceiver
     {
         private MainCharacterReceiverAlias() { }
         public const string INFORMATION = "mainCharacter/information";
+        public const string ILLEGAL_MOVEMENT = "mainCharacter/illegalMovement";
+        public const string LEGAL_MOVEMENT = "mainCharacter/legalMovement";
     }
 }

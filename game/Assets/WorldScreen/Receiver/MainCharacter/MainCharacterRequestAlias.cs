@@ -9,5 +9,6 @@ namespace WorldScreen.MainCharacterReceiver
     {
         private MainCharacterRequestAlias() { }
         public const string INFORMATION = "mainCharacter/information";
+        public const string MOVE_TO = "mainCharacter/moveTo";
     }
 }

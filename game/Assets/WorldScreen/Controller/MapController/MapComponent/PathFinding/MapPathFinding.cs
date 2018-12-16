@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapPathFinding : MonoBehaviour {
     private MapDTG mapDTG;
-    private Cell[,] currentMap;
+    private CellComponent[,] currentMap;
     public Node[,] grid;
     private bool ready = false;
 
@@ -13,31 +13,33 @@ public class MapPathFinding : MonoBehaviour {
         return ready;
     }
 
-    private void Init()
+    public void Refresh(CellComponent[,] cells)
     {
-        if (mapDTG == null)
-        {
-            mapDTG = GetComponent<MapDTG>();
-            currentMap = mapDTG.GetMap().cells;
-            grid = new Node[currentMap.GetLength(0), currentMap.GetLength(1)];
+        currentMap = cells;
+        grid = new Node[cells.GetLength(0), cells.GetLength(1)];
 
-            for (var i = 0; i < currentMap.GetLength(0); i++)
+        for (var i = 0; i < cells.GetLength(0); i++)
+        {
+            for (var j = 0; j < cells.GetLength(1); j++)
             {
-                for (var j = 0; j < currentMap.GetLength(1); j++)
+                if(cells[j, i] == null)
                 {
-                    grid[i, j] = new Node(currentMap[j, i].IsAccessible, new Vector2(i, j), i, j);
+                    grid[i, j] = new Node(false, new Vector2(i, j), i, j);
+                } else
+                {
+                    grid[i, j] = new Node(cells[j, i].IsAccessible(), new Vector2(i, j), i, j);
                 }
             }
-            ready = true;
         }
-        else
+    }
+
+    private void CleanUp()
+    {
+        for (var i = 0; i < grid.GetLength(0); i++)
         {
-            for (var i = 0; i < currentMap.GetLength(0); i++)
+            for (var j = 0; j < grid.GetLength(1); j++)
             {
-                for (var j = 0; j < currentMap.GetLength(1); j++)
-                {
-                    grid[i, j].parent = null;
-                }
+                grid[i, j].parent = null;
             }
         }
     }
@@ -48,8 +50,6 @@ public class MapPathFinding : MonoBehaviour {
         {
             return null;
         }
-
-        Init();
 
         Node startNode = grid[(int)startPosition.x, (int)startPosition.y];
         Node targetNode = grid[(int)selectedPosition.x, (int)selectedPosition.y];
@@ -100,6 +100,7 @@ public class MapPathFinding : MonoBehaviour {
 
         }
 
+        CleanUp();
         return null;
     }
 
@@ -215,15 +216,12 @@ public class MapPathFinding : MonoBehaviour {
             observedNode = observedNode.parent;
         }
         path.Reverse();
+        CleanUp();
         return path;
     }
 
     public List<Vector2> FindAvailableCellInRange(Vector2 startPosition, int range)
     {
-        if (currentMap == null)
-        {
-            Init();
-        }
 
         List<Vector2> rangeList = new List<Vector2>();
         for (int i = 0; i < currentMap.GetLength(0); i++)
@@ -233,7 +231,7 @@ public class MapPathFinding : MonoBehaviour {
                 var position = new Vector2(i, j);
                 var totalVector = position - startPosition;
                 var distance = System.Math.Abs(totalVector.x) + System.Math.Abs(totalVector.y);
-                if (currentMap[i, j] != null && distance <= range && !currentMap[i, j].OffScreen && currentMap[i, j].IsAccessible)
+                if (currentMap[i, j] != null && distance <= range && !currentMap[i, j].IsOffscreen() && currentMap[i, j].IsAccessible())
                 {
                     rangeList.Add(position);
                 }

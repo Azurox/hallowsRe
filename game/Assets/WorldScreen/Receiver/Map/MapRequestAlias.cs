@@ -8,6 +8,5 @@ namespace WorldScreen.MapReceiver
     {
         private MapRequestAlias() { }
         public const string LOAD_MAP = "map/loadMap";
-        public const string ACCOUNT_CREATED = "account/accountCreated";
     }
 }

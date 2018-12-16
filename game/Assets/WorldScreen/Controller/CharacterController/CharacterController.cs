@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +23,7 @@ public class CharacterController : MonoBehaviour {
     {
         socket.On(CharacterReceiverAlias.SPAWN_CHARACTER, SpawnCharacter);
         socket.On(CharacterReceiverAlias.REMOVE_CHARACTER, RemoveCharacter);
+        socket.On(CharacterReceiverAlias.MOVE_CHARACTER, MoveCharacter);
     }
 
     public void Spawn(Character character)
@@ -51,6 +53,23 @@ public class CharacterController : MonoBehaviour {
         }
     }
 
+    private void Move(string id, Vector2 startPosition, List<Vector2> path)
+    {
+        if (currentCharactersComponent.ContainsKey(id))
+        {
+            var character = currentCharactersComponent[id];
+            character.Move(path, (int x, int y) =>
+            {
+                character.SetPosition(x, y);
+            });
+
+        }
+        else
+        {
+            Debug.Log($"tried to move {id} but character wasn't found");
+        }
+    }
+
     private void SpawnCharacter(string data)
     {
         var character = JsonConvert.DeserializeObject<SpawnCharacterReceiver>(data).character;
@@ -61,5 +80,11 @@ public class CharacterController : MonoBehaviour {
     {
         var id = JsonConvert.DeserializeObject<RemoveCharacterReceiver>(data).characterId;
         Remove(id);
+    }
+
+    private void MoveCharacter(string data)
+    {
+        var request = JsonConvert.DeserializeObject<MoveCharacterReceiver>(data);
+        Move(request.characterId, request.startPosition, request.path);
     }
 }

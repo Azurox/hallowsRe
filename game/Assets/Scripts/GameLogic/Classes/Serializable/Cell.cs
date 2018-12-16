@@ -18,4 +18,10 @@ public class Cell {
         this.Obstacle = obstacle;
         this.OffScreen = offScreen;
     }
+
+    public Vector2 GetPosition()
+    {
+        return new Vector2(X, Y);
+    }
+
 }

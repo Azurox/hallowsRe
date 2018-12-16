@@ -28,4 +28,9 @@ public class MapController : MonoBehaviour
     {
        
     }
+
+    public List<Vector2> FindPath(Vector2 startPosition, Vector2 endPosition)
+    {
+        return currentMapComponent.FindPath(startPosition, endPosition);
+    }
 }

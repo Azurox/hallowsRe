@@ -7,7 +7,16 @@ public class MapComponent : MonoBehaviour
     /* Linked GameObject */
     public CellComponent CellComponent;
 
+    private InteractionController InteractionController;
+    private MapPathFinding mapPathFinding;
     private CellComponent[,] cells;
+    private bool mapIsDirty = true;
+
+    private void Start()
+    {
+        InteractionController = GetComponentInParent<InteractionController>();
+        mapPathFinding = GetComponent<MapPathFinding>();
+    }
 
 
     public void Setup(GameMap map)
@@ -16,7 +25,7 @@ public class MapComponent : MonoBehaviour
         {
             cells = new CellComponent[map.cells.GetLength(0), map.cells.GetLength(1)];
         }
-
+        
         for (int i = 0, length = map.cells.GetLength(0); i < length; i++)
         {
             for (int j = 0, lengthJ = map.cells.GetLength(1); j < lengthJ; j++)
@@ -41,6 +50,7 @@ public class MapComponent : MonoBehaviour
 
     public void TargetCell(Cell cell)
     {
+        InteractionController.PlayerClickOnCell(cell);
         // Debug.Log( $"click on cell {cell.X} : {cell.Y}");
     }
 
@@ -52,5 +62,16 @@ public class MapComponent : MonoBehaviour
     public void MouseExit(Cell cell)
     {
         // Debug.Log($"exit on cell {cell.X} : {cell.Y}");
+    }
+
+    public List<Vector2> FindPath(Vector2 startPosition, Vector2 endPosition)
+    {
+        if (mapIsDirty)
+        {
+            mapPathFinding.Refresh(cells);
+        }
+
+        var path = mapPathFinding.FindPath(startPosition, endPosition);
+        return path;
     }
 }

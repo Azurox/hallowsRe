@@ -9,6 +9,7 @@ namespace WorldScreen.CharacterReceiver
         public const string CHARACTERS_ON_MAP = "character/charactersOnMap";
         public const string SPAWN_CHARACTER = "character/spawnCharacter";
         public const string REMOVE_CHARACTER = "character/removeCharacter";
+        public const string MOVE_CHARACTER = "character/moveCharacter";
     }
 }
 
