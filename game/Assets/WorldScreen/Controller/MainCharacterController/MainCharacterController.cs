@@ -47,12 +47,12 @@ public class MainCharacterController : MonoBehaviour {
             path = normalizePath
         });
 
-        socket.AwaitOneResponse(guid, MapReceiverAlias.ILLEGAL_MOVEMENT, (data) =>
+        socket.AwaitOneResponse(guid, MainCharacterReceiverAlias.ILLEGAL_MOVEMENT, (data) =>
         {
             Debug.Log("illegal");
         });
 
-        socket.AwaitOneResponse(guid, MapReceiverAlias.LEGAL_MOVEMENT, (data) =>
+        socket.AwaitOneResponse(guid, MainCharacterReceiverAlias.LEGAL_MOVEMENT, (data) =>
         {
             Debug.Log("legal");
         });
